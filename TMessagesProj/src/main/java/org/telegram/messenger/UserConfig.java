@@ -21,6 +21,11 @@ import org.telegram.tgnet.tl.TL_account;
 
 import java.util.Arrays;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+
 public class UserConfig extends BaseController {
 
     public static int selectedAccount;
