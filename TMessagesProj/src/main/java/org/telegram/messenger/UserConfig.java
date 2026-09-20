@@ -232,30 +232,6 @@ public class UserConfig extends BaseController {
                         editor.remove("terms");
                     }
 
-                    // Terapkan commit/apply secara aman
-                    editor.apply();
-
-                    // Mekanisme Safe Backup file fisik konfigurasi untuk mencegah korupsi total saat OOM/Crash
-                    if (withFile) {
-                        try {
-                            File configFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "config_" + currentAccount + ".json");
-                            if (configFile.exists() && configFile.length() > 0) {
-                                File backupFile = new File(configFile.getParent(), configFile.getName() + ".bak");
-                                createSafeBackup(configFile, backupFile);
-                            }
-                        } catch (Exception e) {
-                            FileLog.e(e);
-                        }
-                    }
-
-                    SharedConfig.saveConfig();
-                } catch (Exception e) {
-                    FileLog.e(e);
-                }
-            }
-        });
-    }
-
                     if (tmpPassword != null) {
                         SerializedData data = new SerializedData();
                         tmpPassword.serializeToStream(data);
@@ -279,12 +255,28 @@ public class UserConfig extends BaseController {
                     }
 
                     editor.apply();
+
+                    // Mekanisme Safe Backup file fisik konfigurasi untuk mencegah korupsi total saat OOM/Crash
+                    if (withFile) {
+                        try {
+                            File configFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "config_" + currentAccount + ".json");
+                            if (configFile.exists() && configFile.length() > 0) {
+                                File backupFile = new File(configFile.getParent(), configFile.getName() + ".bak");
+                                createSafeBackup(configFile, backupFile);
+                            }
+                        } catch (Exception e) {
+                            FileLog.e(e);
+                        }
+                    }
+
+                    SharedConfig.saveConfig();
                 } catch (Exception e) {
                     FileLog.e(e);
                 }
             }
         });
     }
+
 
     public static boolean isValidAccount(int num) {
          return num >= 0 && num < UserConfig.MAX_ACCOUNT_COUNT && getInstance(num).isClientActivated();
