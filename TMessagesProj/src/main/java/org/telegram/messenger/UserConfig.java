@@ -328,14 +328,16 @@ public class UserConfig extends BaseController {
             genericAnimationsStickerPack = preferences.getString("genericAnimationsStickerPack", null);
             lastUpdatedGenericAnimations = preferences.getLong("lastUpdatedGenericAnimations", 0);
 
-
             try {
                 String terms = preferences.getString("terms", null);
                 if (terms != null) {
                     byte[] arr = Base64.decode(terms, Base64.DEFAULT);
-                    if (arr != null) {
+                    if (arr != null && arr.length > 0) {
                         SerializedData data = new SerializedData(arr);
-                        unacceptedTermsOfService = TLRPC.TL_help_termsOfService.TLdeserialize(data, data.readInt32(false), false);
+                        TLRPC.TL_help_termsOfService termsObj = TLRPC.TL_help_termsOfService.TLdeserialize(data, data.readInt32(false), false);
+                        if (termsObj != null) {
+                            unacceptedTermsOfService = termsObj;
+                        }
                         data.cleanup();
                     }
                 }
@@ -352,25 +354,40 @@ public class UserConfig extends BaseController {
                 migrateOffsetAccess = preferences.getLong("6migrateOffsetAccess", 0);
             }
 
-            String string = preferences.getString("tmpPassword", null);
-            if (string != null) {
-                byte[] bytes = Base64.decode(string, Base64.DEFAULT);
-                if (bytes != null) {
-                    SerializedData data = new SerializedData(bytes);
-                    tmpPassword = TL_account.tmpPassword.TLdeserialize(data, data.readInt32(false), false);
-                    data.cleanup();
+            try {
+                String string = preferences.getString("tmpPassword", null);
+                if (string != null) {
+                    byte[] bytes = Base64.decode(string, Base64.DEFAULT);
+                    if (bytes != null && bytes.length > 0) {
+                        SerializedData data = new SerializedData(bytes);
+                        TL_account.tmpPassword pwdObj = TL_account.tmpPassword.TLdeserialize(data, data.readInt32(false), false);
+                        if (pwdObj != null) {
+                            tmpPassword = pwdObj;
+                        }
+                        data.cleanup();
+                    }
                 }
+            } catch (Exception e) {
+                FileLog.e(e);
             }
 
-            string = preferences.getString("user", null);
-            if (string != null) {
-                byte[] bytes = Base64.decode(string, Base64.DEFAULT);
-                if (bytes != null) {
-                    SerializedData data = new SerializedData(bytes);
-                    currentUser = TLRPC.User.TLdeserialize(data, data.readInt32(false), false);
-                    data.cleanup();
+            try {
+                String string = preferences.getString("user", null);
+                if (string != null) {
+                    byte[] bytes = Base64.decode(string, Base64.DEFAULT);
+                    if (bytes != null && bytes.length > 0) {
+                        SerializedData data = new SerializedData(bytes);
+                        TLRPC.User userObj = TLRPC.User.TLdeserialize(data, data.readInt32(false), false);
+                        if (userObj != null) {
+                            currentUser = userObj;
+                        }
+                        data.cleanup();
+                    }
                 }
+            } catch (Exception e) {
+                FileLog.e(e);
             }
+
             if (currentUser != null) {
                 checkPremiumSelf(null, currentUser);
                 clientUserId = currentUser.id;
@@ -378,6 +395,7 @@ public class UserConfig extends BaseController {
             configLoaded = true;
         }
     }
+
 
     public boolean isConfigLoaded() {
         return configLoaded;
