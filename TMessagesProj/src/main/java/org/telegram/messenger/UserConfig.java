@@ -134,6 +134,36 @@ public class UserConfig extends BaseController {
         return id;
     }
 
+    public static void createSafeBackup(File sourceFile, File backupFile) {
+        if (sourceFile == null || !sourceFile.exists() || sourceFile.length() == 0) {
+            return;
+        }
+        
+        File tempBackup = new File(backupFile.getParent(), backupFile.getName() + ".tmp");
+        try (FileInputStream fis = new FileInputStream(sourceFile);
+             FileOutputStream fos = new FileOutputStream(tempBackup)) {
+            
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) > 0) {
+                fos.write(buffer, 0, length);
+            }
+            fos.getFD().sync();
+            
+            if (tempBackup.exists()) {
+                if (backupFile.exists()) {
+                    backupFile.delete();
+                }
+                tempBackup.renameTo(backupFile);
+            }
+        } catch (Exception e) {
+            FileLog.e("Gagal membuat backup config aman", e);
+            if (tempBackup.exists()) {
+                tempBackup.delete();
+            }
+        }
+    }
+
     public void saveConfig(boolean withFile) {
         NotificationCenter.getInstance(currentAccount).doOnIdle(() -> {
             if (!configLoaded) {
@@ -171,8 +201,7 @@ public class UserConfig extends BaseController {
                     editor.putInt("lastMyLocationShareTime", lastMyLocationShareTime);
                     editor.putBoolean("filtersLoaded", filtersLoaded);
                     editor.putString("premiumGiftsStickerPack", premiumGiftsStickerPack);
-                    editor.putLong("lastUpdatedPremiumGiftsStickerPack", lastUpdatedPremiumGiftsStickerPack);
-
+                    editor.putLong("lastUpdatedPremiumGiftsStickerPack", lastUpdatedPremiumGiftsStickerPack);                        
                     editor.putString("genericAnimationsStickerPack", genericAnimationsStickerPack);
                     editor.putLong("lastUpdatedGenericAnimations", lastUpdatedGenericAnimations);
 
@@ -198,7 +227,29 @@ public class UserConfig extends BaseController {
                         editor.remove("terms");
                     }
 
+                    // Terapkan commit/apply secara aman
+                    editor.apply();
+
+                    // Mekanisme Safe Backup file fisik konfigurasi untuk mencegah korupsi total saat OOM/Crash
+                    if (withFile) {
+                        try {
+                            File configFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "config_" + currentAccount + ".json");
+                            if (configFile.exists() && configFile.length() > 0) {
+                                File backupFile = new File(configFile.getParent(), configFile.getName() + ".bak");
+                                createSafeBackup(configFile, backupFile);
+                            }
+                        } catch (Exception e) {
+                            FileLog.e(e);
+                        }
+                    }
+
                     SharedConfig.saveConfig();
+                } catch (Exception e) {
+                    FileLog.e(e);
+                }
+            }
+        });
+    }
 
                     if (tmpPassword != null) {
                         SerializedData data = new SerializedData();
