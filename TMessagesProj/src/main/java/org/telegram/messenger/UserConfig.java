@@ -256,8 +256,8 @@ public class UserConfig extends BaseController {
 
                     editor.apply();
 
-                    // Mekanisme Safe Backup file fisik konfigurasi untuk mencegah korupsi total saat OOM/Crash
-                    if (withFile) {
+                    // Mekanisme Safe Backup file fisik konfigurasi: Hanya dipicu jika user sudah aktif terautentikasi
+                    if (withFile && isClientActivated()) {
                         try {
                             File configFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "config_" + currentAccount + ".json");
                             if (configFile.exists() && configFile.length() > 0) {
@@ -335,12 +335,23 @@ public class UserConfig extends BaseController {
         }
     }
 
-    public void
-    loadConfig() {
+    public void loadConfig() {
         synchronized (sync) {
             if (configLoaded) {
                 return;
             }
+
+            // Auto-recovery backup: Restore dari .bak jika file config utama 0-byte atau missing saat cold start
+            try {
+                File configFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "config_" + currentAccount + ".json");
+                File backupFile = new File(configFile.getParent(), configFile.getName() + ".bak");
+                if ((!configFile.exists() || configFile.length() == 0) && backupFile.exists() && backupFile.length() > 0) {
+                    createSafeBackup(backupFile, configFile);
+                }
+            } catch (Exception e) {
+                FileLog.e("Gagal memproses auto-recovery config", e);
+            }
+
             SharedPreferences preferences = getPreferences();
             if (currentAccount == 0) {
                 selectedAccount = preferences.getInt("selectedAccount", 0);
