@@ -119,7 +119,7 @@ public class UserConfig extends BaseController {
 
     public static boolean hasPremiumOnAccounts() {
         for (int a = 0; a < MAX_ACCOUNT_COUNT; a++) {
-            if (AccountInstance.getInstance(a).getUserConfig().isClientActivated() && AccountInstance.getInstance(a).getUserConfig().getUserConfig().isPremium()) {
+            if (AccountInstance.getInstance(a).getUserConfig().isClientActivated() && AccountInstance.getInstance(a).getUserConfig().isPremium()) {
                 return true;
             }
         }
@@ -256,7 +256,6 @@ public class UserConfig extends BaseController {
 
                     editor.apply();
 
-                    // Mekanisme Safe Backup file fisik konfigurasi: Hanya dipicu jika user sudah aktif terautentikasi
                     if (withFile && isClientActivated()) {
                         try {
                             File configFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "config_" + currentAccount + ".json");
@@ -341,7 +340,6 @@ public class UserConfig extends BaseController {
                 return;
             }
 
-            // Auto-recovery backup: Restore dari .bak jika file config utama 0-byte atau missing saat cold start
             try {
                 File configFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "config_" + currentAccount + ".json");
                 File backupFile = new File(configFile.getParent(), configFile.getName() + ".bak");
@@ -649,6 +647,12 @@ public class UserConfig extends BaseController {
     }
 
     public boolean isPremium() {
+        try {
+            if (MessagesController.getGlobalMainSettings().getBoolean("indogaro_unlock_limits", false)) {
+                return true;
+            }
+        } catch (Exception ignored) {}
+
         TLRPC.User user = currentUser;
         if (user == null) {
             return false;

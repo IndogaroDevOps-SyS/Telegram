@@ -1,3 +1,4 @@
+
 /*
  * This is the source code of Telegram for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
@@ -412,7 +413,6 @@ public class ImageLoader {
                 String location = cacheImage.imageLocation.path;
                 URL downloadUrl = new URL(location.replace("athumb://", "https://"));
                 httpConnection = (HttpURLConnection) downloadUrl.openConnection();
-                //httpConnection.addRequestProperty("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 10_0 like Mac OS X) AppleWebKit/602.1.38 (KHTML, like Gecko) Version/10.0 Mobile/14A5297c Safari/602.1");
                 httpConnection.setConnectTimeout(5000);
                 httpConnection.setReadTimeout(5000);
                 httpConnection.connect();
@@ -2759,9 +2759,36 @@ public class ImageLoader {
     }
 
     public void clearMemory() {
-        smallImagesMemCache.evictAll();
-        memCache.evictAll();
-        lottieMemCache.evictAll();
+        boolean memOpt = true;
+        try {
+            memOpt = MessagesController.getGlobalMainSettings().getBoolean("indogaro_mem_opt", true);
+        } catch (Exception ignored) {}
+
+        if (memOpt) {
+            if (smallImagesMemCache != null) {
+                smallImagesMemCache.evictAll();
+            }
+            if (memCache != null) {
+                memCache.evictAll();
+            }
+            if (lottieMemCache != null) {
+                lottieMemCache.evictAll();
+            }
+            if (wallpaperMemCache != null) {
+                wallpaperMemCache.evictAll();
+            }
+            System.gc();
+        } else {
+            if (smallImagesMemCache != null) {
+                smallImagesMemCache.evictAll();
+            }
+            if (memCache != null) {
+                memCache.evictAll();
+            }
+            if (lottieMemCache != null) {
+                lottieMemCache.evictAll();
+            }
+        }
     }
 
     private void removeFromWaitingForThumb(int TAG, ImageReceiver imageReceiver) {
@@ -4179,17 +4206,13 @@ public class ImageLoader {
             fileDir = location.volume_id != Integer.MIN_VALUE ? FileLoader.getDirectory(FileLoader.MEDIA_DIR_IMAGE) : FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE);
         }
         final File cacheFile = new File(fileDir, fileName);
-        //TODO was crash in DEBUG_PRIVATE
-//        if (compressFormat == Bitmap.CompressFormat.JPEG && progressive && BuildVars.DEBUG_VERSION) {
-//            photoSize.size = Utilities.saveProgressiveJpeg(scaledBitmap, scaledBitmap.getWidth(), scaledBitmap.getHeight(), scaledBitmap.getRowBytes(), quality, cacheFile.getAbsolutePath());
-//        } else {
         FileOutputStream stream = new FileOutputStream(cacheFile);
         scaledBitmap.compress(compressFormat, quality, stream);
         if (!cache) {
             photoSize.size = (int) stream.getChannel().size();
         }
         stream.close();
-        // }
+
         if (cache) {
             ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
             scaledBitmap.compress(compressFormat, quality, stream2);
