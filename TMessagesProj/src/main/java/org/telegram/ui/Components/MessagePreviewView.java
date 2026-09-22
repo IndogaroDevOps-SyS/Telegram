@@ -306,8 +306,10 @@ public class MessagePreviewView extends FrameLayout {
 
                 @Override
                 protected boolean canCopy() {
-                    if (isReplyToRichMessage()) return true;
-                    
+                    if (isReplyToRichMessage()) return false;
+                    return true;
+                }
+
                 @Override
                 protected Theme.ResourcesProvider getResourcesProvider() {
                     return resourcesProvider;
@@ -347,6 +349,7 @@ public class MessagePreviewView extends FrameLayout {
                     return currentTab == TAB_REPLY && !messagePreviewParams.isSecret && isInSelectionMode();
                 }
             };
+            
             textSelectionHelper.setCallback(new TextSelectionHelper.Callback() {
                 @Override
                 public void onStateChanged(boolean isSelected) {
