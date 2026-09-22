@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'org.telegram.build-app-plugin'
+apply plugin: 'id.indogaro.build-app-plugin'
 
 repositories {
     mavenCentral()
@@ -198,7 +198,7 @@ android {
     buildFeatures {
         buildConfig = true
     }
-    namespace 'org.telegram.messenger.regular'
+    namespace 'id.indogaro.messenger.regular'
 
     lintOptions {
         checkReleaseBuilds false
