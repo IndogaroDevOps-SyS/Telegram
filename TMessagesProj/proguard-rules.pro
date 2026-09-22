@@ -8,23 +8,23 @@
 -keep @androidx.annotation.Keep class * { *; }
 -keepclasseswithmembers class * { @androidx.annotation.Keep *; }
 
--keep class org.webrtc.* { *; }
--keep class org.webrtc.audio.* { *; }
--keep class org.webrtc.voiceengine.* { *; }
--keep class org.telegram.messenger.* { *; }
--keep class org.telegram.messenger.camera.* { *; }
--keep class org.telegram.messenger.secretmedia.* { *; }
--keep class org.telegram.messenger.support.* { *; }
--keep class org.telegram.messenger.support.* { *; }
--keep class org.telegram.messenger.time.* { *; }
--keep class org.telegram.messenger.video.* { *; }
--keep class org.telegram.messenger.voip.* { *; }
--keep class org.telegram.SQLite.** { *; }
--keep class org.telegram.tgnet.ConnectionsManager { *; }
--keep class org.telegram.tgnet.NativeByteBuffer { *; }
--keep class org.telegram.tgnet.RequestTimeDelegate { *; }
--keep class org.telegram.tgnet.RequestDelegate { *; }
--keep class org.telegram.ui.Stories.recorder.FfmpegAudioWaveformLoader { *; }
+-keep class id.indogaro.webrtc.* { *; }
+-keep class id.indogaro.webrtc.audio.* { *; }
+-keep class id.indogaro.webrtc.voiceengine.* { *; }
+-keep class id.indogaro.messenger.* { *; }
+-keep class id.indogaro.messenger.camera.* { *; }
+-keep class id.indogaro.messenger.secretmedia.* { *; }
+-keep class id.indogaro.messenger.support.* { *; }
+-keep class id.indogaro.messenger.support.* { *; }
+-keep class id.indogaro.messenger.time.* { *; }
+-keep class id.indogaro.messenger.video.* { *; }
+-keep class id.indogaro.messenger.voip.* { *; }
+-keep class id.indogaro.SQLite.** { *; }
+-keep class id.indogaro.tgnet.ConnectionsManager { *; }
+-keep class id.indogaro.tgnet.NativeByteBuffer { *; }
+-keep class id.indogaro.tgnet.RequestTimeDelegate { *; }
+-keep class id.indogaro.tgnet.RequestDelegate { *; }
+-keep class id.indogaro.ui.Stories.recorder.FfmpegAudioWaveformLoader { *; }
 -keep class androidx.mediarouter.app.MediaRouteButton { *; }
 -keepclassmembers class ** {
     @android.webkit.JavascriptInterface <methods>;
@@ -53,4 +53,4 @@
 #-dontoptimize
 #-dontobfuscate
 
--keep class org.telegram.tgnet.** { *; }
+-keep class id.indogaro.tgnet.** { *; }

@@ -1808,7 +1808,7 @@ add_library(voipandroid STATIC
         voip/webrtc/sdk/android/src/jni/video_encoder_wrapper.cc
         voip/webrtc/sdk/android/src/jni/timestamp_aligner.cc
         voip/webrtc/sdk/android/src/jni/nv12_buffer.cc
-        voip/org_telegram_messenger_voip_Instance.cpp
+        voip/id_indogaro_messenger_voip_Instance.cpp
 )
 target_compile_options(voipandroid PUBLIC
         -Wall -finline-functions -ffast-math -fexceptions)

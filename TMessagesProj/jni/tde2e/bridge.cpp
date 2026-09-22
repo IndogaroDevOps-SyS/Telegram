@@ -36,7 +36,7 @@ jobjectArray java_bytes2d(JNIEnv *env, const std::vector<std::string>& arr) {
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_key_1generate_1temporary_1private_1key(JNIEnv *env, jclass clazz) {
+Java_id_indogaro_messenger_voip_ConferenceCall_key_1generate_1temporary_1private_1key(JNIEnv *env, jclass clazz) {
     auto result = tde2e_api::key_generate_temporary_private_key();
     if (!result.is_ok()) {
         java_throw(env, result.error());
@@ -45,7 +45,7 @@ Java_org_telegram_messenger_voip_ConferenceCall_key_1generate_1temporary_1privat
     return result.value();
 }
 
-extern "C" JNIEXPORT jbyteArray Java_org_telegram_messenger_voip_ConferenceCall_key_1to_1public_1key(JNIEnv *env, jclass clazz, jlong private_key) {
+extern "C" JNIEXPORT jbyteArray Java_id_indogaro_messenger_voip_ConferenceCall_key_1to_1public_1key(JNIEnv *env, jclass clazz, jlong private_key) {
     auto result = tde2e_api::key_to_public_key(private_key);
     if (!result.is_ok()) {
         java_throw(env, result.error());
@@ -56,7 +56,7 @@ extern "C" JNIEXPORT jbyteArray Java_org_telegram_messenger_voip_ConferenceCall_
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_key_1from_1public_1key(JNIEnv *env, jclass clazz,
+Java_id_indogaro_messenger_voip_ConferenceCall_key_1from_1public_1key(JNIEnv *env, jclass clazz,
                                                                        jbyteArray public_key) {
     jsize length = env->GetArrayLength(public_key);
     jbyte* bytes = env->GetByteArrayElements(public_key, nullptr);
@@ -132,7 +132,7 @@ tde2e_api::CallState jni_CallState(JNIEnv* env, jobject o) {
 
 extern "C"
 JNIEXPORT jbyteArray JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1create_1zero_1block(JNIEnv *env, jclass clazz,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1create_1zero_1block(JNIEnv *env, jclass clazz,
                                                                           jlong private_key,
                                                                           jobject initial_state) {
     auto result = tde2e_api::call_create_zero_block(private_key, jni_CallState(env, initial_state));
@@ -145,7 +145,7 @@ Java_org_telegram_messenger_voip_ConferenceCall_call_1create_1zero_1block(JNIEnv
 
 extern "C"
 JNIEXPORT jbyteArray JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1create_1self_1add_1block(JNIEnv *env, jclass clazz,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1create_1self_1add_1block(JNIEnv *env, jclass clazz,
                                                                           jlong private_key_id,
                                                                           jbyteArray previous_block,
                                                                           jobject self) {
@@ -163,7 +163,7 @@ Java_org_telegram_messenger_voip_ConferenceCall_call_1create_1self_1add_1block(J
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1create(JNIEnv *env, jclass clazz,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1create(JNIEnv *env, jclass clazz,
                                                              jlong user_id,
                                                              jlong private_key_id,
                                                              jbyteArray last_block) {
@@ -181,7 +181,7 @@ Java_org_telegram_messenger_voip_ConferenceCall_call_1create(JNIEnv *env, jclass
 
 extern "C"
 JNIEXPORT jbyteArray JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1create_1change_1state_1block(JNIEnv *env,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1create_1change_1state_1block(JNIEnv *env,
                                                                                    jclass clazz,
                                                                                    jlong call_id,
                                                                                    jobject new_state) {
@@ -195,7 +195,7 @@ Java_org_telegram_messenger_voip_ConferenceCall_call_1create_1change_1state_1blo
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1get_1height(JNIEnv *env, jclass clazz,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1get_1height(JNIEnv *env, jclass clazz,
                                                                   jlong call_id) {
     auto result = tde2e_api::call_get_height(call_id);
     if (!result.is_ok()) {
@@ -207,7 +207,7 @@ Java_org_telegram_messenger_voip_ConferenceCall_call_1get_1height(JNIEnv *env, j
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1apply_1block(JNIEnv *env, jclass clazz,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1apply_1block(JNIEnv *env, jclass clazz,
                                                                    jlong call_id,
                                                                    jbyteArray block) {
     jsize length = env->GetArrayLength(block);
@@ -224,7 +224,7 @@ Java_org_telegram_messenger_voip_ConferenceCall_call_1apply_1block(JNIEnv *env, 
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1get_1state(JNIEnv *env, jclass clazz,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1get_1state(JNIEnv *env, jclass clazz,
                                                                  jlong call_id) {
     auto result = tde2e_api::call_get_state(call_id);
     if (!result.is_ok()) {
@@ -255,7 +255,7 @@ jobject java_CallVerificationState(JNIEnv* env, tde2e_api::CallVerificationState
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1get_1verification_1state(JNIEnv *env,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1get_1verification_1state(JNIEnv *env,
                                                                                jclass clazz,
                                                                                jlong call_id) {
     auto result = tde2e_api::call_get_verification_state(call_id);
@@ -268,7 +268,7 @@ Java_org_telegram_messenger_voip_ConferenceCall_call_1get_1verification_1state(J
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1receive_1inbound_1message(JNIEnv *env,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1receive_1inbound_1message(JNIEnv *env,
                                                                                 jclass clazz,
                                                                                 jlong call_id,
                                                                                 jbyteArray message) {
@@ -286,7 +286,7 @@ Java_org_telegram_messenger_voip_ConferenceCall_call_1receive_1inbound_1message(
 
 extern "C"
 JNIEXPORT jobjectArray JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1pull_1outbound_1messages(JNIEnv *env,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1pull_1outbound_1messages(JNIEnv *env,
                                                                                jclass clazz,
                                                                                jlong call_id) {
     auto result = tde2e_api::call_pull_outbound_messages(call_id);
@@ -320,7 +320,7 @@ jobject java_CallVerificationWords(JNIEnv* env, tde2e_api::CallVerificationWords
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1get_1verification_1words(JNIEnv *env,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1get_1verification_1words(JNIEnv *env,
                                                                                jclass clazz,
                                                                                jlong call_id) {
     auto result = tde2e_api::call_get_verification_words(call_id);
@@ -333,7 +333,7 @@ Java_org_telegram_messenger_voip_ConferenceCall_call_1get_1verification_1words(J
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1destroy(JNIEnv *env, jclass clazz,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1destroy(JNIEnv *env, jclass clazz,
                                                               jlong call_id) {
     auto result = tde2e_api::call_destroy(call_id);
     if (!result.is_ok()) {
@@ -343,7 +343,7 @@ Java_org_telegram_messenger_voip_ConferenceCall_call_1destroy(JNIEnv *env, jclas
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1destroy_1all(JNIEnv *env, jclass clazz) {
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1destroy_1all(JNIEnv *env, jclass clazz) {
     auto result = tde2e_api::call_destroy_all();
     if (!result.is_ok()) {
         java_throw(env, result.error());
@@ -368,7 +368,7 @@ jstring java_string(JNIEnv* env, const std::string& s) {
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1describe(JNIEnv *env, jclass clazz,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1describe(JNIEnv *env, jclass clazz,
                                                                       jlong call_id) {
     auto result = tde2e_api::call_describe(call_id);
     if (!result.is_ok()) {
@@ -380,7 +380,7 @@ Java_org_telegram_messenger_voip_ConferenceCall_call_1describe(JNIEnv *env, jcla
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1describe_1block(JNIEnv *env, jclass clazz,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1describe_1block(JNIEnv *env, jclass clazz,
                                                                       jbyteArray block) {
     jsize length = env->GetArrayLength(block);
     jbyte* bytes = env->GetByteArrayElements(block, nullptr);
@@ -396,7 +396,7 @@ Java_org_telegram_messenger_voip_ConferenceCall_call_1describe_1block(JNIEnv *en
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_org_telegram_messenger_voip_ConferenceCall_call_1describe_1message(JNIEnv *env, jclass clazz,
+Java_id_indogaro_messenger_voip_ConferenceCall_call_1describe_1message(JNIEnv *env, jclass clazz,
                                                                         jbyteArray message) {
     jsize length = env->GetArrayLength(message);
     jbyte* bytes = env->GetByteArrayElements(message, nullptr);

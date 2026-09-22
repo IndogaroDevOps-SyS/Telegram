@@ -1,0 +1,5 @@
+package id.indogaro.ui;
+
+public interface MainTabsActivityController {
+    void setTabsVisible(boolean visible);
+}

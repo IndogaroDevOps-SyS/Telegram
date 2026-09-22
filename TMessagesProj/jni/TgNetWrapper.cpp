@@ -565,7 +565,7 @@ static JNINativeMethod ConnectionsManagerMethods[] = {
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_org_telegram_tgnet_ConnectionsManager_native_1test_1AuthAuthorization(JNIEnv *env, jclass clazz, jlong address) {
+Java_id_indogaro_tgnet_ConnectionsManager_native_1test_1AuthAuthorization(JNIEnv *env, jclass clazz, jlong address) {
     auto *buffer = (NativeByteBuffer *) (intptr_t) address;
     bool error = false;
 

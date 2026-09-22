@@ -6,7 +6,7 @@
 static const size_t kHelloBufferSize = 8192;
 
 extern "C" JNIEXPORT jbyteArray JNICALL
-Java_org_telegram_tgnet_ConnectionsManager_nativeTestGenerateClientHello(JNIEnv *env, jclass, jstring domain) {
+Java_id_indogaro_tgnet_ConnectionsManager_nativeTestGenerateClientHello(JNIEnv *env, jclass, jstring domain) {
     const char *chars = env->GetStringUTFChars(domain, nullptr);
     std::string domainStr(chars != nullptr ? chars : "");
     if (chars != nullptr) {

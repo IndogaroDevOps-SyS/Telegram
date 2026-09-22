@@ -1,1 +1,1 @@
--keep class org.telegram.tgnet.** { *; }
+-keep class id.indogaro.tgnet.** { *; }

@@ -407,7 +407,7 @@ static void fastBlur565(int32_t w, int32_t h, int32_t stride, uint8_t *pix, int3
     delete[] rgb;
 }
 
-JNIEXPORT int Java_org_telegram_messenger_Utilities_needInvert(JNIEnv *env, jclass clazz, jobject bitmap) {
+JNIEXPORT int Java_id_indogaro_messenger_Utilities_needInvert(JNIEnv *env, jclass clazz, jobject bitmap) {
     if (!bitmap) {
         return 0;
     }
@@ -479,7 +479,7 @@ JNIEXPORT int Java_org_telegram_messenger_Utilities_needInvert(JNIEnv *env, jcla
     return hasAlpha && matching / total > 0.85;
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Utilities_blurBitmap(JNIEnv *env, jclass clazz, jobject bitmap, jint radius) {
+JNIEXPORT void Java_id_indogaro_messenger_Utilities_blurBitmap(JNIEnv *env, jclass clazz, jobject bitmap, jint radius) {
     if (!bitmap) {
         return;
     }
@@ -519,7 +519,7 @@ JNIEXPORT void Java_org_telegram_messenger_Utilities_blurBitmap(JNIEnv *env, jcl
 const uint32_t PGPhotoEnhanceHistogramBins = 256;
 const uint32_t PGPhotoEnhanceSegments = 4;
 
-JNIEXPORT void Java_org_telegram_messenger_Utilities_calcCDT(JNIEnv *env, jclass clazz, jobject hsvBuffer, jint width, jint height, jobject buffer, jobject calcBuffer) {
+JNIEXPORT void Java_id_indogaro_messenger_Utilities_calcCDT(JNIEnv *env, jclass clazz, jobject hsvBuffer, jint width, jint height, jobject buffer, jobject calcBuffer) {
     float imageWidth = width;
     float imageHeight = height;
     float _clipLimit = 1.25f;
@@ -617,7 +617,7 @@ inline static void zeroClearInt(int *p, size_t count) {
     memset(p, 0, sizeof(int) * count);
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Utilities_stackBlurBitmap(JNIEnv *env, jclass clazz, jobject bitmap, jint radius) {
+JNIEXPORT void Java_id_indogaro_messenger_Utilities_stackBlurBitmap(JNIEnv *env, jclass clazz, jobject bitmap, jint radius) {
     if (radius < 1) {
         return;
     }
@@ -870,7 +870,7 @@ JNIEXPORT void Java_org_telegram_messenger_Utilities_stackBlurBitmap(JNIEnv *env
     AndroidBitmap_unlockPixels(env, bitmap);
 }
 
-JNIEXPORT jboolean JNICALL Java_org_telegram_messenger_Utilities_drawDitheredGradient(JNIEnv *env, jclass clazz, jobject bitmap, jintArray colors, jint startX, jint startY, jint endX, jint endY) {
+JNIEXPORT jboolean JNICALL Java_id_indogaro_messenger_Utilities_drawDitheredGradient(JNIEnv *env, jclass clazz, jobject bitmap, jintArray colors, jint startX, jint startY, jint endX, jint endY) {
     AndroidBitmapInfo info;
     void *pixelsBuffer;
     int reason;
@@ -968,7 +968,7 @@ JNIEXPORT jboolean JNICALL Java_org_telegram_messenger_Utilities_drawDitheredGra
     return JNI_TRUE;
 }
 
-//JNIEXPORT jint Java_org_telegram_messenger_Utilities_saveProgressiveJpeg(JNIEnv *env, jclass clazz, jobject bitmap, jint width, jint height, jint stride, jint quality, jstring path) {
+//JNIEXPORT jint Java_id_indogaro_messenger_Utilities_saveProgressiveJpeg(JNIEnv *env, jclass clazz, jobject bitmap, jint width, jint height, jint stride, jint quality, jstring path) {
 //    if (!bitmap || !path || !width || !height || !stride || stride != width * 4) {
 //        return 0;
 //    }
@@ -1088,7 +1088,7 @@ std::vector<std::pair<float, float>> gatherPositions(std::vector<std::pair<float
 thread_local static float *pixelCache = nullptr;
 thread_local static int pixelCacheSize = 0;
 
-JNIEXPORT void Java_org_telegram_messenger_Utilities_generateGradient(JNIEnv *env, jclass clazz, jobject bitmap, jint phase, jfloat progress, jintArray colors) {
+JNIEXPORT void Java_id_indogaro_messenger_Utilities_generateGradient(JNIEnv *env, jclass clazz, jobject bitmap, jint phase, jfloat progress, jintArray colors) {
     if (!bitmap) {
         return;
     }
@@ -1246,7 +1246,7 @@ static inline uint32_t bitmapBytesPerPixel(int32_t format) {
  * @return JNI_TRUE on success, JNI_FALSE if bitmaps are incompatible or an error occurred.
  */
 JNIEXPORT jboolean JNICALL
-Java_org_telegram_messenger_Utilities_copyBitmaps(
+Java_id_indogaro_messenger_Utilities_copyBitmaps(
         JNIEnv *env,
         jclass /*clazz*/,
         jobject src,
@@ -1528,7 +1528,7 @@ static void process_alpha(
 // Returns true on success, false on error (size mismatch or unsupported format).
 // ---------------------------------------------------------------------------
 JNIEXPORT jboolean JNICALL
-Java_org_telegram_messenger_Utilities_applySoftLight(
+Java_id_indogaro_messenger_Utilities_applySoftLight(
         JNIEnv *env,
         jclass  /*clazz*/,
         jobject inputBitmap,
@@ -1714,7 +1714,7 @@ static void process_alpha8(
 // ---------------------------------------------------------------------------
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_org_telegram_messenger_Utilities_applyAlphaInvert(
+Java_id_indogaro_messenger_Utilities_applyAlphaInvert(
         JNIEnv *env,
         jclass  /*clazz*/,
         jobject inputBitmap,
@@ -1795,7 +1795,7 @@ Java_org_telegram_messenger_Utilities_applyAlphaInvert(
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_org_telegram_messenger_Utilities_nLibyuvARGBSaleBitmap(
+Java_id_indogaro_messenger_Utilities_nLibyuvARGBSaleBitmap(
         JNIEnv* env,
         jclass,
         jobject inputBitmap,
@@ -1897,7 +1897,7 @@ Java_org_telegram_messenger_Utilities_nLibyuvARGBSaleBitmap(
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_org_telegram_messenger_Utilities_averageBitmapColor(
+Java_id_indogaro_messenger_Utilities_averageBitmapColor(
         JNIEnv* env,
         jclass,
         jobject bitmap,
@@ -2045,7 +2045,7 @@ static void expand_alpha8_to_rgba8888(
 // ---------------------------------------------------------------------------
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_org_telegram_messenger_Utilities_expandAlphaToBlack(
+Java_id_indogaro_messenger_Utilities_expandAlphaToBlack(
         JNIEnv *env,
         jclass  /*clazz*/,
         jobject srcBitmap,
@@ -2166,7 +2166,7 @@ static void extract_alpha_strided(
 // ---------------------------------------------------------------------------
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_org_telegram_messenger_Utilities_extractAlpha(
+Java_id_indogaro_messenger_Utilities_extractAlpha(
         JNIEnv *env,
         jclass  /*clazz*/,
         jobject srcBitmap,
@@ -2385,7 +2385,7 @@ static void draw_reply_line_pattern(
 // ---------------------------------------------------------------------------
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_org_telegram_messenger_Utilities_drawReplyLinePattern(
+Java_id_indogaro_messenger_Utilities_drawReplyLinePattern(
         JNIEnv  *env,
         jclass   /*clazz*/,
         jobject  bitmap,

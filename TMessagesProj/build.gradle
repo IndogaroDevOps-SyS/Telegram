@@ -1,7 +1,7 @@
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 apply plugin: 'com.android.library'
-apply plugin: 'org.telegram.build-plugin'
+apply plugin: 'id.indogaro.build-plugin'
 apply plugin: 'idea'
 
 idea {
@@ -248,7 +248,7 @@ android {
         }
     }
 
-    namespace 'org.telegram.messenger'
+    namespace 'id.indogaro.messenger'
 }
 
 
