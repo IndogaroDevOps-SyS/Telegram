@@ -306,10 +306,8 @@ public class MessagePreviewView extends FrameLayout {
 
                 @Override
                 protected boolean canCopy() {
-                    if (isReplyToRichMessage()) return false;
-                    return messagePreviewParams == null || !messagePreviewParams.noforwards;
-                }
-
+                    if (isReplyToRichMessage()) return true;
+                    
                 @Override
                 protected Theme.ResourcesProvider getResourcesProvider() {
                     return resourcesProvider;
