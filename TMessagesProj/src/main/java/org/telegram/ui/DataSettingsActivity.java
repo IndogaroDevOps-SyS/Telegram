@@ -358,11 +358,14 @@ public class DataSettingsActivity extends BaseFragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
                 builder.setTitle("Jumlah Thread (1-100)");
 
+                FrameLayout container = new FrameLayout(getParentActivity());
                 final EditText input = new EditText(getParentActivity());
                 input.setInputType(InputType.TYPE_CLASS_NUMBER);
                 int currentThreads = preferences.getInt("indogaro_threads", 8);
                 input.setText(String.valueOf(currentThreads));
-                builder.setView(input, AndroidUtilities.dp(24), AndroidUtilities.dp(8), AndroidUtilities.dp(24), AndroidUtilities.dp(8));
+
+                container.addView(input, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.LEFT, 24, 8, 24, 8));
+                builder.setView(container);
 
                 builder.setPositiveButton(LocaleController.getString(R.string.OK), (dialog, which) -> {
                     try {
