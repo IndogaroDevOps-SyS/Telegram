@@ -239,24 +239,20 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                     final int width = getMeasuredWidth();
                     final int height = getMeasuredHeight();
                     if (iBlur3SourceGlassFrosted != null && !iBlur3SourceGlassFrosted.inRecording()) {
-                        //if (iBlur3SourceGlassFrosted.needUpdateDisplayList(width, height) || iBlur3Invalidated) {
                         final Canvas c = iBlur3SourceGlassFrosted.beginRecording(width, height);
                         c.drawColor(getThemedColor(Theme.key_windowBackgroundWhite));
                         if (SharedConfig.chatBlurEnabled()) {
                             scrollableViewNoiseSuppressor.draw(c, DownscaleScrollableNoiseSuppressor.DRAW_FROSTED_GLASS);
                         }
                         iBlur3SourceGlassFrosted.endRecording();
-                        //}
                     }
                     if (iBlur3SourceGlass != null && !iBlur3SourceGlass.inRecording()) {
-                        //if (iBlur3SourceGlass.needUpdateDisplayList(width, height) || iBlur3Invalidated) {
                         final Canvas c = iBlur3SourceGlass.beginRecording(width, height);
                         c.drawColor(getThemedColor(Theme.key_windowBackgroundWhite));
                         if (SharedConfig.chatBlurEnabled()) {
                             scrollableViewNoiseSuppressor.draw(c, DownscaleScrollableNoiseSuppressor.DRAW_GLASS);
                         }
                         iBlur3SourceGlass.endRecording();
-                        //}
                     }
                     iBlur3Invalidated = false;
                 }
@@ -486,7 +482,6 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
         });
 
         navigationBar = new View(context);
-//        fragmentView.addView(navigationBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 0, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
 
         updateActionBarVisible(true, false);
         listView.adapter.update(false);
@@ -700,6 +695,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
         items.add(UItem.asShadow(null));
 
+        // 🚀 INJEKSI MENU INDOGARO SYSTEM & MONITORING
+        items.add(SettingCell.Factory.of(999, 0xFF1BA4ED, 0xFF1488E1, R.drawable.settings_devices, "Indogaro System & Monitoring", "Pantau thread, memori RAM, & jaringan"));
+        items.add(UItem.asShadow(null));
+
   if (false) {
         if (!getMessagesController().premiumFeaturesBlocked()) {
             items.add(SettingCell.Factory.of(11, 0xFFB659FF, 0xFF617CFF, R.drawable.settings_premium, getString(R.string.TelegramPremium)));
@@ -813,6 +812,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             }
             return;
         }
+
+        // 🚀 HANDLE KLIK MENU INDOGARO SYSTEM & MONITORING
+        if (item.id == 999) {
+            presentSettingFragment(new IndogaroSettingsActivity());
+            return;
+        }
+
         switch (item.id) {
             case 1:
                 presentSettingFragment(new UserInfoActivity());
