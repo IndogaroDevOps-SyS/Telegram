@@ -8,6 +8,8 @@
 
 package org.telegram.messenger;
 
+import android.content.SharedPreferences;
+
 import org.telegram.messenger.utils.ImmutableByteArrayOutputStream;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.NativeByteBuffer;
@@ -49,8 +51,42 @@ public class FileLoadOperation {
     public boolean isStory;
 
     public volatile boolean caughtPremiumFloodWait;
+
+    // --- INDOGARO CUSTOM OPTIMIZATION HELPERS ---
+    private int getCustomMaxThreads(int defaultValue) {
+        try {
+            SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+            boolean dlOpt = preferences.getBoolean("indogaro_dl_opt", true);
+            if (!dlOpt) {
+                return defaultValue;
+            }
+            int threads = preferences.getInt("indogaro_threads", 8);
+            if (threads < 1) return 1;
+            if (threads > 100) return 100;
+            return threads;
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    private int getCustomBufferSize(int defaultValue) {
+        try {
+            SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+            boolean dlOpt = preferences.getBoolean("indogaro_dl_opt", true);
+            if (!dlOpt) {
+                return defaultValue;
+            }
+            int mb = preferences.getInt("indogaro_buffer_size", 4);
+            if (mb <= 0) return defaultValue;
+            int bytes = mb * 1024 * 1024;
+            // 1024-byte alignment guard for MTProto compliance
+            return (bytes / 1024) * 1024;
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
     public void setStream(FileLoadOperationStream stream, boolean streamPriority, long streamOffset) {
-//        FileLog.e("FileLoadOperation " + getFileName() + " setStream(" + stream + ")");
         this.stream = stream;
         this.streamOffset = streamOffset;
         this.streamPriority = streamPriority;
@@ -286,16 +322,17 @@ public class FileLoadOperation {
     }
 
     private void updateParams() {
+        int customThreads = getCustomMaxThreads(4);
         if ((preloadPrefixSize > 0 || MessagesController.getInstance(currentAccount).getfileExperimentalParams) && !forceSmallChunk) {
-            downloadChunkSizeBig = 1024 * 512;
-            maxDownloadRequests = 8;
-            maxDownloadRequestsBig = 8;
+            downloadChunkSizeBig = getCustomBufferSize(1024 * 512);
+            maxDownloadRequests = customThreads;
+            maxDownloadRequestsBig = customThreads;
         } else {
-            downloadChunkSizeBig = 1024 * 128;
-            maxDownloadRequests = 4;
-            maxDownloadRequestsBig = 4;
+            downloadChunkSizeBig = getCustomBufferSize(1024 * 128);
+            maxDownloadRequests = customThreads;
+            maxDownloadRequestsBig = customThreads;
         }
-        maxCdnParts = (int) (FileLoader.DEFAULT_MAX_FILE_SIZE / downloadChunkSizeBig);
+        maxCdnParts = (int) (FileLoader.DEFAULT_MAX_FILE_SIZE / Math.max(1, downloadChunkSizeBig));
     }
 
     public FileLoadOperation(ImageLocation imageLocation, Object parent, String extension, long size) {
@@ -557,7 +594,6 @@ public class FileLoadOperation {
         if (!modified) {
             ranges.add(new Range(start, end));
         }
-
     }
 
     long totalTime;
@@ -780,12 +816,6 @@ public class FileLoadOperation {
             }
             FileLog.e("FileLoadOperation " + getFileName() + " removing stream listener " + operation);
             streamListeners.remove(operation);
-//            if (!isStory && streamListeners.isEmpty()) {
-//                Utilities.stageQueue.cancelRunnable(cancelAfterNoStreamListeners);
-//                Utilities.stageQueue.postRunnable(cancelAfterNoStreamListeners, 1200);
-//            } else if (!streamListeners.isEmpty()) {
-//                Utilities.stageQueue.cancelRunnable(cancelAfterNoStreamListeners);
-//            }
         });
     }
 
@@ -827,25 +857,32 @@ public class FileLoadOperation {
     public boolean start(final FileLoadOperationStream stream, final long streamOffset, final boolean streamPriority) {
         startTime = System.currentTimeMillis();
         updateParams();
+        int customThreads = getCustomMaxThreads(4);
+
         if (currentDownloadChunkSize == 0) {
             if (forceSmallChunk) {
                 if (BuildVars.LOGS_ENABLED) {
                     FileLog.d("debug_loading: restart with small chunk");
                 }
-                currentDownloadChunkSize =  1024 * 32;
+                currentDownloadChunkSize = 1024 * 32;
                 currentMaxDownloadRequests = 4;
             } else if (isStory) {
                 currentDownloadChunkSize = downloadChunkSizeBig;
-                currentMaxDownloadRequests = maxDownloadRequestsBig;
+                currentMaxDownloadRequests = getCustomMaxThreads(maxDownloadRequestsBig);
             } else if (isStream) {
-                currentDownloadChunkSize = downloadChunkSizeAnimation;
-                currentMaxDownloadRequests = maxDownloadRequestsAnimation;
+                boolean streamOpt = false;
+                try {
+                    streamOpt = MessagesController.getGlobalMainSettings().getBoolean("indogaro_stream_opt", true);
+                } catch (Exception ignored) {}
+                currentDownloadChunkSize = streamOpt ? getCustomBufferSize(1024 * 512) : downloadChunkSizeAnimation;
+                currentMaxDownloadRequests = streamOpt ? getCustomMaxThreads(12) : maxDownloadRequestsAnimation;
             } else {
                 boolean bigChunk = totalBytesCount >= bigFileSizeFrom;
-                currentDownloadChunkSize = bigChunk ? downloadChunkSizeBig : downloadChunkSize;
-                currentMaxDownloadRequests = bigChunk ? maxDownloadRequestsBig : maxDownloadRequests;
+                currentDownloadChunkSize = bigChunk ? downloadChunkSizeBig : getCustomBufferSize(downloadChunkSize);
+                currentMaxDownloadRequests = customThreads;
             }
         }
+
         final boolean alreadyStarted = state != stateIdle;
         final boolean wasPaused = paused;
         paused = false;
@@ -1015,7 +1052,6 @@ public class FileLoadOperation {
             finalFileExist = false;
         }
 
-
         if (!finalFileExist) {
             cacheFileTemp = new File(tempPath, fileNameTemp);
             if (ungzip) {
@@ -1062,7 +1098,6 @@ public class FileLoadOperation {
             boolean[] preloaded = new boolean[]{false};
             if (supportsPreloading && fileNamePreload != null) {
                 cacheFilePreload = new File(tempPath, fileNamePreload);
-                boolean closeStream = false;
                 try {
                     preloadStream = new RandomAccessFile(cacheFilePreload, "rws");
                     long len = preloadStream.length();
@@ -1164,7 +1199,6 @@ public class FileLoadOperation {
                 FileLoader.getInstance(currentAccount).getFileDatabase().saveFileDialogId(cacheFileParts, fileMetadata);
                 FileLoader.getInstance(currentAccount).getFileDatabase().saveFileDialogId(cacheFileTemp, fileMetadata);
             }
-
 
             if (cacheFileTemp.exists()) {
                 if (newKeyGenerated) {
@@ -1697,7 +1731,6 @@ public class FileLoadOperation {
             cacheFilePreload = null;
             delegate.didPreFinishLoading(FileLoadOperation.this, cacheFileFinal);
         }
-
     }
 
     private void delayRequestInfo(RequestInfo requestInfo) {
@@ -2057,7 +2090,7 @@ public class FileLoadOperation {
                 removePart(notRequestedBytesRanges, requestInfo.offset, requestInfo.offset + requestInfo.chunkSize);
                 if (!forceSmallChunk) {
                     forceSmallChunk = true;
-                    currentDownloadChunkSize =  1024 * 32;
+                    currentDownloadChunkSize = 1024 * 32;
                     currentMaxDownloadRequests = 4;
                 }
                 startDownloadRequest(requestInfo.connectionType);
@@ -2367,7 +2400,6 @@ public class FileLoadOperation {
             int connectionType;
             if (useConnectionType == -1) {
                 connectionType = requestsCount % 2 == 0 ? ConnectionsManager.ConnectionTypeDownload : ConnectionsManager.ConnectionTypeDownload2;
-                //globalRequestPointer++;
             } else {
                 connectionType = useConnectionType;
             }
@@ -2626,7 +2658,6 @@ public class FileLoadOperation {
 
     public static long floorDiv(long x, long y) {
         long r = x / y;
-        // if the signs are different and modulo not zero, round down
         if ((x ^ y) < 0 && (r * y != x)) {
             r--;
         }
