@@ -3491,7 +3491,7 @@ public class ChatActivity extends BaseFragment implements
             if (chatActivity != null && chatActivity.getDialogId() == UserObject.VERIFY) {
                 return false;
             }
-            final boolean noforwards = false:
+            final boolean noforwards = false;
             
             return !isFactCheck && (
                 chatActivity != null && chatActivity.getCurrentEncryptedChat() == null &&
