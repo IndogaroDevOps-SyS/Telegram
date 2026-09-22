@@ -1,43 +1,39 @@
 package org.telegram.ui;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.SystemClock;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.ApplicationLoader;
+import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
-import org.telegram.messenger.SharedConfig;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Cells.HeaderCell;
-import org.telegram.ui.Cells.TextCell;
-import org.telegram.ui.Cells.TextDetailCell;
+import org.telegram.ui.Cells.TextSettingsCell;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
+import org.telegram.ui.Components.SizeNotifierFrameLayout;
+
+import java.util.ArrayList;
 
 public class IndogaroSettingsActivity extends BaseFragment {
 
     private RecyclerListView listView;
     private ListAdapter listAdapter;
-
-    private int rowCount;
-    private int monitoringHeaderRow;
-    private int threadStatusRow;
-    private int networkStatusRow;
-    private int memoryStatusRow;
-    private int performanceHeaderRow;
-    private int refreshActionRow;
-    private int devInfoRow;
+    private ArrayList<Item> items = new ArrayList<>();
 
     @Override
     public boolean onFragmentCreate() {
@@ -47,15 +43,17 @@ public class IndogaroSettingsActivity extends BaseFragment {
     }
 
     private void updateRows() {
-        rowCount = 0;
-        monitoringHeaderRow = rowCount++;
-        threadStatusRow = rowCount++;
-        networkStatusRow = rowCount++;
-        memoryStatusRow = rowCount++;
-        
-        performanceHeaderRow = rowCount++;
-        refreshActionRow = rowCount++;
-        devInfoRow = rowCount++;
+        items.clear();
+        items.add(new Item(1, "Status Thread Aktif", Thread.activeCount() + " Threads Running"));
+        items.add(new Item(2, "Penggunaan Memori RAM", getRamUsageInfo()));
+        items.add(new Item(3, "Optimasi & Bersihkan Cache", "Bersihkan cache sistem Indogaro"));
+    }
+
+    private String getRamUsageInfo() {
+        Runtime runtime = Runtime.getRuntime();
+        long usedMem = (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024;
+        long maxMem = runtime.maxMemory() / 1024 / 1024;
+        return usedMem + " MB / " + maxMem + " MB";
     }
 
     @Override
@@ -72,106 +70,79 @@ public class IndogaroSettingsActivity extends BaseFragment {
             }
         });
 
-        fragmentView = new FrameLayout(context);
-        FrameLayout frameLayout = (FrameLayout) fragmentView;
-        frameLayout.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
+        SizeNotifierFrameLayout contentView = new SizeNotifierFrameLayout(context) {
+            @Override
+            protected void dispatchDraw(Canvas canvas) {
+                super.dispatchDraw(canvas);
+            }
+        };
+        contentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
 
+        listAdapter = new ListAdapter(context);
         listView = new RecyclerListView(context);
-        listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
-        listView.setAdapter(listAdapter = new ListAdapter(context));
-        
+        listView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+        listView.setAdapter(listAdapter);
+
         listView.setOnItemClickListener((view, position) -> {
-            if (position == refreshActionRow) {
-                // Aksi interaktif: Paksa Garbage Collector dan refresh list data secara instan
-                System.gc();
-                if (listAdapter != null) {
+            if (position >= 0 && position < items.size()) {
+                Item item = items.get(position);
+                if (item.id == 3) {
+                    // Perbaikan: Menggunakan Toast standar Android atau Bulletin Telegram
+                    Toast.makeText(getParentActivity(), "Sistem & Cache Memori Diperbarui!", Toast.LENGTH_SHORT).show();
+                    updateRows();
                     listAdapter.notifyDataSetChanged();
                 }
-                AndroidUtilities.showToast("Sistem & Cache Memori Diperbarui!");
             }
         });
 
-        frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        return fragmentView;
+        contentView.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+
+        return fragmentView = contentView;
+    }
+
+    private static class Item {
+        int id;
+        String title;
+        String value;
+
+        public Item(int id, String title, String value) {
+            this.id = id;
+            this.title = title;
+            this.value = value;
+        }
     }
 
     private class ListAdapter extends RecyclerListView.SelectionAdapter {
+
         private final Context mContext;
 
         public ListAdapter(Context context) {
-            mContext = context;
+            this.mContext = context;
+        }
+
+        // Perbaikan: Wajib mengimplementasikan method isEnabled dari SelectionAdapter
+        @Override
+        public boolean isEnabled(RecyclerView.ViewHolder holder) {
+            return true;
         }
 
         @Override
         public int getItemCount() {
-            return rowCount;
-        }
-
-        @Override
-        public boolean isEnabled(RecyclerView.ViewHolder holder, int position) {
-            // Hanya baris tombol refresh yang interaktif (bisa diklik)
-            return position == refreshActionRow;
+            return items.size();
         }
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view;
-            if (viewType == 0) {
-                view = new HeaderCell(mContext);
-            } else if (viewType == 1) {
-                view = new TextDetailCell(mContext);
-            } else {
-                view = new TextCell(mContext);
-                view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-            }
-            view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
-            return new RecyclerListView.Holder(view);
+            TextSettingsCell cell = new TextSettingsCell(mContext);
+            cell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+            return new RecyclerListView.Holder(cell);
         }
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            int viewType = getItemViewType(position);
-            if (viewType == 0) {
-                HeaderCell headerCell = (HeaderCell) holder.itemView;
-                if (position == monitoringHeaderRow) {
-                    headerCell.setText("Status Real-Time Engine");
-                } else if (position == performanceHeaderRow) {
-                    headerCell.setText("Aksi & Informasi Developer");
-                }
-            } else if (viewType == 1) {
-                TextDetailCell detailCell = (TextDetailCell) holder.itemView;
-                if (position == threadStatusRow) {
-                    int activeThreads = Thread.activeCount();
-                    detailCell.setTextAndValue("Thread Aktif (Worker/Pool)", "Jumlah thread sistem aktif saat ini: " + activeThreads, true);
-                } else if (position == networkStatusRow) {
-                    SharedPreferences prefs = MessagesController.getGlobalMainSettings();
-                    boolean netOpt = prefs.getBoolean("indogaro_net_opt", true);
-                    detailCell.setTextAndValue("Optimasi Jaringan (Net Opt)", netOpt ? "AKTIF (Bypass Throttling & Stream Boost)" : "MATI (Standard Telegram)", true);
-                } else if (position == memoryStatusRow) {
-                    Runtime runtime = Runtime.getRuntime();
-                    long freeMem = runtime.freeMemory() / (1024 * 1024);
-                    long totalMem = runtime.totalMemory() / (1024 * 1024);
-                    long maxMem = runtime.maxMemory() / (1024 * 1024);
-                    detailCell.setTextAndValue("RAM Heap (Free / Total / Max)", freeMem + " MB / " + totalMem + " MB / " + maxMem + " MB", true);
-                }
-            } else if (viewType == 2) {
-                TextCell textCell = (TextCell) holder.itemView;
-                if (position == refreshActionRow) {
-                    textCell.setTextAndValue("Bersihkan Cache & Refresh Status", "Tekan untuk memicu Garbage Collector", false);
-                } else if (position == devInfoRow) {
-                    textCell.setTextAndValue("Arsitektur & Engine", "Indogaro Core v2026 (Senior System Architect)", false);
-                }
-            }
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            if (position == monitoringHeaderRow || position == performanceHeaderRow) {
-                return 0; // HeaderCell
-            } else if (position == threadStatusRow || position == networkStatusRow || position == memoryStatusRow) {
-                return 1; // TextDetailCell (informatif 2 baris)
-            }
-            return 2; // TextCell standar (untuk tombol aksi/info teks biasa)
+            TextSettingsCell cell = (TextSettingsCell) holder.itemView;
+            Item item = items.get(position);
+            cell.setTextAndValue(item.title, item.value, position != items.size() - 1);
         }
     }
 }
