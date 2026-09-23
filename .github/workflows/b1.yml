@@ -48,6 +48,9 @@ jobs:
       - name: Make Gradlew Executable
         run: chmod +x gradlew
 
+      - name: cek Cmake
+        run: ./gradlew :TMessagesProj:generateCmakeRelWithDebInfoModel --info
+
       - name: Compile Java Check
         run: ./gradlew :TMessagesProj_App:compileAfatReleaseJavaWithJavac --no-daemon --console=plain
 
