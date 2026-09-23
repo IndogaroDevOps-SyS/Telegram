@@ -51,6 +51,19 @@ jobs:
       - name: Compile Java Check
         run: ./gradlew :TMessagesProj_App:compileAfatReleaseJavaWithJavac --no-daemon
 
+      - name: Save Gradle Error Log
+        if: failure()
+        run: |
+          mkdir -p build-logs
+          ./gradlew :TMessagesProj_App:compileAfatReleaseJavaWithJavac --no-daemon --stacktrace > build-logs/last_build_error.log 2>&1 || true
+
+      - name: Upload Build Logs as Artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-error-logs
+          path: build-logs/
+
       - name: Build Release APK (AFAT)
         run: ./gradlew TMessagesProj_App:assembleAfatRelease --stacktrace 
 
