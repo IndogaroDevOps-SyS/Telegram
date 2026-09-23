@@ -48,14 +48,11 @@ jobs:
       - name: Make Gradlew Executable
         run: chmod +x gradlew
 
-      - name: cek Cmake
-        run: ./gradlew :TMessagesProj:generateCmakeRelWithDebInfoModel --info
-
       - name: Compile Java Check
-        run: ./gradlew :TMessagesProj_App:compileAfatReleaseJavaWithJavac --no-daemon --console=plain
+        run: ./gradlew :TMessagesProj_App:compileAfatReleaseJavaWithJavac --no-daemon
 
       - name: Build Release APK (AFAT)
-        run: ./gradlew TMessagesProj_App:assembleAfatRelease --stacktrace --console=plain
+        run: ./gradlew TMessagesProj_App:assembleAfatRelease --stacktrace 
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4

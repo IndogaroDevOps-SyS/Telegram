@@ -640,7 +640,7 @@ extern "C" JNIEXPORT jlong JNICALL Java_id_indogaro_ui_Components_AnimatedFileNa
 }
 
 extern "C" JNIEXPORT void JNICALL Java_id_indogaro_ui_Components_AnimatedFileNative_nDestroyDecoder(JNIEnv *env, jclass clazz, jlong ptr) {
-    if (ptr == NULL) {
+    if (ptr == 0) {
         return;
     }
     VideoInfo *info = (VideoInfo *) (intptr_t) ptr;
@@ -665,7 +665,7 @@ extern "C" JNIEXPORT void JNICALL Java_id_indogaro_ui_Components_AnimatedFileNat
 }
 
 extern "C" JNIEXPORT void JNICALL Java_id_indogaro_ui_Components_AnimatedFileNative_nStopDecoder(JNIEnv *env, jclass clazz, jlong ptr) {
-    if (ptr == NULL) {
+    if (ptr == 0) {
         return;
     }
     VideoInfo *info = (VideoInfo *) (intptr_t) ptr;
@@ -673,7 +673,7 @@ extern "C" JNIEXPORT void JNICALL Java_id_indogaro_ui_Components_AnimatedFileNat
 }
 
 extern "C" JNIEXPORT void JNICALL Java_id_indogaro_ui_Components_AnimatedFileNative_nPrepareToSeek(JNIEnv *env, jclass clazz, jlong ptr) {
-    if (ptr == NULL) {
+    if (ptr == 0) {
         return;
     }
     VideoInfo *info = (VideoInfo *) (intptr_t) ptr;
