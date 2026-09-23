@@ -49,10 +49,10 @@ jobs:
         run: chmod +x gradlew
 
       - name: Compile Java Check
-        run: ./gradlew :TMessagesProj_App:compileAfatReleaseJavaWithJavac --no-daemon
+        run: ./gradlew :TMessagesProj_App:compileAfatReleaseJavaWithJavac --no-daemon --console=plain
 
       - name: Build Release APK (AFAT)
-        run: ./gradlew TMessagesProj_App:assembleAfatRelease --stacktrace
+        run: ./gradlew TMessagesProj_App:assembleAfatRelease --stacktrace --console=plain
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
