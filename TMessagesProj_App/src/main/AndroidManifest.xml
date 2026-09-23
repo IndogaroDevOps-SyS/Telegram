@@ -3,14 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto">
 
-    <application android:name="org.telegram.messenger.ApplicationLoaderImpl" tools:replace="name">
+    <application android:name="id.indogaro.messenger.ApplicationLoaderImpl" tools:replace="name">
         <service
-            android:name="org.telegram.messenger.GoogleVoiceClientService"
+            android:name="id.indogaro.messenger.GoogleVoiceClientService"
             android:exported="true"
             android:foregroundServiceType="dataSync"
         />
         <activity
-            android:name="org.telegram.messenger.GoogleVoiceClientActivity"
+            android:name="id.indogaro.messenger.GoogleVoiceClientActivity"
             android:exported="true"
         >
             <intent-filter>
