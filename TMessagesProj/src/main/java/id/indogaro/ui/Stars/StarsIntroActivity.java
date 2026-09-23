@@ -291,7 +291,7 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
         iconTextureView.mRenderer.updateColors();
         iconTextureView.setStarParticlesView(particlesView);
         aboveTitleView.addView(iconTextureView, LayoutHelper.createFrame(190, 190, Gravity.CENTER, 0, 12, 0, 24));
-        configureHeader(getString(R.string.TelegramStars), AndroidUtilities.replaceArrows(AndroidUtilities.replaceSingleTag(getString(R.string.TelegramStarsInfo2), () -> {
+        configureHeader(getString(R.string.IndogaroStars), AndroidUtilities.replaceArrows(AndroidUtilities.replaceSingleTag(getString(R.string.IndogaroStarsInfo2), () -> {
             new ExplainStarsSheet(context).show();
         }), true), aboveTitleView, null);
 
@@ -401,7 +401,7 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
         SpannableStringBuilder sb2 = new SpannableStringBuilder();
         sb2.append("G  ");
         sb2.setSpan(new ColoredImageSpan(R.drawable.menu_stars_gift), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        sb2.append(LocaleController.getString(R.string.TelegramStarsGift));
+        sb2.append(LocaleController.getString(R.string.IndogaroStarsGift));
         giftButton.setText(sb2, false);
         giftButton.setOnClickListener(v -> {
             StarsController.getInstance(currentAccount).getGiftOptions();
@@ -906,7 +906,7 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
                     if (!tonAmount.isZero()) {
                         ssb.append(replaceStarsWithPlain(true, "⭐️" + tonAmount.asFormatString(), 0.62f, refTon));
                         if (refTon[0] != null) {
-                            refTon[0].setColorKey(Theme.key_telegram_color_text);
+                            refTon[0].setColorKey(Theme.key_indogaro_color_text);
                         }
                         ssb.append("  ");
                     }
@@ -2568,7 +2568,7 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
         private final int BUTTON_EXPAND = -1;
 
         public void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
-            items.add(UItem.asHeader(getString(R.string.TelegramStarsChoose)));
+            items.add(UItem.asHeader(getString(R.string.IndogaroStarsChoose)));
             int stars = 1;
             ArrayList<TL_stars.TL_starsTopupOption> options = StarsController.getInstance(currentAccount).getOptions();
             if (options != null && !options.isEmpty()) {
@@ -2851,7 +2851,7 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
         public void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
             items.add(UItem.asCustomShadow(headerView));
             if (canBuy) {
-                items.add(UItem.asHeader(getString(R.string.TelegramStarsChoose)));
+                items.add(UItem.asHeader(getString(R.string.IndogaroStarsChoose)));
             }
             int stars = 1;
             ArrayList<TL_stars.TL_starsTopupOption> options = StarsController.getInstance(currentAccount).getOptions();
@@ -2878,7 +2878,7 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
                 if (count < 3) {
                     items.clear();
                     items.add(UItem.asCustom(headerView));
-                    items.add(UItem.asHeader(getString(R.string.TelegramStarsChoose)));
+                    items.add(UItem.asHeader(getString(R.string.IndogaroStarsChoose)));
                     count = 0;
                     for (int id = 0; id < options.size(); ++id) {
                         TL_stars.TL_starsTopupOption option = options.get(id);
@@ -3140,7 +3140,7 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
 
         public void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
             items.add(UItem.asCustom(headerView));
-            items.add(UItem.asHeader(getString(R.string.TelegramStarsChoose)));
+            items.add(UItem.asHeader(getString(R.string.IndogaroStarsChoose)));
             int stars = 1;
             ArrayList<TL_stars.TL_starsGiftOption> options = StarsController.getInstance(currentAccount).getGiftOptions();
             if (options != null && !options.isEmpty()) {

@@ -10,7 +10,7 @@ if (window.navigator && !window.navigator.share) {
         if (typeof data !== 'object' || !data.url && !data.title && !data.text && !data.files) {
             return new Promise((_, reject) => reject(new DOMException("share(...) receives only object with either url, title, text or files", "TypeError")))
         }
-        if (!window.TelegramWebview) {
+        if (!window.IndogaroWebview) {
             return new Promise((_, reject) => reject(new DOMException("Must be handling a user gesture to perform a share", "NotAllowedError")))
         }
         const { url, title, text } = data
@@ -20,10 +20,10 @@ if (window.navigator && !window.navigator.share) {
                 const bytes = Array.from(new Uint8Array(buffer))
                 const filename = file.name
                 const filetype = file.type
-                window.TelegramWebview.resolveShare(JSON.stringify({ url, title, text }), bytes, filename, filetype);
+                window.IndogaroWebview.resolveShare(JSON.stringify({ url, title, text }), bytes, filename, filetype);
             })
         } else {
-            window.TelegramWebview.resolveShare(JSON.stringify({ url, title, text }), null, null, null);
+            window.IndogaroWebview.resolveShare(JSON.stringify({ url, title, text }), null, null, null);
         }
         return new Promise((resolve, reject) => {
             window.navigator.__share__receive = reason => {

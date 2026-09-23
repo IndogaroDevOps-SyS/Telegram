@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 1.3.x.
+ * This is the source code of Indogaro for Android v. 1.3.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -374,7 +374,7 @@ public class ContactsController extends BaseController {
     }
 
     public String getInviteText(int contacts) {
-        String link = inviteLink == null ? "https://telegram.org/dl" : inviteLink;
+        String link = inviteLink == null ? "https://indogaro.org/dl" : inviteLink;
         if (contacts <= 1) {
             return LocaleController.formatString(R.string.InviteText2, link);
         } else {
@@ -1335,7 +1335,7 @@ public class ContactsController extends BaseController {
                             }
                             getMessagesStorage().putCachedPhoneBook(contactsMap, false, false);
                             AndroidUtilities.runOnUIThread(() -> {
-                                mergePhonebookAndTelegramContacts(phoneBookSectionsDictFinal, phoneBookSectionsArrayFinal, phoneBookByShortPhonesFinal);
+                                mergePhonebookAndIndogaroContacts(phoneBookSectionsDictFinal, phoneBookSectionsArrayFinal, phoneBookByShortPhonesFinal);
                                 updateUnregisteredContacts();
                                 getNotificationCenter().postNotificationName(NotificationCenter.contactsDidLoad);
                                 getNotificationCenter().postNotificationName(NotificationCenter.contactsImported);
@@ -1423,7 +1423,7 @@ public class ContactsController extends BaseController {
                                         delayedContactsUpdate.clear();
                                     }
                                     AndroidUtilities.runOnUIThread(() -> {
-                                        mergePhonebookAndTelegramContacts(phoneBookSectionsDictFinal, phoneBookSectionsArrayFinal, phoneBookByShortPhonesFinal);
+                                        mergePhonebookAndIndogaroContacts(phoneBookSectionsDictFinal, phoneBookSectionsArrayFinal, phoneBookByShortPhonesFinal);
                                         getNotificationCenter().postNotificationName(NotificationCenter.contactsImported);
                                     });
                                     if (hasErrors[0]) {
@@ -1447,7 +1447,7 @@ public class ContactsController extends BaseController {
                             delayedContactsUpdate.clear();
                         }
                         AndroidUtilities.runOnUIThread(() -> {
-                            mergePhonebookAndTelegramContacts(phoneBookSectionsDictFinal, phoneBookSectionsArrayFinal, phoneBookByShortPhonesFinal);
+                            mergePhonebookAndIndogaroContacts(phoneBookSectionsDictFinal, phoneBookSectionsArrayFinal, phoneBookByShortPhonesFinal);
                             updateUnregisteredContacts();
                             getNotificationCenter().postNotificationName(NotificationCenter.contactsDidLoad);
                             getNotificationCenter().postNotificationName(NotificationCenter.contactsImported);
@@ -1467,7 +1467,7 @@ public class ContactsController extends BaseController {
                         applyContactsUpdates(delayedContactsUpdate, null, null, null);
                         delayedContactsUpdate.clear();
                     }
-                    AndroidUtilities.runOnUIThread(() -> mergePhonebookAndTelegramContacts(phoneBookSectionsDictFinal, phoneBookSectionsArrayFinal, phoneBookByShortPhonesFinal));
+                    AndroidUtilities.runOnUIThread(() -> mergePhonebookAndIndogaroContacts(phoneBookSectionsDictFinal, phoneBookSectionsArrayFinal, phoneBookByShortPhonesFinal));
                 });
                 if (!contactsMap.isEmpty()) {
                     getMessagesStorage().putCachedPhoneBook(contactsMap, false, false);
@@ -1792,11 +1792,11 @@ public class ContactsController extends BaseController {
         }
     }
 
-    private void mergePhonebookAndTelegramContacts(final HashMap<String, ArrayList<Object>> phoneBookSectionsDictFinal, final ArrayList<String> phoneBookSectionsArrayFinal, final HashMap<String, Contact> phoneBookByShortPhonesFinal) {
-        mergePhonebookAndTelegramContacts(phoneBookSectionsDictFinal, phoneBookSectionsArrayFinal,phoneBookByShortPhonesFinal, true);
+    private void mergePhonebookAndIndogaroContacts(final HashMap<String, ArrayList<Object>> phoneBookSectionsDictFinal, final ArrayList<String> phoneBookSectionsArrayFinal, final HashMap<String, Contact> phoneBookByShortPhonesFinal) {
+        mergePhonebookAndIndogaroContacts(phoneBookSectionsDictFinal, phoneBookSectionsArrayFinal,phoneBookByShortPhonesFinal, true);
     }
 
-    private void mergePhonebookAndTelegramContacts(final HashMap<String, ArrayList<Object>> phoneBookSectionsDictFinal, final ArrayList<String> phoneBookSectionsArrayFinal, final HashMap<String, Contact> phoneBookByShortPhonesFinal, boolean needUpdateLists) {
+    private void mergePhonebookAndIndogaroContacts(final HashMap<String, ArrayList<Object>> phoneBookSectionsDictFinal, final ArrayList<String> phoneBookSectionsArrayFinal, final HashMap<String, Contact> phoneBookByShortPhonesFinal, boolean needUpdateLists) {
         final ArrayList<TLRPC.TL_contact> contactsCopy = new ArrayList<>(contacts);
         Utilities.globalQueue.postRunnable(() -> {
             if(needUpdateLists) {
@@ -2300,7 +2300,7 @@ public class ContactsController extends BaseController {
         builder.withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactId);
         builder.withValue(ContactsContract.Data.MIMETYPE, "vnd.android.cursor.item/vnd.id.indogaro.messenger.android.profile");
         builder.withValue(ContactsContract.Data.DATA1, user.id);
-        builder.withValue(ContactsContract.Data.DATA2, "Telegram Profile");
+        builder.withValue(ContactsContract.Data.DATA2, "Indogaro Profile");
         builder.withValue(ContactsContract.Data.DATA3, LocaleController.formatString("ContactShortcutMessage", R.string.ContactShortcutMessage, phoneOrName));
         builder.withValue(ContactsContract.Data.DATA4, user.id);
         query.add(builder.build());
@@ -2309,7 +2309,7 @@ public class ContactsController extends BaseController {
         builder.withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactId);
         builder.withValue(ContactsContract.Data.MIMETYPE, "vnd.android.cursor.item/vnd.id.indogaro.messenger.android.call");
         builder.withValue(ContactsContract.Data.DATA1, user.id);
-        builder.withValue(ContactsContract.Data.DATA2, "Telegram Voice Call");
+        builder.withValue(ContactsContract.Data.DATA2, "Indogaro Voice Call");
         builder.withValue(ContactsContract.Data.DATA3, LocaleController.formatString("ContactShortcutVoiceCall", R.string.ContactShortcutVoiceCall, phoneOrName));
         builder.withValue(ContactsContract.Data.DATA4, user.id);
         query.add(builder.build());
@@ -2318,7 +2318,7 @@ public class ContactsController extends BaseController {
         builder.withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactId);
         builder.withValue(ContactsContract.Data.MIMETYPE, "vnd.android.cursor.item/vnd.id.indogaro.messenger.android.call.video");
         builder.withValue(ContactsContract.Data.DATA1, user.id);
-        builder.withValue(ContactsContract.Data.DATA2, "Telegram Video Call");
+        builder.withValue(ContactsContract.Data.DATA2, "Indogaro Video Call");
         builder.withValue(ContactsContract.Data.DATA3, LocaleController.formatString("ContactShortcutVideoCall", R.string.ContactShortcutVideoCall, phoneOrName));
         builder.withValue(ContactsContract.Data.DATA4, user.id);
         query.add(builder.build());
@@ -2470,7 +2470,7 @@ public class ContactsController extends BaseController {
                 }
                 buildContactsSectionsArrays(true);
                 if (needResort) {
-                    mergePhonebookAndTelegramContacts(phoneBookSectionsDict, phoneBookSectionsArray, phoneBookByShortPhones, false);
+                    mergePhonebookAndIndogaroContacts(phoneBookSectionsDict, phoneBookSectionsArray, phoneBookByShortPhones, false);
                 }
                 getNotificationCenter().postNotificationName(NotificationCenter.contactsDidLoad);
             });
@@ -2907,7 +2907,7 @@ public class ContactsController extends BaseController {
             // 1. Check if we already have the invisible group/label and create it if we don't
             Cursor cursor = resolver.query(groupsURI, new String[]{ContactsContract.Groups._ID},
                     ContactsContract.Groups.TITLE + "=? AND " + ContactsContract.Groups.ACCOUNT_TYPE + "=? AND " + ContactsContract.Groups.ACCOUNT_NAME + "=?",
-                    new String[]{"TelegramConnectionService", systemAccount.type, systemAccount.name}, null);
+                    new String[]{"IndogaroConnectionService", systemAccount.type, systemAccount.name}, null);
             int groupID;
             if (cursor != null && cursor.moveToFirst()) {
                 groupID = cursor.getInt(0);
@@ -2921,7 +2921,7 @@ public class ContactsController extends BaseController {
                 values.put(ContactsContract.Groups.ACCOUNT_NAME, systemAccount.name);
                 values.put(ContactsContract.Groups.GROUP_VISIBLE, 0);
                 values.put(ContactsContract.Groups.GROUP_IS_READ_ONLY, 1);
-                values.put(ContactsContract.Groups.TITLE, "TelegramConnectionService");
+                values.put(ContactsContract.Groups.TITLE, "IndogaroConnectionService");
                 Uri res = resolver.insert(groupsURI, values);
                 groupID = Integer.parseInt(res.getLastPathSegment());
             }
@@ -2993,7 +2993,7 @@ public class ContactsController extends BaseController {
 
             Cursor cursor = resolver.query(ContactsContract.Groups.CONTENT_URI, new String[]{ContactsContract.Groups._ID},
                     ContactsContract.Groups.TITLE + "=? AND " + ContactsContract.Groups.ACCOUNT_TYPE + "=? AND " + ContactsContract.Groups.ACCOUNT_NAME + "=?",
-                    new String[]{"TelegramConnectionService", systemAccount.type, systemAccount.name}, null);
+                    new String[]{"IndogaroConnectionService", systemAccount.type, systemAccount.name}, null);
             int groupID;
             if (cursor != null && cursor.moveToFirst()) {
                 groupID = cursor.getInt(0);

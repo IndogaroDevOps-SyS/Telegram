@@ -30,7 +30,7 @@ public class DialogMediaIconsHelper {
         ColoredImageSpan span = spans.get(iconRes);
         if (span == null) {
             span = new ColoredImageSpan(iconRes);
-            span.setColorKey(Theme.key_telegram_color_text);
+            span.setColorKey(Theme.key_indogaro_color_text);
             spans.put(iconRes, span);
         }
 

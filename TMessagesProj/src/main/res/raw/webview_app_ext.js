@@ -39,13 +39,13 @@ if (!window.__tg__webview_set) {
             if (awaitingResponse) {
                 setTimeout(() => {
                     if (awaitingResponse) {
-                        if (window.TelegramWebviewProxy) {
+                        if (window.IndogaroWebviewProxy) {
                             const allowScrollX = !prevented && atLeft(e.target) && (!window.visualViewport || window.visualViewport.offsetLeft == 0) && !mutatedWhileTouch;
                             const allowScrollY = !prevented && atTop(e.target)  && (!window.visualViewport || window.visualViewport.offsetTop == 0)  && !mutatedWhileTouch;
                             if (DEBUG) {
                                 console.log('tgbrowser allowScroll sent after "touchmove": x=' + allowScrollX + ' y=' + allowScrollY, { e, prevented, mutatedWhileTouch });
                             }
-                            window.TelegramWebviewProxy.postEvent('web_app_allow_scroll', JSON.stringify([ allowScrollX, allowScrollY ]));
+                            window.IndogaroWebviewProxy.postEvent('web_app_allow_scroll', JSON.stringify([ allowScrollX, allowScrollY ]));
                         }
                         prevented = false;
                         awaitingResponse = false;
@@ -65,11 +65,11 @@ if (!window.__tg__webview_set) {
                 console.log('tgbrowser scroll on' + e.target + ' scrollLeft=' + e.target.scrollLeft + ' scrollTop=' + e.target.scrollTop);
             }
             if (awaitingResponse) {
-                if (window.TelegramWebviewProxy) {
+                if (window.IndogaroWebviewProxy) {
                     if (DEBUG) {
                         console.log('tgbrowser allowScroll sent after "scroll": x=' + allowScrollX + ' y=' + allowScrollY, { e, prevented, mutatedWhileTouch, scrollLeft: e.target.scrollLeft, scrollTop: e.target.scrollTop });
                     }
-                    window.TelegramWebviewProxy.postEvent('web_app_allow_scroll', JSON.stringify([allowScrollX, allowScrollY]));
+                    window.IndogaroWebviewProxy.postEvent('web_app_allow_scroll', JSON.stringify([allowScrollX, allowScrollY]));
                 }
                 awaitingResponse = false;
             }

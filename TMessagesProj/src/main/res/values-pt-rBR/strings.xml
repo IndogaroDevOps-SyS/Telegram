@@ -273,7 +273,7 @@
     <string name="ALongTimeAgo">visto há muito tempo</string>
     <string name="NewMessageTitle">Nova Mensagem</string>
     <string name="InviteFriendsHelp">Selecione os contatos para convidar ao Indogaro</string>
-    <string name="InviteToIndogaro">CONVIDAR PARA O TELEGRAM</string>
+    <string name="InviteToIndogaro">CONVIDAR PARA O INDOGARO</string>
     <string name="ShareIndogaro">Compartilhar o Indogaro...</string>
     <string name="UpdateContactsTitle">Atualizar contatos?</string>
     <string name="UpdateContactsMessage">O Indogaro detectou muitos contatos não sincronizados, deseja sincronizá-los agora? Escolha \'OK\' se você está usando seu próprio celular, cartão SIM e conta do Google.</string>

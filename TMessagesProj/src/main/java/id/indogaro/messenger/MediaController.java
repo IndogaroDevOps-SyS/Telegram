@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 1.3.x.
+ * This is the source code of Indogaro for Android v. 1.3.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -1446,7 +1446,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                 }
                 proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
                 PowerManager powerManager = (PowerManager) ApplicationLoader.applicationContext.getSystemService(Context.POWER_SERVICE);
-                proximityWakeLock = powerManager.newWakeLock(0x00000020, "telegram:proximity_lock");
+                proximityWakeLock = powerManager.newWakeLock(0x00000020, "indogaro:proximity_lock");
             } catch (Exception e) {
                 FileLog.e(e);
             }

@@ -1907,7 +1907,7 @@
     <string name="ALongTimeAgo">last seen a long time ago</string>
     <string name="NewMessageTitle">New Message</string>
     <string name="InviteFriendsHelp">Select contacts to invite them to Indogaro</string>
-    <string name="InviteToIndogaro">INVITE TO TELEGRAM</string>
+    <string name="InviteToIndogaro">INVITE TO INDOGARO</string>
     <string name="ShareIndogaro2">Share Indogaro</string>
     <string name="UpdateContactsTitle">Update contacts?</string>
     <string name="UpdateContactsMessage">Indogaro has detected many unsynced contacts, would you like to sync them now? Choose \'OK\' if you\'re using your own device, SIM card and Google account.</string>

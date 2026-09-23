@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -416,7 +416,7 @@ public class CheckBoxCell extends FrameLayout {
         } else {
             name = ContactsController.formatName(userOrChat);
         }
-        if (userOrChat instanceof TLRPC.User && ((TLRPC.User) userOrChat).id == MessagesController.getInstance(UserConfig.selectedAccount).telegramAntispamUserId) {
+        if (userOrChat instanceof TLRPC.User && ((TLRPC.User) userOrChat).id == MessagesController.getInstance(UserConfig.selectedAccount).indogaroAntispamUserId) {
             name = LocaleController.getString(R.string.ChannelAntiSpamUser);
         }
         if (textAnimated) {

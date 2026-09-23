@@ -16,7 +16,7 @@ import id.indogaro.messenger.FileLog;
  */
 
 @TargetApi(Build.VERSION_CODES.O)
-public class TelegramConnectionService extends ConnectionService {
+public class IndogaroConnectionService extends ConnectionService {
 
 	@Override
 	public void onCreate() {

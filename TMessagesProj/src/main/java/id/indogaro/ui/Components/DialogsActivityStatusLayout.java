@@ -24,7 +24,7 @@ public class DialogsActivityStatusLayout extends View {
     private final Paint fillingPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private final RectF statusBarRectF = new RectF();
-    private final RectF telegramLogoRectF = new RectF();
+    private final RectF indogaroLogoRectF = new RectF();
     private final RectF animatingRectF = new RectF();
 
     public DialogsActivityStatusLayout(Context context) {
@@ -33,7 +33,7 @@ public class DialogsActivityStatusLayout extends View {
     }
 
     public void updateColors() {
-        fillingPaint.setColor(Theme.getColor(Theme.key_telegram_color));
+        fillingPaint.setColor(Theme.getColor(Theme.key_indogaro_color));
         invalidate();
     }
 
@@ -47,13 +47,13 @@ public class DialogsActivityStatusLayout extends View {
         statusBarRectF.set(0, 0, getMeasuredWidth(), t);
 
         final int t2 = t + h / 2 - dp(15);
-        telegramLogoRectF.set(dp(12), t2, dp(12) + dp(30), t2 + dp(30));
+        indogaroLogoRectF.set(dp(12), t2, dp(12) + dp(30), t2 + dp(30));
     }
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         final float factor = animatorStatusBarVisible.getFloatValue();
-        lerp(telegramLogoRectF, statusBarRectF, factor, animatingRectF);
+        lerp(indogaroLogoRectF, statusBarRectF, factor, animatingRectF);
 
         final float radius = lerp(dp(15), 0, factor);
 

@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -3417,9 +3417,9 @@ public class Theme {
     public static final int key_botKeyboard_button_danger = colorsCount++;
     public static final int key_botKeyboard_button_success = colorsCount++;
 
-    public static final int key_telegram_color_dialogsLogo = colorsCount++;
-    public static final int key_telegram_color = colorsCount++;
-    public static final int key_telegram_color_text = colorsCount++;
+    public static final int key_indogaro_color_dialogsLogo = colorsCount++;
+    public static final int key_indogaro_color = colorsCount++;
+    public static final int key_indogaro_color_text = colorsCount++;
 
     public static final String key_drawable_botInline = "drawableBotInline";
     public static final String key_drawable_botLink = "drawableBotLink";
@@ -3706,10 +3706,10 @@ public class Theme {
         fallbackKeys.put(key_glass_tabSelectedText, Theme.key_chat_messagePanelSend);
         fallbackKeys.put(key_glass_tabUnselected, Theme.key_windowBackgroundWhiteBlackText);
         fallbackKeys.put(key_actionBarDefaultTitle, key_windowBackgroundWhiteBlackText);
-        fallbackKeys.put(key_telegram_color_dialogsLogo, key_windowBackgroundWhiteBlackText);
+        fallbackKeys.put(key_indogaro_color_dialogsLogo, key_windowBackgroundWhiteBlackText);
         fallbackKeys.put(key_profile_title, key_windowBackgroundWhiteBlackText);
-        fallbackKeys.put(key_telegram_color, Theme.key_chat_messagePanelSend);
-        fallbackKeys.put(key_telegram_color_text, Theme.key_windowBackgroundWhiteBlueText4);
+        fallbackKeys.put(key_indogaro_color, Theme.key_chat_messagePanelSend);
+        fallbackKeys.put(key_indogaro_color_text, Theme.key_windowBackgroundWhiteBlueText4);
 
 
 
@@ -3732,7 +3732,7 @@ public class Theme {
 
         //fallbackKeys.put(key_chat_msgIvButtonDefaultInlineIn, );
         //fallbackKeys.put(key_chat_msgIvButtonDefaultInlineInPressed,  );
-        fallbackKeys.put(key_chat_msgIvButtonDefaultInlineInText, key_telegram_color_text);
+        fallbackKeys.put(key_chat_msgIvButtonDefaultInlineInText, key_indogaro_color_text);
 
 
 
@@ -3754,7 +3754,7 @@ public class Theme {
 
         // fallbackKeys.put(key_chat_msgIvButtonDefaultInlineOut, );
         // fallbackKeys.put(key_chat_msgIvButtonDefaultInlineOutPressed, );
-        fallbackKeys.put(key_chat_msgIvButtonDefaultInlineOutText, key_telegram_color_text);
+        fallbackKeys.put(key_chat_msgIvButtonDefaultInlineOutText, key_indogaro_color_text);
 
 
 
@@ -7919,7 +7919,7 @@ public class Theme {
         dialogs_pinnedPaint.setColor(getColor(key_chats_pinnedOverlay));
         dialogs_timePaint.setColor(getColor(key_chats_date));
         dialogs_timePaintBold.setColor(getColor(key_chats_date_bold));
-        dialogs_timePaintBoldAccent.setColor(getColor(key_telegram_color_text));
+        dialogs_timePaintBoldAccent.setColor(getColor(key_indogaro_color_text));
         dialogs_countTextPaint.setColor(getColor(key_chats_unreadCounterText));
         dialogs_countTextPaint2.setColor(getColor(key_chats_unreadCounterText));
         dialogs_archiveTextPaint.setColor(getColor(key_chats_archiveText));
@@ -7941,7 +7941,7 @@ public class Theme {
         setDrawableColorByKey(dialogs_errorDrawable, key_chats_sentErrorIcon);
         setDrawableColorByKey(dialogs_pinnedDrawable, key_chats_pinnedIcon);
         setDrawableColorByKey(dialogs_pinnedDrawable2, key_chats_pinnedIcon);
-        setDrawableColorByKey(dialogs_pinnedDrawable2Accent, key_telegram_color_text);
+        setDrawableColorByKey(dialogs_pinnedDrawable2Accent, key_indogaro_color_text);
         setDrawableColorByKey(dialogs_reorderDrawable, key_chats_pinnedIcon);
         setDrawableColorByKey(dialogs_muteDrawable, key_chats_muteIcon);
         setDrawableColorByKey(dialogs_unmuteDrawable, key_chats_muteIcon);

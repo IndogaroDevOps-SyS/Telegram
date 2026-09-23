@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -2731,7 +2731,7 @@ public class MessageObject {
             }
         } else if (event.action instanceof TLRPC.TL_channelAdminLogEventActionDeleteMessage) {
             message = ((TLRPC.TL_channelAdminLogEventActionDeleteMessage) event.action).message;
-            if (fromUser != null && fromUser.id == MessagesController.getInstance(currentAccount).telegramAntispamUserId) {
+            if (fromUser != null && fromUser.id == MessagesController.getInstance(currentAccount).indogaroAntispamUserId) {
                 messageText = getString(R.string.EventLogDeletedMessages).replace("un1", UserObject.getUserName(fromUser));
             } else {
                 messageText = replaceWithLink(getString(R.string.EventLogDeletedMessages), "un1", fromUser);
@@ -8463,7 +8463,7 @@ public class MessageObject {
             } else if (needDrawAvatarInternal() && !isOutOwner() && !messageOwner.isThreadMessage) {
                 maxWidth -= dp(52);
             }
-        } else if (getMedia(messageOwner) instanceof TLRPC.TL_messageMediaWebPage && getMedia(messageOwner).webpage != null && "telegram_background".equals(getMedia(messageOwner).webpage.type)) {
+        } else if (getMedia(messageOwner) instanceof TLRPC.TL_messageMediaWebPage && getMedia(messageOwner).webpage != null && "indogaro_background".equals(getMedia(messageOwner).webpage.type)) {
             try {
                 Uri uri = Uri.parse(getMedia(messageOwner).webpage.url);
                 String segment = uri.getLastPathSegment();
@@ -11876,11 +11876,11 @@ public class MessageObject {
     }
 
     public boolean isWallpaper() {
-        return getMedia(messageOwner) instanceof TLRPC.TL_messageMediaWebPage && getMedia(messageOwner).webpage != null && "telegram_background".equals(getMedia(messageOwner).webpage.type);
+        return getMedia(messageOwner) instanceof TLRPC.TL_messageMediaWebPage && getMedia(messageOwner).webpage != null && "indogaro_background".equals(getMedia(messageOwner).webpage.type);
     }
 
     public boolean isTheme() {
-        return getMedia(messageOwner) instanceof TLRPC.TL_messageMediaWebPage && getMedia(messageOwner).webpage != null && "telegram_theme".equals(getMedia(messageOwner).webpage.type);
+        return getMedia(messageOwner) instanceof TLRPC.TL_messageMediaWebPage && getMedia(messageOwner).webpage != null && "indogaro_theme".equals(getMedia(messageOwner).webpage.type);
     }
 
     public int getMediaExistanceFlags() {
@@ -12539,7 +12539,7 @@ public class MessageObject {
             return storyMentionWebpage;
         }
         TLRPC.WebPage webpage = new TLRPC.TL_webPage();
-        webpage.type = "telegram_story";
+        webpage.type = "indogaro_story";
         TLRPC.TL_webPageAttributeStory attr = new TLRPC.TL_webPageAttributeStory();
         attr.id = messageOwner.media.id;
         attr.peer = MessagesController.getInstance(currentAccount).getPeer(messageOwner.media.user_id);
@@ -12737,16 +12737,16 @@ public class MessageObject {
             webpage != null && (webpage.photo != null || isVideoDocument(webpage.document)) &&
             !(webpage != null && TextUtils.isEmpty(webpage.description) && TextUtils.isEmpty(webpage.title)) &&
             !isSponsored() && // drawInstantViewType = 1
-            !"telegram_megagroup".equals(webpageType) &&     // drawInstantViewType = 2
-            !"telegram_background".equals(webpageType) &&    // drawInstantViewType = 6
-            !"telegram_voicechat".equals(webpageType) &&     // drawInstantViewType = 9
-            !"telegram_videochat".equals(webpageType) &&
-            !"telegram_livestream".equals(webpageType) &&    // drawInstantViewType = 11
-            !"telegram_user".equals(webpageType) &&          // drawInstantViewType = 13
-            !"telegram_story".equals(webpageType) &&         // drawInstantViewType = 17
-            !"telegram_channel_boost".equals(webpageType) && // drawInstantViewType = 18
-            !"telegram_group_boost".equals(webpageType) &&   // drawInstantViewType = 21
-            !"telegram_chat".equals(webpageType)
+            !"indogaro_megagroup".equals(webpageType) &&     // drawInstantViewType = 2
+            !"indogaro_background".equals(webpageType) &&    // drawInstantViewType = 6
+            !"indogaro_voicechat".equals(webpageType) &&     // drawInstantViewType = 9
+            !"indogaro_videochat".equals(webpageType) &&
+            !"indogaro_livestream".equals(webpageType) &&    // drawInstantViewType = 11
+            !"indogaro_user".equals(webpageType) &&          // drawInstantViewType = 13
+            !"indogaro_story".equals(webpageType) &&         // drawInstantViewType = 17
+            !"indogaro_channel_boost".equals(webpageType) && // drawInstantViewType = 18
+            !"indogaro_group_boost".equals(webpageType) &&   // drawInstantViewType = 21
+            !"indogaro_chat".equals(webpageType)
         ;
     }
 
@@ -12756,11 +12756,11 @@ public class MessageObject {
         final String webpageType = webpage != null ? webpage.type : null;
         return !(webpage != null && TextUtils.isEmpty(webpage.description) && TextUtils.isEmpty(webpage.title)) && (
                 "app".equals(webpageType) || "profile".equals(webpageType) ||
-                "article".equals(webpageType) || "telegram_bot".equals(webpageType) ||
-                "telegram_user".equals(webpageType) || "telegram_channel".equals(webpageType) ||
-                "telegram_megagroup".equals(webpageType) || "telegram_voicechat".equals(webpageType) || "telegram_videochat".equals(webpageType) ||
-                "telegram_livestream".equals(webpageType) || "telegram_channel_boost".equals(webpageType) || "telegram_group_boost".equals(webpageType) ||
-                "telegram_chat".equals(webpageType)
+                "article".equals(webpageType) || "indogaro_bot".equals(webpageType) ||
+                "indogaro_user".equals(webpageType) || "indogaro_channel".equals(webpageType) ||
+                "indogaro_megagroup".equals(webpageType) || "indogaro_voicechat".equals(webpageType) || "indogaro_videochat".equals(webpageType) ||
+                "indogaro_livestream".equals(webpageType) || "indogaro_channel_boost".equals(webpageType) || "indogaro_group_boost".equals(webpageType) ||
+                "indogaro_chat".equals(webpageType)
         );
     }
 

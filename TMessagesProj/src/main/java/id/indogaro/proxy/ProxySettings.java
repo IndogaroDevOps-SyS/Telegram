@@ -221,7 +221,7 @@ public final class ProxySettings {
                 }
 
                 host = host.toLowerCase();
-                if (!host.equals("telegram.me") && !host.equals("t.me") && !host.equals("telegram.dog")) {
+                if (!host.equals("indogaro.me") && !host.equals("t.me") && !host.equals("indogaro.dog")) {
                     return null;
                 }
 
@@ -257,7 +257,7 @@ public final class ProxySettings {
                     return null;
                 }
 
-                uri = Uri.parse("tg://telegram.org/" + url.substring(queryIndex));
+                uri = Uri.parse("tg://indogaro.org/" + url.substring(queryIndex));
             } else {
                 return null;
             }

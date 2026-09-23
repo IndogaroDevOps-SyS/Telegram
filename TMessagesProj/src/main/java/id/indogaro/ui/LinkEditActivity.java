@@ -150,7 +150,7 @@ public class LinkEditActivity extends BaseFragment {
 
             @Override
             public void draw(@NonNull Canvas canvas) {
-                p.setColor(Theme.getColor(Theme.key_telegram_color));
+                p.setColor(Theme.getColor(Theme.key_indogaro_color));
                 canvas.drawRoundRect(getBounds().left, getBounds().exactCenterY() - dp(14),
                         getBounds().right, getBounds().exactCenterY() + dp(14), dp(14), dp(14), p);
             }

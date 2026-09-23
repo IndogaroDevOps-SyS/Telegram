@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -217,7 +217,7 @@ public class IdenticonActivity extends BaseFragment implements NotificationCente
             codeTextView.setText(hash.toString());
             hash.clear();
             hash.append(AndroidUtilities.replaceTags(LocaleController.formatString("EncryptionKeyDescription", R.string.EncryptionKeyDescription, user.first_name, user.first_name)));
-            final String url = "telegram.org";
+            final String url = "indogaro.org";
             int index = hash.toString().indexOf(url);
             if (index != -1) {
                 hash.setSpan(new URLSpanReplacement(LocaleController.getString(R.string.EncryptionKeyLink)), index, index + url.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

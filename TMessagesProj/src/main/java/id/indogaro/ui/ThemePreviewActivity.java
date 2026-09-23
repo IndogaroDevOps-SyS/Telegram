@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -1057,7 +1057,7 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
         }
 
         if (messagesAdapter.showSecretMessages) {
-            actionBar2.setTitle("Telegram Beta Chat");
+            actionBar2.setTitle("Indogaro Beta Chat");
             actionBar2.setSubtitle(LocaleController.formatPluralString("Members", 505));
         } else {
             if (screenType == SCREEN_TYPE_CHANGE_BACKGROUND) {
@@ -5015,7 +5015,7 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
                     TLRPC.TL_messageEntityTextUrl entityUrl = new TLRPC.TL_messageEntityTextUrl();
                     entityUrl.offset = index1;
                     entityUrl.length = index2 - index1 - 1;
-                    entityUrl.url = "https://telegram.org";
+                    entityUrl.url = "https://indogaro.org";
                     message.entities.add(entityUrl);
                 }
                 message.message = builder.toString();

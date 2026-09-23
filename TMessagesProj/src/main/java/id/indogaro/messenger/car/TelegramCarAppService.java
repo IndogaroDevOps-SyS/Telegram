@@ -7,7 +7,7 @@ import androidx.car.app.validation.HostValidator;
 
 import id.indogaro.messenger.BuildVars;
 
-public class TelegramCarAppService extends CarAppService {
+public class IndogaroCarAppService extends CarAppService {
 
     @NonNull
     @Override
@@ -24,6 +24,6 @@ public class TelegramCarAppService extends CarAppService {
     @NonNull
     @Override
     public Session onCreateSession() {
-        return new TelegramCarSession();
+        return new IndogaroCarSession();
     }
 }

@@ -21,7 +21,7 @@ import id.indogaro.messenger.MediaController;
 import id.indogaro.messenger.MessageObject;
 import id.indogaro.messenger.NotificationCenter;
 import id.indogaro.messenger.R;
-import id.indogaro.messenger.TelegramMediaSession;
+import id.indogaro.messenger.IndogaroMediaSession;
 
 import java.util.ArrayList;
 
@@ -66,7 +66,7 @@ public class MusicSongsScreen extends Screen
     @NonNull
     @Override
     public Template onGetTemplate() {
-        TelegramMediaSession session = TelegramMediaSession.getInstance(getCarContext().getApplicationContext());
+        IndogaroMediaSession session = IndogaroMediaSession.getInstance(getCarContext().getApplicationContext());
         String headerTitle = title.isEmpty() ? " " : title;
 
         ArrayList<MessageObject> songs = session.getMusicMessages(dialogId);
@@ -114,7 +114,7 @@ public class MusicSongsScreen extends Screen
 
     private void playAtIndex(int index) {
         try {
-            TelegramMediaSession session = TelegramMediaSession.getInstance(getCarContext().getApplicationContext());
+            IndogaroMediaSession session = IndogaroMediaSession.getInstance(getCarContext().getApplicationContext());
             MediaControllerCompat controller = session.getSession().getController();
             controller.getTransportControls().playFromMediaId(dialogId + "_" + index, null);
         } catch (Throwable ignored) {

@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -156,7 +156,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
         this.padding = padding;
 
         statusColor = Theme.getColor(Theme.key_windowBackgroundWhiteGrayText, resourcesProvider);
-        statusOnlineColor = Theme.getColor(Theme.key_telegram_color_text, resourcesProvider);
+        statusOnlineColor = Theme.getColor(Theme.key_indogaro_color_text, resourcesProvider);
 
         avatarDrawable = new AvatarDrawable();
 

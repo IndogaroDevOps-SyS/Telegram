@@ -379,10 +379,10 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
     }
 
     private BotWebViewProxy botWebViewProxy;
-    private static final String BOT_WEB_MESSAGE_BRIDGE = "TelegramWebviewProxyMessage";
+    private static final String BOT_WEB_MESSAGE_BRIDGE = "IndogaroWebviewProxyMessage";
     private static final int MAX_BOT_WEB_MESSAGE_LENGTH = 1024 * 1024;
     private static final String BOT_WEB_MESSAGE_SHIM =
-            "window.TelegramWebviewProxy={postEvent:function(eventType,eventData){" +
+            "window.IndogaroWebviewProxy={postEvent:function(eventType,eventData){" +
                     "window." + BOT_WEB_MESSAGE_BRIDGE + ".postMessage(JSON.stringify({eventType:eventType,eventData:eventData}));" +
                     "}};";
     private long documentGeneration;
@@ -494,7 +494,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
                 final PackageInfo packageInfo = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
                 final int perf = SharedConfig.getDevicePerformanceClass();
                 final String perfName = perf == SharedConfig.PERFORMANCE_CLASS_LOW ? "LOW" : perf == SharedConfig.PERFORMANCE_CLASS_AVERAGE ? "AVERAGE" : "HIGH";
-                useragent += " Telegram-Android/" + packageInfo.versionName + " (" + capitalizeFirst(Build.MANUFACTURER) + " " + Build.MODEL + "; Android " + Build.VERSION.RELEASE + "; SDK " + Build.VERSION.SDK_INT + "; " + perfName + ")";
+                useragent += " Indogaro-Android/" + packageInfo.versionName + " (" + capitalizeFirst(Build.MANUFACTURER) + " " + Build.MODEL + "; Android " + Build.VERSION.RELEASE + "; SDK " + Build.VERSION.SDK_INT + "; " + perfName + ")";
             }
             settings.setUserAgentString(useragent);
         } catch (Exception e) {
@@ -534,9 +534,9 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
             }
             if (webViewProxy == null) {
                 webViewProxy = new WebViewProxy(webView, this);
-                webView.addJavascriptInterface(webViewProxy, "TelegramWebviewProxy");
+                webView.addJavascriptInterface(webViewProxy, "IndogaroWebviewProxy");
             } else if (replaceWith == null) {
-                webView.addJavascriptInterface(webViewProxy, "TelegramWebviewProxy");
+                webView.addJavascriptInterface(webViewProxy, "IndogaroWebviewProxy");
             }
             webViewProxy.setContainer(this);
         }
@@ -1217,7 +1217,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
             return;
         }
         d("notifyEvent " + event);
-        evaluateJs("window.Telegram.WebView.receiveEvent('" + event + "', " + eventData + ");", false);
+        evaluateJs("window.Indogaro.WebView.receiveEvent('" + event + "', " + eventData + ");", false);
     }
 
     private void notifyEvent(WebRequestContext context, String event, JSONObject eventData) {
@@ -1258,7 +1258,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
             return;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("window.Telegram.WebView.receiveEvent('");
+        sb.append("window.Indogaro.WebView.receiveEvent('");
         sb.append(event);
         sb.append("', ");
         sb.append(eventData);
@@ -1274,7 +1274,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
                 FileLog.d("notifyEvent " + event + " dropped after document change");
                 return;
             }
-            webView.evaluateJS("window.Telegram.WebView.receiveEvent('" + event + "', " + eventData + ");");
+            webView.evaluateJS("window.Indogaro.WebView.receiveEvent('" + event + "', " + eventData + ");");
         });
     }
 
@@ -1428,7 +1428,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
         }
 
         // Remove the legacy object even when this WebView was passed in from another container.
-        webView.removeJavascriptInterface("TelegramWebviewProxy");
+        webView.removeJavascriptInterface("IndogaroWebviewProxy");
 
         if (!WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
             d("Bot WebMessageListener is unsupported; native bridge disabled");
@@ -3987,7 +3987,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
                             builder.setTitleMultipleLines(true);
                             builder.setTitle(formattedUrl);
                             builder.setItems(new CharSequence[]{
-                                    LocaleController.getString(R.string.OpenInTelegramBrowser),
+                                    LocaleController.getString(R.string.OpenInIndogaroBrowser),
                                     LocaleController.getString(R.string.OpenInSystemBrowser),
                                     LocaleController.getString(R.string.Copy)
                             }, (dialog, which) -> {

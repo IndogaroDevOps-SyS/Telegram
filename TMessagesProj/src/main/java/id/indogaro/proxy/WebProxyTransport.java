@@ -67,7 +67,7 @@ public final class WebProxyTransport implements ForegroundDetector.Listener {
     private static final int MAX_STREAMS = 64;
     private static final int MAX_OUTBOUND_ITEMS = 8192;
     private static final int MAX_OUTBOUND_BYTES = 64 * 1024 * 1024;
-    private static final String BRIDGE_OBJECT = "TelegramWebProxy";
+    private static final String BRIDGE_OBJECT = "IndogaroWebProxy";
 
     private static final Object staticLock = new Object();
     private static WebProxyTransport instance;

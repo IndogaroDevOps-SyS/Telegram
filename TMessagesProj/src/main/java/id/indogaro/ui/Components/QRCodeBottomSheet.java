@@ -22,7 +22,7 @@ import android.widget.TextView;
 import androidx.core.graphics.ColorUtils;
 
 import com.google.zxing.EncodeHintType;
-import id.indogaro.messenger.TelegramQRCodeWriter;
+import id.indogaro.messenger.IndogaroQRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import id.indogaro.messenger.AndroidUtilities;
@@ -154,7 +154,7 @@ public class QRCodeBottomSheet extends BottomSheet {
             HashMap<EncodeHintType, Object> hints = new HashMap<>();
             hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
             hints.put(EncodeHintType.MARGIN, 0);
-            TelegramQRCodeWriter writer = new TelegramQRCodeWriter();
+            IndogaroQRCodeWriter writer = new IndogaroQRCodeWriter();
             Bitmap bitmap = writer.encode(key, 768, 768, hints, oldBitmap);
             imageSize = writer.getImageSize();
             return bitmap;

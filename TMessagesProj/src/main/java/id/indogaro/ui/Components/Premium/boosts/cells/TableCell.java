@@ -223,7 +223,7 @@ public class TableCell extends FrameLayout {
         }
 
         String monthsStr = giftCode.months == 12 ? LocaleController.formatPluralString("Years", 1) : LocaleController.formatPluralString("Months", giftCode.months);
-        giftTextView.setText(LocaleController.formatString("BoostingTelegramPremiumFor", R.string.BoostingTelegramPremiumFor, monthsStr));
+        giftTextView.setText(LocaleController.formatString("BoostingIndogaroPremiumFor", R.string.BoostingIndogaroPremiumFor, monthsStr));
 
         if (fromChat != null) {
             SpannableStringBuilder builder = new SpannableStringBuilder();

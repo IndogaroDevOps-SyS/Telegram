@@ -87,7 +87,7 @@ public class IndogaroSettingsActivity extends BaseFragment {
             if (position >= 0 && position < items.size()) {
                 Item item = items.get(position);
                 if (item.id == 3) {
-                    // Perbaikan: Menggunakan Toast standar Android atau Bulletin Telegram
+                    // Perbaikan: Menggunakan Toast standar Android atau Bulletin Indogaro
                     Toast.makeText(getParentActivity(), "Sistem & Cache Memori Diperbarui!", Toast.LENGTH_SHORT).show();
                     updateRows();
                     listAdapter.notifyDataSetChanged();

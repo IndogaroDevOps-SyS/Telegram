@@ -33,8 +33,8 @@ public class StorageUsageView extends FrameLayout {
     private boolean calculating;
     ProgressView progressView;
 
-    TextView telegramCacheTextView;
-    TextView telegramDatabaseTextView;
+    TextView indogaroCacheTextView;
+    TextView indogaroDatabaseTextView;
     TextView freeSizeTextView;
     TextView totlaSizeTextView;
     TextView calculatingTextView;
@@ -140,13 +140,13 @@ public class StorageUsageView extends FrameLayout {
         }
 
 
-        telegramCacheTextView = new TextView(context);
-        telegramCacheTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
-        telegramCacheTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        indogaroCacheTextView = new TextView(context);
+        indogaroCacheTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
+        indogaroCacheTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
 
-        telegramDatabaseTextView = new TextView(context);
-        telegramDatabaseTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
-        telegramDatabaseTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        indogaroDatabaseTextView = new TextView(context);
+        indogaroDatabaseTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
+        indogaroDatabaseTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
 
         freeSizeTextView = new TextView(context);
         freeSizeTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
@@ -159,18 +159,18 @@ public class StorageUsageView extends FrameLayout {
 
         lastProgressColor = Theme.getColor(Theme.key_player_progress);
 
-        telegramCacheTextView.setCompoundDrawablesWithIntrinsicBounds(Theme.createCircleDrawable(AndroidUtilities.dp(10), lastProgressColor), null, null, null);
-        telegramCacheTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
+        indogaroCacheTextView.setCompoundDrawablesWithIntrinsicBounds(Theme.createCircleDrawable(AndroidUtilities.dp(10), lastProgressColor), null, null, null);
+        indogaroCacheTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
         freeSizeTextView.setCompoundDrawablesWithIntrinsicBounds(Theme.createCircleDrawable(AndroidUtilities.dp(10), ColorUtils.setAlphaComponent(lastProgressColor,64)), null, null, null);
         freeSizeTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
         totlaSizeTextView.setCompoundDrawablesWithIntrinsicBounds(Theme.createCircleDrawable(AndroidUtilities.dp(10), ColorUtils.setAlphaComponent(lastProgressColor,127)), null, null, null);
         totlaSizeTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
-        telegramDatabaseTextView.setCompoundDrawablesWithIntrinsicBounds(Theme.createCircleDrawable(AndroidUtilities.dp(10), lastProgressColor), null, null, null);
-        telegramDatabaseTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
+        indogaroDatabaseTextView.setCompoundDrawablesWithIntrinsicBounds(Theme.createCircleDrawable(AndroidUtilities.dp(10), lastProgressColor), null, null, null);
+        indogaroDatabaseTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
 
         legendLayout.addView(calculatingTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT));
-        legendLayout.addView(telegramDatabaseTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT));
-        legendLayout.addView(telegramCacheTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT));
+        legendLayout.addView(indogaroDatabaseTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT));
+        legendLayout.addView(indogaroCacheTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT));
         legendLayout.addView(totlaSizeTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT));
         legendLayout.addView(freeSizeTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT));
 
@@ -196,10 +196,10 @@ public class StorageUsageView extends FrameLayout {
 
         if (calculating) {
             calculatingTextView.setVisibility(View.VISIBLE);
-            telegramCacheTextView.setVisibility(View.GONE);
+            indogaroCacheTextView.setVisibility(View.GONE);
             freeSizeTextView.setVisibility(View.GONE);
             totlaSizeTextView.setVisibility(View.GONE);
-            telegramDatabaseTextView.setVisibility(View.GONE);
+            indogaroDatabaseTextView.setVisibility(View.GONE);
             divider.setVisibility(GONE);
             textSettingsCell.setVisibility(GONE);
             progress = 0f;
@@ -215,14 +215,14 @@ public class StorageUsageView extends FrameLayout {
             if (totalSize > 0) {
                 divider.setVisibility(VISIBLE);
                 textSettingsCell.setVisibility(VISIBLE);
-                telegramCacheTextView.setVisibility(View.VISIBLE);
-                telegramDatabaseTextView.setVisibility(GONE);
-                textSettingsCell.setTextAndValue(LocaleController.getString(R.string.ClearTelegramCache), AndroidUtilities.formatFileSize(totalSize), true);
-                telegramCacheTextView.setText(LocaleController.formatString("TelegramCacheSize", R.string.TelegramCacheSize, AndroidUtilities.formatFileSize(totalSize + database)));
+                indogaroCacheTextView.setVisibility(View.VISIBLE);
+                indogaroDatabaseTextView.setVisibility(GONE);
+                textSettingsCell.setTextAndValue(LocaleController.getString(R.string.ClearIndogaroCache), AndroidUtilities.formatFileSize(totalSize), true);
+                indogaroCacheTextView.setText(LocaleController.formatString("IndogaroCacheSize", R.string.IndogaroCacheSize, AndroidUtilities.formatFileSize(totalSize + database)));
             } else {
-                telegramCacheTextView.setVisibility(View.GONE);
-                telegramDatabaseTextView.setVisibility(VISIBLE);
-                telegramDatabaseTextView.setText(LocaleController.formatString("LocalDatabaseSize", R.string.LocalDatabaseSize, AndroidUtilities.formatFileSize(database)));
+                indogaroCacheTextView.setVisibility(View.GONE);
+                indogaroDatabaseTextView.setVisibility(VISIBLE);
+                indogaroDatabaseTextView.setText(LocaleController.formatString("LocalDatabaseSize", R.string.LocalDatabaseSize, AndroidUtilities.formatFileSize(database)));
                 divider.setVisibility(GONE);
                 textSettingsCell.setVisibility(GONE);
             }
@@ -269,11 +269,11 @@ public class StorageUsageView extends FrameLayout {
         if (lastProgressColor != Theme.getColor(Theme.key_player_progress)){
             lastProgressColor = Theme.getColor(Theme.key_player_progress);
 
-            telegramCacheTextView.setCompoundDrawablesWithIntrinsicBounds(Theme.createCircleDrawable(AndroidUtilities.dp(10), lastProgressColor), null, null, null);
-            telegramCacheTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
+            indogaroCacheTextView.setCompoundDrawablesWithIntrinsicBounds(Theme.createCircleDrawable(AndroidUtilities.dp(10), lastProgressColor), null, null, null);
+            indogaroCacheTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
 
-            telegramDatabaseTextView.setCompoundDrawablesWithIntrinsicBounds(Theme.createCircleDrawable(AndroidUtilities.dp(10), lastProgressColor), null, null, null);
-            telegramDatabaseTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
+            indogaroDatabaseTextView.setCompoundDrawablesWithIntrinsicBounds(Theme.createCircleDrawable(AndroidUtilities.dp(10), lastProgressColor), null, null, null);
+            indogaroDatabaseTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));
 
             freeSizeTextView.setCompoundDrawablesWithIntrinsicBounds(Theme.createCircleDrawable(AndroidUtilities.dp(10), ColorUtils.setAlphaComponent(lastProgressColor,64)), null, null, null);
             freeSizeTextView.setCompoundDrawablePadding(AndroidUtilities.dp(6));

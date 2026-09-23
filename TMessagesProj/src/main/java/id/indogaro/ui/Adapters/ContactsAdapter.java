@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 1.3.x.
+ * This is the source code of Indogaro for Android v. 1.3.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -557,7 +557,7 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
                 if (needPhonebook || !isAdmin) {
                     textCell.setColors(Theme.key_windowBackgroundWhiteBlackText, Theme.key_windowBackgroundWhiteBlackText);
                 } else {
-                    textCell.setColors(Theme.key_telegram_color_text, Theme.key_telegram_color_text);
+                    textCell.setColors(Theme.key_indogaro_color_text, Theme.key_indogaro_color_text);
                 }
                 if (section == 0) {
                     if (needPhonebook) {

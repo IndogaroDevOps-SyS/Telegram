@@ -700,12 +700,12 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
         if (false) {
             if (!getMessagesController().premiumFeaturesBlocked()) {
-                items.add(SettingCell.Factory.of(11, 0xFFB659FF, 0xFF617CFF, R.drawable.settings_premium, getString(R.string.TelegramPremium)));
+                items.add(SettingCell.Factory.of(11, 0xFFB659FF, 0xFF617CFF, R.drawable.settings_premium, getString(R.string.IndogaroPremium)));
             }
             if (getMessagesController().starsPurchaseAvailable()) {
                 StarsController c = StarsController.getInstance(currentAccount);
                 long balance = c.getBalance().amount;
-                items.add(SettingCell.Factory.of(12, 0xFFEFA612, 0xFFE77512, R.drawable.settings_stars, getString(R.string.TelegramStars), null, c.balanceAvailable() && balance > 0 ? StarsIntroActivity.formatStarsAmount(c.getBalance(), 0.85f, ' ') : ""));
+                items.add(SettingCell.Factory.of(12, 0xFFEFA612, 0xFFE77512, R.drawable.settings_stars, getString(R.string.IndogaroStars), null, c.balanceAvailable() && balance > 0 ? StarsIntroActivity.formatStarsAmount(c.getBalance(), 0.85f, ' ') : ""));
             }
             StarsController.getInstance(currentAccount, true).getBalance();
             if (ApplicationLoader.isBetaBuild() || ApplicationLoader.isStandaloneBuild() || ApplicationLoader.isHuaweiStoreBuild() || (StarsController.getInstance(currentAccount, true).balanceAvailable() && (StarsController.getInstance(currentAccount, true).hasTransactions() || StarsController.getInstance(currentAccount, true).getBalance().positive()))) {
@@ -728,7 +728,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
         if (false) {
             if (!getMessagesController().premiumFeaturesBlocked()) {
-                items.add(SettingCell.Factory.of(15, 0xFFF45255, 0xFFDF3955, R.drawable.settings_business, getString(R.string.TelegramBusiness)));
+                items.add(SettingCell.Factory.of(15, 0xFFF45255, 0xFFDF3955, R.drawable.settings_business, getString(R.string.IndogaroBusiness)));
             }
             if (!getMessagesController().premiumPurchaseBlocked()) {
                 items.add(SettingCell.Factory.of(16, 0xFFF38B31, 0xFFE26314, R.drawable.settings_gift, getString(R.string.SendAGift)));
@@ -738,8 +738,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
             items.add(UItem.asHeader(getString(R.string.SettingsHelp)));
             items.add(SettingCell.Factory.of(17, IconBackgroundColors.ORANGE.top, IconBackgroundColors.ORANGE.bottom, R.drawable.settings_ask, getString(R.string.AskAQuestion)));
-            items.add(SettingCell.Factory.of(18, IconBackgroundColors.BLUE_LIGHT.top, IconBackgroundColors.BLUE_LIGHT.bottom, R.drawable.settings_faq, getString(R.string.TelegramFAQ)));
-            items.add(SettingCell.Factory.of(23, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.settings_features, getString(R.string.TelegramFeatures)));
+            items.add(SettingCell.Factory.of(18, IconBackgroundColors.BLUE_LIGHT.top, IconBackgroundColors.BLUE_LIGHT.bottom, R.drawable.settings_faq, getString(R.string.IndogaroFAQ)));
+            items.add(SettingCell.Factory.of(23, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.settings_features, getString(R.string.IndogaroFeatures)));
             items.add(SettingCell.Factory.of(19, IconBackgroundColors.GREEN.top, IconBackgroundColors.GREEN.bottom, R.drawable.settings_policy, getString(R.string.PrivacyPolicy)));
         }
 
@@ -862,7 +862,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                 showDialog(AlertsCreator.createSupportAlert(this, resourceProvider));
                 break;
             case 18:
-                Browser.openUrl(getParentActivity(), LocaleController.getString(R.string.TelegramFaqUrl));
+                Browser.openUrl(getParentActivity(), LocaleController.getString(R.string.IndogaroFaqUrl));
                 break;
             case 19:
                 Browser.openUrl(getParentActivity(), LocaleController.getString(R.string.PrivacyPolicyUrl));
@@ -880,7 +880,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                 if (MessagesController.getInstance(currentAccount).isFrozen()) {
                     AccountFrozenAlert.show(currentAccount);
                 } else {
-                    Browser.openUrl(getContext(), LocaleController.getString(R.string.TelegramFeaturesUrl));
+                    Browser.openUrl(getContext(), LocaleController.getString(R.string.IndogaroFeaturesUrl));
                 }
                 break;
             }
@@ -937,7 +937,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                     }
                     break;
             }
-            return formatString(R.string.TelegramVersion, String.format(Locale.US, "v%s (%d)\n%s", pInfo.versionName, code, abi));
+            return formatString(R.string.IndogaroVersion, String.format(Locale.US, "v%s (%d)\n%s", pInfo.versionName, code, abi));
         } catch (Exception e) {
             FileLog.e(e);
         }

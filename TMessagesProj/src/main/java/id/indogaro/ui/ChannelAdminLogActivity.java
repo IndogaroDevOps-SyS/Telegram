@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -1671,7 +1671,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
             }
         }
 
-        if (message.currentEvent != null && (message.currentEvent.action instanceof TLRPC.TL_channelAdminLogEventActionDeleteMessage && message.currentEvent.user_id == getMessagesController().telegramAntispamUserId || message.currentEvent.action instanceof TLRPC.TL_channelAdminLogEventActionToggleAntiSpam)) {
+        if (message.currentEvent != null && (message.currentEvent.action instanceof TLRPC.TL_channelAdminLogEventActionDeleteMessage && message.currentEvent.user_id == getMessagesController().indogaroAntispamUserId || message.currentEvent.action instanceof TLRPC.TL_channelAdminLogEventActionToggleAntiSpam)) {
             if (v instanceof ChatActionCell) {
                 SpannableString arrow = new SpannableString(">");
                 Drawable arrowDrawable = getContext().getResources().getDrawable(R.drawable.attach_arrow_right).mutate();
@@ -2449,9 +2449,9 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
                     TLRPC.ChatFull chatFull = getMessagesController().getChatFull(currentChat.id);
                     if (chatFull != null && chatFull.antispam) {
                         TLRPC.ChannelParticipant antispamParticipant = new TLRPC.ChannelParticipant() {};
-                        antispamParticipant.user_id = getMessagesController().telegramAntispamUserId;
+                        antispamParticipant.user_id = getMessagesController().indogaroAntispamUserId;
                         antispamParticipant.peer = getMessagesController().getPeer(antispamParticipant.user_id);
-                        loadAntispamUser(getMessagesController().telegramAntispamUserId);
+                        loadAntispamUser(getMessagesController().indogaroAntispamUserId);
                         admins.add(0, antispamParticipant);
                     }
                 }

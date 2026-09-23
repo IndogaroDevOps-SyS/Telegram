@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -112,7 +112,7 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
         });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mediaSession = new MediaSessionCompat(this, "telegramAudioPlayer");
+            mediaSession = new MediaSessionCompat(this, "indogaroAudioPlayer");
             playbackState = new PlaybackStateCompat.Builder();
             albumArtPlaceholder = Bitmap.createBitmap(AndroidUtilities.dp(102), AndroidUtilities.dp(102), Bitmap.Config.ARGB_8888);
             Drawable placeholder = getResources().getDrawable(R.drawable.nocover_big);

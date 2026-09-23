@@ -66,7 +66,7 @@ import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.zxing.EncodeHintType;
-import id.indogaro.messenger.TelegramQRCodeWriter;
+import id.indogaro.messenger.IndogaroQRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import id.indogaro.messenger.AndroidUtilities;
@@ -1053,7 +1053,7 @@ public class QrActivity extends BaseFragment {
                 float xCenter = getWidth() / 2f, yCenter = top + (getWidth()) / 2f - padding;
                 int imageSize = Math.round((size - 32) / 4.65f / multiple) * multiple / 2;
                 canvas.drawCircle(xCenter, yCenter, imageSize * .75f, bitmapGradientPaint);
-                TelegramQRCodeWriter.drawSideQuads(canvas, padding, top, bitmapGradientPaint, 7, multiple, 16, size, .75f, radii, true);
+                IndogaroQRCodeWriter.drawSideQuads(canvas, padding, top, bitmapGradientPaint, 7, multiple, 16, size, .75f, radii, true);
                 if (!logoCenterSet && centerChangedListener != null) {
                     centerChangedListener.onCenterChanged((int) (xCenter - imageSize * 0.75f), (int) (yCenter - imageSize * 0.75f), (int) (xCenter + imageSize * 0.75f), (int) (yCenter + imageSize * 0.75f));
                     logoCenterSet = true;
@@ -1308,7 +1308,7 @@ public class QrActivity extends BaseFragment {
             HashMap<EncodeHintType, Object> hints = new HashMap<>();
             hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
             hints.put(EncodeHintType.MARGIN, 0);
-            TelegramQRCodeWriter writer = new TelegramQRCodeWriter();
+            IndogaroQRCodeWriter writer = new IndogaroQRCodeWriter();
             int version;
             for (version = 3; version < 5; ++version) {
                 try {

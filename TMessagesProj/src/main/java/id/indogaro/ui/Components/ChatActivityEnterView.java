@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -2902,7 +2902,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         sendOutlineView.setImageResource(R.drawable.send_outline);
         sendOutlineView.setScaleType(ImageView.ScaleType.CENTER);
         sendOutlineView.setVisibility(View.GONE);
-        sendOutlineView.setColorFilter(getThemedColor(Theme.key_telegram_color), PorterDuff.Mode.SRC_IN);
+        sendOutlineView.setColorFilter(getThemedColor(Theme.key_indogaro_color), PorterDuff.Mode.SRC_IN);
         textFieldContainer.addView(sendOutlineView, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.RIGHT));
 
         sendButtonContainer = new FrameLayout(context) {
@@ -8816,7 +8816,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             try {
                 if (wakeLock == null) {
                     PowerManager pm = (PowerManager) ApplicationLoader.applicationContext.getSystemService(Context.POWER_SERVICE);
-                    wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "telegram:audio_record_lock");
+                    wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "indogaro:audio_record_lock");
                     wakeLock.acquire();
                 }
             } catch (Exception e) {
@@ -10380,7 +10380,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         emojiButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
         deleteRichDraftButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.SRC_IN));
         deleteRichDraftButton.setBackground(Theme.createInsetRoundRectDrawable(getThemedColor(Theme.key_listSelector), dp(19), dp(1), dp(3)));
-        sendOutlineView.setColorFilter(getThemedColor(Theme.key_telegram_color), PorterDuff.Mode.SRC_IN);
+        sendOutlineView.setColorFilter(getThemedColor(Theme.key_indogaro_color), PorterDuff.Mode.SRC_IN);
     }
 
     private void updateRecordedDeleteIconColors() {

@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -14086,7 +14086,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 String siteName = webPage.site_name;
                 if (siteName != null) {
                     siteName = siteName.toLowerCase();
-                    if (siteName.equals("instagram") || siteName.equals("twitter") || "telegram_album".equals(webPage.type)) {
+                    if (siteName.equals("instagram") || siteName.equals("twitter") || "indogaro_album".equals(webPage.type)) {
                         if (!TextUtils.isEmpty(webPage.author)) {
                             nameOverride = webPage.author;
                         }

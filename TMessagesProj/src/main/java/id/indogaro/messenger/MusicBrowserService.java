@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -30,7 +30,7 @@ public class MusicBrowserService extends MediaBrowserService {
     public void onCreate() {
         super.onCreate();
         ApplicationLoader.postInitApplication();
-        TelegramMediaSession holder = TelegramMediaSession.getInstance(this);
+        IndogaroMediaSession holder = IndogaroMediaSession.getInstance(this);
         setSessionToken(holder.getFrameworkSessionToken());
     }
 
@@ -49,17 +49,17 @@ public class MusicBrowserService extends MediaBrowserService {
         if (!isSelf && !PackageValidator.isKnownCaller(this, clientPackageName, clientUid)) {
             return null;
         }
-        if (TelegramMediaSession.getInstance(this).isPasscodeLocked()) {
+        if (IndogaroMediaSession.getInstance(this).isPasscodeLocked()) {
             return null;
         }
-        return new BrowserRoot(MEDIA_ID_ROOT, TelegramMediaSession.getInstance(this).buildRootHints());
+        return new BrowserRoot(MEDIA_ID_ROOT, IndogaroMediaSession.getInstance(this).buildRootHints());
     }
 
     @Override
     public void onLoadChildren(String parentMediaId, Result<List<MediaBrowser.MediaItem>> result) {
-        TelegramMediaSession holder = TelegramMediaSession.getInstance(this);
+        IndogaroMediaSession holder = IndogaroMediaSession.getInstance(this);
         if (holder.isPasscodeLocked()) {
-            Toast.makeText(getApplicationContext(), LocaleController.getString(R.string.EnterYourTelegramPasscode), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), LocaleController.getString(R.string.EnterYourIndogaroPasscode), Toast.LENGTH_LONG).show();
             stopSelf();
             result.detach();
             return;

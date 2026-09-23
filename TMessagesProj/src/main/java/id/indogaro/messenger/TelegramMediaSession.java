@@ -38,15 +38,15 @@ import java.util.List;
 import java.util.Locale;
 
 @SuppressLint("StaticFieldLeak")
-public class TelegramMediaSession {
+public class IndogaroMediaSession {
 
-    private static volatile TelegramMediaSession instance;
+    private static volatile IndogaroMediaSession instance;
 
-    public static TelegramMediaSession getInstance(Context context) {
+    public static IndogaroMediaSession getInstance(Context context) {
         if (instance == null) {
-            synchronized (TelegramMediaSession.class) {
+            synchronized (IndogaroMediaSession.class) {
                 if (instance == null) {
-                    instance = new TelegramMediaSession(context.getApplicationContext());
+                    instance = new IndogaroMediaSession(context.getApplicationContext());
                 }
             }
         }
@@ -54,11 +54,11 @@ public class TelegramMediaSession {
     }
 
     @Nullable
-    public static TelegramMediaSession peekInstance() {
+    public static IndogaroMediaSession peekInstance() {
         return instance;
     }
 
-    private static final String SESSION_TAG = "TelegramMediaSession";
+    private static final String SESSION_TAG = "IndogaroMediaSession";
     private static final String MEDIA_ID_ROOT = "__ROOT__";
     private static final String MEDIA_ID_CHAT_PREFIX = "__CHAT_";
 
@@ -89,7 +89,7 @@ public class TelegramMediaSession {
     private Paint roundPaint;
     private RectF bitmapRect;
 
-    private TelegramMediaSession(Context appContext) {
+    private IndogaroMediaSession(Context appContext) {
         this.appContext = appContext;
         this.currentAccount = UserConfig.selectedAccount;
         this.lastSelectedDialog = AndroidUtilities.getPrefIntOrLong(MessagesController.getNotificationsSettings(currentAccount), "auto_lastSelectedDialog", 0);

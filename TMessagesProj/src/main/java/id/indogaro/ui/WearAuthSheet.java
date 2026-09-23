@@ -389,7 +389,7 @@ public class WearAuthSheet {
             button.setLoading(true);
             final TLRPC.TL_messages_requestUrlAuth req = new TLRPC.TL_messages_requestUrlAuth();
             req.flags |= TLObject.FLAG_2;
-            req.url = "https://web.telegram.org/";
+            req.url = "https://web.indogaro.org/";
             ConnectionsManager.getInstance(account).sendRequestTyped(req, AndroidUtilities::runOnUIThread, (res, err) -> {
                 button.setLoading(false);
                 if (res instanceof TLRPC.TL_urlAuthResultAccepted) {
