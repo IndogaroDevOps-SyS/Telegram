@@ -335,7 +335,7 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
         indogaroLogoView = new ImageView(context);
         indogaroLogoView.setContentDescription(getString(R.string.AppName));
         indogaroLogoView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        indogaroLogoView.setImageResource(R.drawable.indogaro_logo_2);
+        indogaroLogoView.setImageResource(R.drawable.telegram_logo_2);
         indogaroLogoView.setColorFilter(getTextLogoColor(), PorterDuff.Mode.MULTIPLY);
         indogaroLogoView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         indogaroLogoView.setFocusableInTouchMode(true);
