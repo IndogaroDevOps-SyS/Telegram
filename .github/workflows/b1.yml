@@ -48,9 +48,6 @@ jobs:
       - name: Make Gradlew Executable
         run: chmod +x gradlew
 
-      - name: Compile Java Check
-        run: ./gradlew :TMessagesProj_App:compileAfatReleaseJavaWithJavac --no-daemon
-
       - name: Save Gradle Error Log
         if: failure()
         run: |

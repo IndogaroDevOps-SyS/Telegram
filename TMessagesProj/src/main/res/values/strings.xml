@@ -11254,4 +11254,56 @@
     <string name="paste">Paste</string>
     <string name="selectAll">Select All</string>
     
+
+    <string name="StorageUsageIndogaro">Indogaro Storage Usage</string>
+    <string name="StorageUsageIndogaroLess">Indogaro Storage Usage Less</string>
+    <string name="MapPreviewProviderIndogaro">Indogaro Map Preview</string>
+    <string name="IndogaroStars">Indogaro Stars</string>
+    <string name="IndogaroStarsInfo2">Indogaro Stars Info</string>
+    <string name="IndogaroStarsGift">Indogaro Stars Gift</string>
+    <string name="IndogaroStarsChoose">Choose Indogaro Stars</string>
+    <string name="UseProxyIndogaroError">Proxy connection error in Indogaro.</string>
+    <string name="IndogaroPremiumSubscribedTitle">Indogaro Premium Subscribed</string>
+    <string name="IndogaroPremiumSubscribedSubtitle">You are subscribed to Indogaro Premium.</string>
+    <string name="IndogaroPremiumSubtitle">Unlock all features with Indogaro Premium.</string>
+    <string name="IndogaroBusinessSubscribedSubtitleTemp">Indogaro Business active.</string>
+    <string name="IndogaroBusinessSubtitleTemp">Indogaro Business features.</string>
+    <string name="UpdateIndogaro">Update Indogaro</string>
+    <string name="OpenInIndogaroBrowser">Open in Indogaro Browser</string>
+    <string name="AboutIndogaroPremium">About Indogaro Premium</string>
+    <string name="IndogaroPremiumShort">Indogaro Premium</string>
+    <string name="GiftIndogaroPremiumTitle">Gift Indogaro Premium</string>
+    <string name="IndogaroFeatures">Indogaro Features</string>
+    <string name="IndogaroFeaturesUrl">https://indogaro.id/features</string>
+    <string name="EnterYourIndogaroPasscode">Enter your Indogaro passcode</string>
+    <string name="GiftIndogaroPremiumOrStarsTitle">Gift Indogaro Premium or Stars</string>
+    <string name="IndogaroPassport">Indogaro Passport</string>
+    <string name="OptimizingIndogaro">Optimizing Indogaro</string>
+    <string name="OptimizingIndogaroDescription1">Please wait while Indogaro optimizes your database.</string>
+    <string name="OptimizingIndogaroDescription2">This may take a few moments.</string>
+    <string name="ClearIndogaroCache">Clear Indogaro Cache</string>
+    <string name="IndogaroCacheSize">Indogaro Cache Size</string>
+    <string name="GiftIndogaroPremiumDescription">Gift Indogaro Premium to your friend.</string>
+    <string name="IndogaroPremiumUserStatusCollectibleDialogTitle">Collectible Status</string>
+    <string name="IndogaroPremiumUserStatusDialogSubtitle">Premium Status</string>
+    <string name="IndogaroPremiumUserStatusDialogTitle">Status Title</string>
+    <string name="IndogaroPremiumUserStatusDefaultDialogTitle">Default Status</string>
+    <string name="IndogaroPremiumUserGiftedPremiumOutboundDialogTitleWithPlural">Gifted Premium</string>
+    <string name="IndogaroPremiumUserGiftedPremiumOutboundDialogSubtitle">Outbound Subtitle</string>
+    <string name="IndogaroPremiumUserGiftedPremiumDialogTitleWithPluralSomeone">Gifted Premium Someone</string>
+    <string name="IndogaroPremiumUserGiftedPremiumDialogSubtitle">Gifted Subtitle</string>
+    <string name="IndogaroPremiumUserGiftedPremiumDialogTitleWithPlural">Gifted Title</string>
+    <string name="IndogaroPremiumUserDialogTitle">User Dialog Title</string>
+    <string name="BoostingIndogaroPremiumFor">Boosting for %s</string>
+    <string name="IndogaroBusinessSubtitle2">Business Subtitle</string>
+    <string name="IndogaroPassportCreatePasswordInfo">Create password for Indogaro Passport</string>
+    <string name="IndogaroPassportCreatePassword">Create Password</string>
+    <string name="IndogaroPassportDelete">Delete Passport</string>
+    <string name="IndogaroPassportDeleteTitle">Delete Passport Title</string>
+    <string name="IndogaroPassportDeleteAlert">Are you sure you want to delete your passport?</string>
+    <string name="UseProxyIndogaro">Use Indogaro Proxy</string>
+    <string name="UseProxyIndogaroInfo">Proxy info for Indogaro.</string>
+    <string name="IndogaroTones">Indogaro Tones</string>
+    <string name="ShareIndogaro2">Share Indogaro</string>
+    
 </resources>
