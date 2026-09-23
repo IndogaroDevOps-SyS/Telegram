@@ -11240,4 +11240,18 @@
     <string name="IndogaroFAQ">Indogaro FAQ</string>
     <string name="MenuIndogaroStars">Indogaro Stars</string>
     
+
+    <string name="StickersStickerAlreadyThere">Sticker is already in your set.</string>
+    <string name="StoryPrivacyButtonAllContacts">All Contacts</string>
+    <string name="StoryPrivacyButtonCloseFriends">Close Friends</string>
+    <string name="StoryPrivacyButtonEveryone">Everyone</string>
+    <string name="StoryPrivacyButtonMessage">Selected Contacts</string>
+    <string name="WalletScanCode">Scan QR Code</string>
+    <string name="WalletScanCodeNotFound">QR Code not found</string>
+    <string name="WebPoweredBy">Powered by Web</string>
+    <string name="copy">Copy</string>
+    <string name="cut">Cut</string>
+    <string name="paste">Paste</string>
+    <string name="selectAll">Select All</string>
+    
 </resources>
