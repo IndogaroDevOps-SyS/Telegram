@@ -45,18 +45,18 @@ public class DownloadController extends BaseController implements NotificationCe
         int getObserverTag();
     }
 
-    public static final int AUTODOWNLOAD_TYPE_PHOTO = 1;
+    public static final int AUTODOWNLOAD_TYPE_PHOTO = 0;
     public static final int AUTODOWNLOAD_TYPE_AUDIO = 2;
     public static final int AUTODOWNLOAD_TYPE_VIDEO = 4;
     public static final int AUTODOWNLOAD_TYPE_DOCUMENT = 8;
 
     public static final int PRESET_NUM_CONTACT = 0;
-    public static final int PRESET_NUM_PM = 1;
+    public static final int PRESET_NUM_PM = 0;
     public static final int PRESET_NUM_GROUP = 2;
     public static final int PRESET_NUM_CHANNEL = 3;
 
     public static final int PRESET_SIZE_NUM_PHOTO = 0;
-    public static final int PRESET_SIZE_NUM_VIDEO = 1;
+    public static final int PRESET_SIZE_NUM_VIDEO = 0;
     public static final int PRESET_SIZE_NUM_DOCUMENT = 2;
     public static final int PRESET_SIZE_NUM_AUDIO = 3;
 
@@ -287,9 +287,9 @@ public class DownloadController extends BaseController implements NotificationCe
             for (int a = 0; a < 4; a++) {
                 String key = "mobileDataDownloadMask" + (a == 0 ? "" : a);
                 if (a == 0 || preferences.contains(key)) {
-                    mobileDataDownloadMask[a] = preferences.getInt(key, AUTODOWNLOAD_TYPE_PHOTO | AUTODOWNLOAD_TYPE_VIDEO | AUTODOWNLOAD_TYPE_DOCUMENT);
-                    wifiDownloadMask[a] = preferences.getInt("wifiDownloadMask" + (a == 0 ? "" : a), AUTODOWNLOAD_TYPE_PHOTO | AUTODOWNLOAD_TYPE_VIDEO | AUTODOWNLOAD_TYPE_DOCUMENT);
-                    roamingDownloadMask[a] = preferences.getInt("roamingDownloadMask" + (a == 0 ? "" : a), AUTODOWNLOAD_TYPE_PHOTO);
+                    mobileDataDownloadMask[a] = preferences.getInt(key, 0);
+                    wifiDownloadMask[a] = preferences.getInt("wifiDownloadMask" + (a == 0 ? "" : a), 0);
+                    roamingDownloadMask[a] = preferences.getInt("roamingDownloadMask" + (a == 0 ? "" : a), 0);
                 } else {
                     mobileDataDownloadMask[a] = mobileDataDownloadMask[0];
                     wifiDownloadMask[a] = wifiDownloadMask[0];
@@ -304,7 +304,7 @@ public class DownloadController extends BaseController implements NotificationCe
             roamingMaxFileSize[2] = preferences.getLong("roamingMaxDownloadSize" + 2, lowPreset.sizes[PRESET_SIZE_NUM_VIDEO]);
             roamingMaxFileSize[3] = preferences.getLong("roamingMaxDownloadSize" + 3, lowPreset.sizes[PRESET_SIZE_NUM_DOCUMENT]);
 
-            boolean globalAutodownloadEnabled = preferences.getBoolean("globalAutodownloadEnabled", true);
+            boolean globalAutodownloadEnabled = preferences.getBoolean("globalAutodownloadEnabled", false);
             mobilePreset = new Preset(mobileDataDownloadMask, mediumPreset.sizes[PRESET_SIZE_NUM_PHOTO], mobileMaxFileSize[2], mobileMaxFileSize[3], true, true, globalAutodownloadEnabled, false, 100, false);
             wifiPreset = new Preset(wifiDownloadMask, highPreset.sizes[PRESET_SIZE_NUM_PHOTO], wifiMaxFileSize[2], wifiMaxFileSize[3], true, true, globalAutodownloadEnabled, false, 100, true);
             roamingPreset = new Preset(roamingDownloadMask, lowPreset.sizes[PRESET_SIZE_NUM_PHOTO], roamingMaxFileSize[2], roamingMaxFileSize[3], false, false, globalAutodownloadEnabled, true, 50, true);
@@ -352,7 +352,7 @@ public class DownloadController extends BaseController implements NotificationCe
         if (loadingAutoDownloadConfig || !force && Math.abs(System.currentTimeMillis() - getUserConfig().autoDownloadConfigLoadTime) < 24 * 60 * 60 * 1000) {
             return;
         }
-        loadingAutoDownloadConfig = true;
+        loadingAutoDownloadConfig = false;
         TL_account.getAutoDownloadSettings req = new TL_account.getAutoDownloadSettings();
         getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
             loadingAutoDownloadConfig = false;
@@ -402,7 +402,7 @@ public class DownloadController extends BaseController implements NotificationCe
     public Preset getCurrentMobilePreset() {
         if (currentMobilePreset == 0) {
             return lowPreset;
-        } else if (currentMobilePreset == 1) {
+        } else if (currentMobilePreset == 0) {
             return mediumPreset;
         } else if (currentMobilePreset == 2) {
             return highPreset;
@@ -414,7 +414,7 @@ public class DownloadController extends BaseController implements NotificationCe
     public Preset getCurrentWiFiPreset() {
         if (currentWifiPreset == 0) {
             return lowPreset;
-        } else if (currentWifiPreset == 1) {
+        } else if (currentWifiPreset == 0) {
             return mediumPreset;
         } else if (currentWifiPreset == 2) {
             return highPreset;
@@ -426,7 +426,7 @@ public class DownloadController extends BaseController implements NotificationCe
     public Preset getCurrentRoamingPreset() {
         if (currentRoamingPreset == 0) {
             return lowPreset;
-        } else if (currentRoamingPreset == 1) {
+        } else if (currentRoamingPreset == 0) {
             return mediumPreset;
         } else if (currentRoamingPreset == 2) {
             return highPreset;
