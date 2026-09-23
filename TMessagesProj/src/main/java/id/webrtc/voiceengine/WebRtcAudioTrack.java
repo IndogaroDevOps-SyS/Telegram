@@ -22,7 +22,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import org.telegram.messenger.FileLog;
+import id.indogaro.messenger.FileLog;
 import org.webrtc.ContextUtils;
 import org.webrtc.Logging;
 import org.webrtc.ThreadUtils;

@@ -47,7 +47,7 @@
         <activity-alias
             android:enabled="false"
             android:name="id.indogaro.messenger.VintageIcon"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
+            android:targetActivity="id.indogaro.ui.LaunchActivity"
             android:icon="@mipmap/icon_6_launcher_sa"
             android:roundIcon="@mipmap/icon_6_launcher_sa"
             android:exported="true"
@@ -63,7 +63,7 @@
         <activity-alias
             android:enabled="false"
             android:name="id.indogaro.messenger.AquaIcon"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
+            android:targetActivity="id.indogaro.ui.LaunchActivity"
             android:icon="@mipmap/icon_4_launcher_sa"
             android:roundIcon="@mipmap/icon_4_launcher_sa"
             android:exported="true"
@@ -79,7 +79,7 @@
         <activity-alias
             android:enabled="false"
             android:name="id.indogaro.messenger.PremiumIcon"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
+            android:targetActivity="id.indogaro.ui.LaunchActivity"
             android:icon="@mipmap/icon_3_launcher_sa"
             android:roundIcon="@mipmap/icon_3_launcher_sa"
             android:exported="true"
@@ -95,7 +95,7 @@
         <activity-alias
             android:enabled="false"
             android:name="id.indogaro.messenger.TurboIcon"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
+            android:targetActivity="id.indogaro.ui.LaunchActivity"
             android:icon="@mipmap/icon_5_launcher_sa"
             android:roundIcon="@mipmap/icon_5_launcher_sa"
             android:exported="true"
@@ -111,7 +111,7 @@
         <activity-alias
             android:enabled="false"
             android:name="id.indogaro.messenger.NoxIcon"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
+            android:targetActivity="id.indogaro.ui.LaunchActivity"
             android:icon="@mipmap/icon_2_launcher_sa"
             android:roundIcon="@mipmap/icon_2_launcher_sa"
             android:exported="true"

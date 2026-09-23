@@ -21,7 +21,7 @@ import android.os.Message;
 import androidx.annotation.Nullable;
 import android.view.Surface;
 
-import org.telegram.messenger.FileLog;
+import id.indogaro.messenger.FileLog;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
