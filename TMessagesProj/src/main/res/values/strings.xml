@@ -11225,4 +11225,19 @@
     <string name="UnsupportedUpdate">Update</string>
     <string name="IndogaroBusiness">Indogaro Business</string>
     <string name="IndogaroPremium">Indogaro Premium</string>
+
+    <string name="UseProxyIndogaroInfo2">You can use proxy with custom settings in Indogaro.</string>
+    <string name="IndogaroVersion">Indogaro v%s</string>
+    <string name="GiftValueLastIndogaro">Last Indogaro Gift Value</string>
+    <string name="GiftValueOnSaleIndogaro">On Sale in Indogaro</string>
+    <string name="OpenInIndogaroBrowser2">Open in Indogaro Browser</string>
+    <string name="InviteToIndogaroShort">Invite to Indogaro</string>
+    <string name="NumberNotOnIndogaro">This number is not on Indogaro yet.</string>
+    <string name="VoiceCallViaIndogaro">Voice Call via Indogaro</string>
+    <string name="VideoCallViaIndogaro">Video Call via Indogaro</string>
+    <string name="CallViaIndogaro">Call via Indogaro</string>
+    <string name="IndogaroFaqUrl">https://indogaro.id/faq</string>
+    <string name="IndogaroFAQ">Indogaro FAQ</string>
+    <string name="MenuIndogaroStars">Indogaro Stars</string>
+    
 </resources>
