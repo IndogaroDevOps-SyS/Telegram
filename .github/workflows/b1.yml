@@ -1,4 +1,4 @@
-name: Build Telegram Android Official ARM64
+  name: Build Telegram Android Official ARM64
 
 on:
   push:
@@ -65,13 +65,6 @@ jobs:
         with:
           name: Telegram-Official-Release-APK
           path: 'TMessagesProj/build/outputs/apk/afat/release/*.apk'
-          retention-days: 30
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Telegram-Official-Release-APKss
-          path: 'TMessagesProj_App/build/outputs/apk/afat/release/app.apk'
           retention-days: 30
 
       - name: Create GitHub Release and Upload APK

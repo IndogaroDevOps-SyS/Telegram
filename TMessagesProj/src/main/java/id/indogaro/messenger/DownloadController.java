@@ -315,9 +315,9 @@ public class DownloadController extends BaseController implements NotificationCe
 
             // Indogaro: Paksa matikan total auto-download dengan menonaktifkan flag dan mengosongkan ukuran
             boolean globalAutodownloadEnabled = false;
-            mobilePreset = new Preset(0, 0, 0, 0, false, false, false, false, 0, false);
-            wifiPreset = new Preset(0, 0, 0, 0, false, false, false, false, 0, false);
-            roamingPreset = new Preset(0, 0, 0, 0, false, false, false, false, 0, false);
+            mobilePreset = new Preset(new int[10], 0, 0, 0, false, false, false, false, 0, false);
+            wifiPreset = new Preset(new int[10], 0, 0, 0, false, false, false, false, 0, false);
+            roamingPreset = new Preset(new int[10], 0, 0, 0, false, false, false, false, 0, false);
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("newConfig", true);
