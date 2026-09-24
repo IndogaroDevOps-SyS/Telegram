@@ -226,7 +226,12 @@ public class SearchAdapterHelper {
                                         if (!allowChats || canAddGroupsOnly && !ChatObject.canAddBotsToChat(chat) || !allowGlobalResults && ChatObject.isNotInChat(chat) || !filter(chat)) {
                                             continue;
                                         }
-                                        globalSearch.add(chat);
+                    // Indogaro Filter: Blokir Grup, izinkan Channel
+                    boolean isBroadcast = (chat.flags & TLRPC.CHAT_FLAG_BROADCAST) != 0;
+                    if (isBroadcast) {
+                        globalSearch.add(chat);
+                        globalSearchMap.put(-chat.id, chat);
+                    }
                                         globalSearchMap.put(-chat.id, chat);
                                     } else if (user != null) {
                                         if (canAddGroupsOnly || !allowBots && user.bot || !allowSelf && user.self || !allowGlobalResults && b == 1 && !user.contact || !filter(user)) {
