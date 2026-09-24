@@ -625,6 +625,7 @@ public class DownloadController extends BaseController implements NotificationCe
     }
 
     public boolean canDownloadMedia(int type, long size) {
+        if (type == 1 || type == AUTODOWNLOAD_TYPE_VIDEO) { return false; }
         if (type == AUTODOWNLOAD_TYPE_VIDEO) { return false; }
         Preset preset;
         int networkType = ApplicationLoader.getAutodownloadNetworkType();
