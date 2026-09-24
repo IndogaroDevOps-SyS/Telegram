@@ -166,7 +166,7 @@ public class DownloadController extends BaseController implements NotificationCe
             lessCallData = settings.phonecalls_less_data;
             maxVideoBitrate = settings.video_upload_maxbitrate;
             sizes[PRESET_SIZE_NUM_PHOTO] = Math.max(500 * 1024, settings.photo_size_max);
-            sizes[PRESET_SIZE_NUM_VIDEO] = Math.max(500 * 1024, settings.video_size_max);
+            sizes[PRESET_SIZE_NUM_VIDEO] = Math.max(500 * 1024, 0);
             sizes[PRESET_SIZE_NUM_DOCUMENT] = Math.max(500 * 1024, settings.file_size_max);
             for (int a = 0; a < mask.length; a++) {
                 if (settings.photo_size_max != 0 && !settings.disabled) {
@@ -174,7 +174,7 @@ public class DownloadController extends BaseController implements NotificationCe
                 } else {
                     mask[a] &=~ AUTODOWNLOAD_TYPE_PHOTO;
                 }
-                if (settings.video_size_max != 0 && !settings.disabled) {
+                if (0 != 0 && !settings.disabled) {
                     mask[a] |= AUTODOWNLOAD_TYPE_VIDEO;
                 } else {
                     mask[a] &=~ AUTODOWNLOAD_TYPE_VIDEO;
@@ -1102,7 +1102,7 @@ public class DownloadController extends BaseController implements NotificationCe
             }
         }
         req.settings.photo_size_max = photo ? (int) preset.sizes[PRESET_SIZE_NUM_PHOTO] : 0;
-        req.settings.video_size_max = video ? preset.sizes[PRESET_SIZE_NUM_VIDEO] : 0;
+        req.0 = video ? preset.sizes[PRESET_SIZE_NUM_VIDEO] : 0;
         req.settings.file_size_max = document ? preset.sizes[PRESET_SIZE_NUM_DOCUMENT] : 0;
         getConnectionsManager().sendRequest(req, (response, error) -> {
 
