@@ -3459,7 +3459,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         searchItem.setSearchFieldHint(getString(R.string.Search));
         searchItem.setContentDescription(getString(R.string.Search));
         if (onlySelect) {
-            actionBar.setBackButtonImage(R.drawable.ic_ab_back);
+            actionBar.setTitle("Indogaro");
+        actionBar.setBackButtonImage(R.drawable.ic_ab_back);
             if (initialDialogsType == DIALOGS_TYPE_BOT_SELECT_VERIFY) {
                 actionBar.setTitle(getString(R.string.BotChooseChatToVerify));
             } else if (isReplyTo) {
