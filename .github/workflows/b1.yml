@@ -62,9 +62,9 @@ jobs:
           path: build-logs/
 
       - name: Build Release APK (AFAT)
-         run: |
-           mkdir -p build-logs
-           ./gradlew TMessagesProj_App:assembleAfatRelease --no-daemon --stacktrace > build-logs/log-build.log 2>&1 || true
+        run: |
+          mkdir -p build-logs
+          ./gradlew :TMessagesProj_App:assembleAfatRelease --no-daemon --stacktrace > build-logs/log-build.log 2>&1 || true
 
       - name: uploud log
         if: failure()
