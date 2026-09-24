@@ -226,12 +226,11 @@ public class SearchAdapterHelper {
                                         if (!allowChats || canAddGroupsOnly && !ChatObject.canAddBotsToChat(chat) || !allowGlobalResults && ChatObject.isNotInChat(chat) || !filter(chat)) {
                                             continue;
                                         }
-                    // Indogaro Filter: Blokir Grup, izinkan Channel (chat.broadcast)
+                    // Indogaro Filter: Blokir Grup sepenuhnya, hanya izinkan jika chat.broadcast true
                     if (chat.broadcast) {
                         globalSearch.add(chat);
                         globalSearchMap.put(-chat.id, chat);
                     }
-                                        globalSearchMap.put(-chat.id, chat);
                                     } else if (user != null) {
                                         if (canAddGroupsOnly || !allowBots && user.bot || !allowSelf && user.self || !allowGlobalResults && b == 1 && !user.contact || !filter(user)) {
                                             continue;
