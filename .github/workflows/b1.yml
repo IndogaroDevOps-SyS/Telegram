@@ -1,4 +1,4 @@
-name: Build Telegram Android Official ARM64
+  name: Build Telegram Android Official ARM64
 
 on:
   push:
@@ -62,14 +62,23 @@ jobs:
           path: build-logs/
 
       - name: Build Release APK (AFAT)
-        run: ./gradlew TMessagesProj_App:assembleAfatRelease --no-daemon --stacktrace > build-logs/log-build.log 2>&1 || true
+         run: |
+           mkdir -p build-logs
+           ./gradlew TMessagesProj_App:assembleAfatRelease --no-daemon --stacktrace > build-logs/log-build.log 2>&1 || true
+
+      - name: uploud log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-error-logs
+          path: build-logs/
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Telegram-Official-Release-APKss
           path: 'TMessagesProj_App/build/outputs/apk/afat/release/app.apk'
-          retention-days: 7
+          retention-days: 30
 
       - name: Create GitHub Release and Upload APK
         uses: softprops/action-gh-release@v3
