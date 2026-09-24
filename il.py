@@ -2,51 +2,53 @@ import os
 import sys
 import argparse
 
-def write_log(log_path, data):
-    with open(log_path, "a", encoding="utf-8") as f:
-        f.write(data + "\n")
-
-def search_code(keyword, log_filename, root_dir="TMessagesProj"):
-    # Tentukan jalur penyimpanan log di /sdcard/ dengan nama kustom
-    log_path = f"/sdcard/{log_filename}" if not log_filename.startswith("/") else log_filename
-    
-    # Inisialisasi file log baru
-    with open(log_path, "w", encoding="utf-8") as f:
-        f.write(f"=== INDOGARO DEV TOOL LOG: '{keyword}' ===\n")
-
-    header = f"=== PENCARIAN KODE: '{keyword}' (Target: {root_dir}) ===\n"
-    print(header)
-    write_log(log_path, header)
-    
-    files = [os.path.join(dp, f) for dp, dn, filenames in os.walk(root_dir) for f in filenames]
-    found_count = 0
-    keyword_lower = keyword.lower()
-    
-    for file_path in files:
-        # Abaikan folder build, git, atau cache agar pencarian fokus
-        if "/build/" in file_path or "/.git/" in file_path or "/bin/" in file_path:
-            continue
-        try:
-            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                lines = f.readlines()
-            for idx, line in enumerate(lines):
-                if keyword_lower in line.lower():
-                    found_count += 1
-                    res = f"[FOUND] {file_path}:{idx + 1}\n   -> {line.strip()}"
-                    print(res)
-                    write_log(log_path, res + "\n")
-        except Exception as e:
-            continue
-            
-    summary = f"=== TOTAL KETEMU: {found_count} baris ===\nLog disimpan ke: {log_path}\n"
-    print(summary)
-    write_log(log_path, summary)
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Indogaro Advanced CLI Dev Tool untuk Pencarian Kode & Log Otomatis.")
-    parser.add_argument("-n", "--name", required=True, help="Kata kunci atau string kode yang ingin dicari.")
-    parser.add_argument("-l", "--log", default="indogaro_dev_log.txt", help="Nama file output log di /sdcard/ (default: indogaro_dev_log.txt).")
-    parser.add_argument("-d", "--dir", default="TMessagesProj", help="Direktori root yang ingin dipindai (default: TMessagesProj).")
+def search_code():
+    parser = argparse.ArgumentParser(description="Indogaro Code Search Tool (IL)")
+    parser.add_argument("-n", "--name", required=True, help="Keyword atau teks yang dicari")
+    parser.add_argument("-l", "--log", default="/sdcard/il_search_result.txt", help="Path file output log")
+    parser.add_argument("-p", "--path", default="TMessagesProj", help="Direktori atau spesifik file target pencarian")
     
     args = parser.parse_args()
-    search_code(args.name, args.log, args.dir)
+    
+    target = args.path
+    keyword = args.name
+    log_file = args.log
+    
+    found_results = []
+    
+    if os.path.isfile(target):
+        files_to_search = [target]
+    else:
+        files_to_search = []
+        for root, dirs, files in os.walk(target):
+            for file in files:
+                if file.endswith((".java", ".kt", ".py", ".xml", ".gradle")):
+                    files_to_search.append(os.path.join(root, file))
+                    
+    print(f"=== PENCARIAN KODE: \x1b[36m{keyword}\x1b[0m (Target: {target}) ===")
+    
+    for filepath in files_to_search:
+        try:
+            with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+                for line_num, line in enumerate(f, 1):
+                    if keyword in line:
+                        res = f"[FOUND] {filepath}:{line_num}\n   -> {line.strip()}\n"
+                        found_results.append(res)
+        except Exception as e:
+            pass
+            
+    output = f"=== INDOGARO DEV TOOL LOG: '{keyword}' ===\n"
+    if found_results:
+        output += "".join(found_results)
+        output += f"=== TOTAL KETEMU: {len(found_results)} baris ==="
+    else:
+        output += "=== TIDAK ADA HASIL YANG DITEMUKAN ==="
+        
+    with open(log_file, "w", encoding="utf-8") as f:
+        f.write(output)
+        
+    print(output)
+    print(f"\nLog disimpan ke: {log_file}")
+
+if __name__ == "__main__":
+    search_code()

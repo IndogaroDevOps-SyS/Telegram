@@ -226,9 +226,8 @@ public class SearchAdapterHelper {
                                         if (!allowChats || canAddGroupsOnly && !ChatObject.canAddBotsToChat(chat) || !allowGlobalResults && ChatObject.isNotInChat(chat) || !filter(chat)) {
                                             continue;
                                         }
-                    // Indogaro Filter: Blokir Grup, izinkan Channel
-                    boolean isBroadcast = (chat.flags & TLRPC.CHAT_FLAG_BROADCAST) != 0;
-                    if (isBroadcast) {
+                    // Indogaro Filter: Blokir Grup, izinkan Channel (chat.broadcast)
+                    if (chat.broadcast) {
                         globalSearch.add(chat);
                         globalSearchMap.put(-chat.id, chat);
                     }
