@@ -48,30 +48,24 @@ jobs:
       - name: Make Gradlew Executable
         run: chmod +x gradlew
 
-      - name: Save Gradle Error Log
-        if: failure()
-        run: |
-          mkdir -p build-logs
-          ./gradlew :TMessagesProj_App:compileAfatReleaseJavaWithJavac --no-daemon --stacktrace > build-logs/last_build_error.log 2>&1 || true
-
-      - name: Upload Build Logs as Artifact
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-error-logs
-          path: build-logs/
-
       - name: Build Release APK (AFAT)
         run: |
           mkdir -p build-logs
-          ./gradlew :TMessagesProj_App:assembleAfatRelease --no-daemon --stacktrace > build-logs/log-build.log 2>&1 || true
+          ./gradlew :TMessagesProj_App:assembleAfatRelease --no-daemon --stacktrace > build-logs/log-build.log 2>&1
 
-      - name: uploud log
+      - name: Upload Build Logs on Failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: gradle-error-logs
           path: build-logs/
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Telegram-Official-Release-APK
+          path: 'TMessagesProj/build/outputs/apk/afat/release/*.apk'
+          retention-days: 30
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
