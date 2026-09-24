@@ -1,4 +1,4 @@
-  name: Build Telegram Android Official ARM64
+name: Build Telegram Android Official ARM64
 
 on:
   push:
