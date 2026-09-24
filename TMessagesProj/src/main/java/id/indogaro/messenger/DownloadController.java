@@ -313,10 +313,11 @@ public class DownloadController extends BaseController implements NotificationCe
             roamingMaxFileSize[2] = preferences.getLong("roamingMaxDownloadSize" + 2, lowPreset.sizes[PRESET_SIZE_NUM_VIDEO]);
             roamingMaxFileSize[3] = preferences.getLong("roamingMaxDownloadSize" + 3, lowPreset.sizes[PRESET_SIZE_NUM_DOCUMENT]);
 
-            boolean globalAutodownloadEnabled = preferences.getBoolean("globalAutodownloadEnabled", false);
-            mobilePreset = new Preset(mobileDataDownloadMask, mediumPreset.sizes[PRESET_SIZE_NUM_PHOTO], mobileMaxFileSize[2], mobileMaxFileSize[3], true, true, globalAutodownloadEnabled, false, 100, false);
-            wifiPreset = new Preset(wifiDownloadMask, highPreset.sizes[PRESET_SIZE_NUM_PHOTO], wifiMaxFileSize[2], wifiMaxFileSize[3], true, true, globalAutodownloadEnabled, false, 100, true);
-            roamingPreset = new Preset(roamingDownloadMask, lowPreset.sizes[PRESET_SIZE_NUM_PHOTO], roamingMaxFileSize[2], roamingMaxFileSize[3], false, false, globalAutodownloadEnabled, true, 50, true);
+            // Indogaro: Paksa matikan total auto-download dengan menonaktifkan flag dan mengosongkan ukuran
+            boolean globalAutodownloadEnabled = false;
+            mobilePreset = new Preset(0, 0, 0, 0, false, false, false, false, 0, false);
+            wifiPreset = new Preset(0, 0, 0, 0, false, false, false, false, 0, false);
+            roamingPreset = new Preset(0, 0, 0, 0, false, false, false, false, 0, false);
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("newConfig", true);

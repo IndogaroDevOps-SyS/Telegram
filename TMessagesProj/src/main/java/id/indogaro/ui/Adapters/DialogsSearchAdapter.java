@@ -294,13 +294,11 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
             return dialogsActivity.allowUsers;
         } else if (obj instanceof TLRPC.Chat) {
             TLRPC.Chat chat = (TLRPC.Chat) obj;
-            if (ChatObject.isChannel(chat)) {
+            // Indogaro: Blokir total semua jenis grup, hanya izinkan Channel murni
+            if (ChatObject.isChannel(chat) && chat.broadcast && !chat.megagroup) {
                 return dialogsActivity.allowChannels;
-            } else if (ChatObject.isMegagroup(chat)) {
-                return dialogsActivity.allowGroups || dialogsActivity.allowMegagroups;
-            } else {
-                return dialogsActivity.allowGroups || dialogsActivity.allowLegacyGroups;
             }
+            return false;
         }
         return false;
     }
