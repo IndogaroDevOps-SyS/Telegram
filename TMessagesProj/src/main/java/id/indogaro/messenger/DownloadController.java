@@ -262,15 +262,18 @@ public class DownloadController extends BaseController implements NotificationCe
         String defaultMedium = "13_13_13_13_1048576_10485760_1048576_524288_1_1_1_0_100_1";
         String defaultHigh = "13_13_13_13_1048576_15728640_3145728_524288_1_1_1_0_100_1";
         lowPreset = new Preset(preferences.getString("preset0", defaultLow), defaultLow);
-        lowPreset.sizes[0] = 0; lowPreset.sizes[1] = 0; lowPreset.sizes[2] = 0; lowPreset.sizes[3] = 0;
-        mediumPreset.sizes[0] = 0; mediumPreset.sizes[1] = 0; mediumPreset.sizes[2] = 0; mediumPreset.sizes[3] = 0;
-        highPreset.sizes[0] = 0; highPreset.sizes[1] = 0; highPreset.sizes[2] = 0; highPreset.sizes[3] = 0;
-        mobilePreset.sizes[0] = 0; mobilePreset.sizes[1] = 0; mobilePreset.sizes[2] = 0; mobilePreset.sizes[3] = 0;
-        wifiPreset.sizes[0] = 0; wifiPreset.sizes[1] = 0; wifiPreset.sizes[2] = 0; wifiPreset.sizes[3] = 0;
-        roamingPreset.sizes[0] = 0; roamingPreset.sizes[1] = 0; roamingPreset.sizes[2] = 0; roamingPreset.sizes[3] = 0;
-        lowPreset.preloadStories = false;
         mediumPreset = new Preset(preferences.getString("preset1", defaultMedium), defaultMedium);
         highPreset = new Preset(preferences.getString("preset2", defaultHigh), defaultHigh);
+        mobilePreset = new Preset(preferences.getString("mobilePreset", defaultMedium), defaultMedium);
+        wifiPreset = new Preset(preferences.getString("wifiPreset", defaultHigh), defaultHigh);
+        roamingPreset = new Preset(preferences.getString("roamingPreset", defaultLow), defaultLow);
+        if (lowPreset.sizes != null) { for (int i = 0; i < lowPreset.sizes.length; i++) { lowPreset.sizes[i] = 0; } }
+        if (mediumPreset.sizes != null) { for (int i = 0; i < mediumPreset.sizes.length; i++) { mediumPreset.sizes[i] = 0; } }
+        if (highPreset.sizes != null) { for (int i = 0; i < highPreset.sizes.length; i++) { highPreset.sizes[i] = 0; } }
+        if (mobilePreset.sizes != null) { for (int i = 0; i < mobilePreset.sizes.length; i++) { mobilePreset.sizes[i] = 0; } }
+        if (wifiPreset.sizes != null) { for (int i = 0; i < wifiPreset.sizes.length; i++) { wifiPreset.sizes[i] = 0; } }
+        if (roamingPreset.sizes != null) { for (int i = 0; i < roamingPreset.sizes.length; i++) { roamingPreset.sizes[i] = 0; } }
+        lowPreset.preloadStories = false;
         boolean newConfig;
         if ((newConfig = preferences.contains("newConfig")) || !getUserConfig().isClientActivated()) {
             mobilePreset = new Preset(preferences.getString("mobilePreset", defaultMedium), defaultMedium);
