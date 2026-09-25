@@ -64,7 +64,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Telegram-Official-Release-APK
-          path: 'TMessagesProj/build/outputs/apk/afat/release/*.apk'
+          path: 'TMessagesProj/build/outputs/apk/afat/release/app.apk'
           retention-days: 30
 
       - name: Create GitHub Release and Upload APK
