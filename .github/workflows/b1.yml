@@ -27,7 +27,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-
       - name: Set up Java JDK 17
         uses: actions/setup-java@v5
         with:
@@ -44,21 +43,30 @@ jobs:
           touch local.properties
           echo "API_ID=${{ secrets.TELEGRAM_API_ID }}" >> local.properties
           echo "API_HASH=${{ secrets.TELEGRAM_API_HASH }}" >> local.properties
-
       - name: Make Gradlew Executable
         run: chmod +x gradlew
 
-      - name: Build Release APK (AFAT)
+      - name: Save Gradle Error Log
+        if: failure()
         run: |
           mkdir -p build-logs
-          ./gradlew :TMessagesProj_App:assembleAfatRelease --no-daemon --stacktrace
+          ./gradlew :TMessagesProj_App:compileAfatReleaseJavaWithJavac --no-daemon --stacktrace > build-logs/last_build_error.log 2>&1 || true
+      - name: Upload Build Logs as Artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-error-logs
+          path: build-logs/
+
+      - name: Build Release APK (AFAT)
+        run: ./gradlew TMessagesProj_App:assembleAfatRelease --stacktrace 
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Telegram-Official-Release-APK
-          path: 'TMessagesProj/build/outputs/apk/afat/release/app.apk'
-          retention-days: 30
+          name: Telegram-Official-Release-APKss
+          path: 'TMessagesProj_App/build/outputs/apk/afat/release/app.apk'
+          retention-days: 7
 
       - name: Create GitHub Release and Upload APK
         uses: softprops/action-gh-release@v3
