@@ -51,14 +51,7 @@ jobs:
       - name: Build Release APK (AFAT)
         run: |
           mkdir -p build-logs
-          ./gradlew :TMessagesProj_App:assembleAfatRelease --no-daemon --stacktrace > build-logs/log-build.log 2>&1
-
-      - name: Upload Build Logs on Failure
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-error-logs
-          path: build-logs/
+          ./gradlew :TMessagesProj_App:assembleAfatRelease --no-daemon --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
