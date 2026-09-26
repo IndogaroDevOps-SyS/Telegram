@@ -858,6 +858,9 @@ public class DownloadController extends BaseController implements NotificationCe
     }
 
     public int canDownloadMedia(TLRPC.Message message) {
+        // Indogaro: Blokir total unduh otomatis video
+        if (message != null && MessageObject.isVideoMessage(message)) { return 0; }
+
         if (message == null || message.media instanceof TLRPC.TL_messageMediaStory) {
             return canPreloadStories() ? 2 : 0;
         }
