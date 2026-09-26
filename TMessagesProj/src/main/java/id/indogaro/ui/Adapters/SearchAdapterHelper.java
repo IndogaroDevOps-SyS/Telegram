@@ -188,6 +188,35 @@ public class SearchAdapterHelper {
                             globalSearch.clear();
                             globalSearchMap.clear();
                             localServerSearch.clear();
+
+                            // Indogaro: Purge all non-channel chats (groups/megagroups) from global server response
+                            if (res.chats != null) {
+                                java.util.Iterator<TLRPC.Chat> chatIterator = res.chats.iterator();
+                                while (chatIterator.hasNext()) {
+                                    TLRPC.Chat c = chatIterator.next();
+                                    if (!ChatObject.isChannel(c) || !c.broadcast || c.megagroup) {
+                                        chatIterator.remove();
+                                    }
+                                }
+                            }
+                            if (res.results != null) {
+                                java.util.Iterator<TLRPC.Peer> peerIterator = res.results.iterator();
+                                while (peerIterator.hasNext()) {
+                                    TLRPC.Peer peer = peerIterator.next();
+                                    if (peer.channel_id == 0) {
+                                        peerIterator.remove();
+                                    }
+                                }
+                            }
+                            if (res.my_results != null) {
+                                java.util.Iterator<TLRPC.Peer> peerIterator = res.my_results.iterator();
+                                while (peerIterator.hasNext()) {
+                                    TLRPC.Peer peer = peerIterator.next();
+                                    if (peer.channel_id == 0) {
+                                        peerIterator.remove();
+                                    }
+                                }
+                            }
                             MessagesController.getInstance(currentAccount).putChats(res.chats, false);
                             MessagesController.getInstance(currentAccount).putUsers(res.users, false);
                             MessagesStorage.getInstance(currentAccount).putUsersAndChats(res.users, res.chats, true, true);
