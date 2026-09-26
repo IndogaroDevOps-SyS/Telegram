@@ -617,21 +617,8 @@ public class DownloadController extends BaseController implements NotificationCe
     }
 
     public boolean canDownloadMedia(MessageObject messageObject) {
-        if (messageObject.type == MessageObject.TYPE_STORY) {
-            if (!SharedConfig.isAutoplayVideo()) return false;
-            TLRPC.TL_messageMediaStory mediaStory = (TLRPC.TL_messageMediaStory) MessageObject.getMedia(messageObject);
-            TL_stories.StoryItem storyItem = mediaStory.storyItem;
-            if (storyItem == null || storyItem.media == null || storyItem.media.document == null || !storyItem.isPublic) {
-                return false;
-            }
-            return true;
-        }
-        if (messageObject.sponsoredMedia != null) {
-            return true;
-        }
-        if (messageObject.isHiddenSensitive())
-            return false;
-        return canDownloadMediaInternal(messageObject) == 1;
+        // Indogaro: Blokir total semua unduhan otomatis media
+        return false;
     }
 
     public boolean canDownloadMedia(int type, long size) {
