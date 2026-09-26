@@ -756,9 +756,16 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                             add = true;
                         }
                     } else {
-                        if (!chatsToLoad.contains(-did)) {
-                            chatsToLoad.add(-did);
-                            add = true;
+                        // Indogaro: Blokir total grup/supergrup dari pencarian lokal
+                        long chatId = -did;
+                        TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(chatId);
+                        if (chat != null && ChatObject.isChannel(chat) && chat.broadcast && !chat.megagroup) {
+                            if (!chatsToLoad.contains(chatId)) {
+                                chatsToLoad.add(chatId);
+                                add = true;
+                            }
+                        } else {
+                            add = false;
                         }
                     }
                     if (add) {
