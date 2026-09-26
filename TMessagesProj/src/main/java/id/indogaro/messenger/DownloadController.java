@@ -1129,6 +1129,10 @@ public class DownloadController extends BaseController implements NotificationCe
     }
 
     protected void processDownloadObjects(int type, ArrayList<DownloadObject> objects) {
+        // Indogaro: Blokir total semua pemrosesan antrean unduhan otomatis video
+        if (type == AUTODOWNLOAD_TYPE_VIDEO || type == 4) {
+            return;
+        }
         if (objects.isEmpty()) {
             return;
         }
