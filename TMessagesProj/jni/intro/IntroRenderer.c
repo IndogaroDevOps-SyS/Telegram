@@ -127,6 +127,9 @@ float anim_pin_start_time, anim_pin_duration;
 static int32_t anim_pencil_period;
 static mat4x4 private_matrix;
 float cloud_scroll_offset;
+static GLuint indogaro_texture_1;
+static GLuint indogaro_texture_2;
+static GLuint indogaro_texture_3;
 
 vec4 background_color = {1, 1, 1, 1};
 
@@ -2656,6 +2659,12 @@ JNIEXPORT void Java_id_indogaro_messenger_Intro_setPowerfulTextures(JNIEnv *env,
     powerful_star_texture = a_powerful_star;
     powerful_infinity_texture = a_powerful_infinity;
     powerful_infinity_white_texture = a_powerful_infinity_white;
+}
+
+JNIEXPORT void Java_id_indogaro_messenger_Intro_setIndogaroTextures(JNIEnv *env, jclass class, GLuint a_indogaro_1, GLuint a_indogaro_2, GLuint a_indogaro_3) {
+    indogaro_texture_1 = a_indogaro_1;
+    indogaro_texture_2 = a_indogaro_2;
+    indogaro_texture_3 = a_indogaro_3;
 }
 
 JNIEXPORT void Java_id_indogaro_messenger_Intro_setPrivateTextures(JNIEnv *env, jclass class, GLuint a_private_door, GLuint a_private_screw) {
