@@ -6708,19 +6708,19 @@ public class MessagesController extends BaseController implements NotificationCe
                 return migratedTo.noforwards;
             }
         }
-        return false;
+        return chat.noforwards;
     }
 
     public boolean isChatNoForwards(long chatId) {
-        return false;
+        return isChatNoForwards(getChat(chatId));
     }
 
     public boolean isPeerNoForwards(long dialogId) {
-        return false;
+        return dialogId > 0 ? isUserNoForwards(dialogId) : isChatNoForwards(-dialogId);
     }
 
     public boolean isUserNoForwards(long userId) {
-        return false;
+        return isUserNoForwards(getUserFull(userId));
     }
 
     public boolean isUserNoForwards(TLRPC.UserFull userFull) {
@@ -6728,7 +6728,7 @@ public class MessagesController extends BaseController implements NotificationCe
             return false;
         }
 
-        return false;
+        return userFull.noforwards_peer_enabled || userFull.noforwards_my_enabled;
     }
 
     public TLRPC.User getUser(Long id) {
