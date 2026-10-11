@@ -40,9 +40,9 @@ jobs:
 
       - name: Inject Telegram API Credentials
         run: |
-          touch local.properties
-          echo "API_ID=${{ secrets.TELEGRAM_API_ID }}" >> local.properties
-          echo "API_HASH=${{ secrets.TELEGRAM_API_HASH }}" >> local.properties
+          sed -i 's/public static int APP_ID = .*/public static int APP_ID = ${{ secrets.TELEGRAM_APP_ID }};/' TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+          sed -i 's/public static String APP_HASH = .*/public static String APP_HASH = "${{ secrets.TELEGRAM_APP_HASH }}";/' TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+
       - name: Make Gradlew Executable
         run: chmod +x gradlew
 
