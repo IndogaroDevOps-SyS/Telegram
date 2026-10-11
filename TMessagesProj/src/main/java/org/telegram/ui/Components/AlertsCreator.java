@@ -1,5 +1,5 @@
 /*
- * This is the source code of Indogaro for Android v. 5.x.x.
+ * This is the source code of Telegram for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -1638,7 +1638,7 @@ public class AlertsCreator {
         ArrayList<Integer> types = new ArrayList<>();
         int providers = MessagesController.getInstance(currentAccount).availableMapProviders;
         if ((providers & 1) != 0) {
-            arrayList.add(LocaleController.getString(R.string.MapPreviewProviderIndogaro));
+            arrayList.add(LocaleController.getString(R.string.MapPreviewProviderTelegram));
             types.add(0);
         }
         if ((providers & 2) != 0) {
@@ -5221,8 +5221,8 @@ public class AlertsCreator {
         buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         buttonTextView.setTypeface(AndroidUtilities.bold());
         buttonTextView.setText(button);
-        buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(8), Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider), Theme.getColor(Theme.key_featuredStickers_addButtonPressed, resourcesProvider)));
-        ScaleStateListAnimator.apply(buttonTextView);
+        buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(24), Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider), Theme.getColor(Theme.key_featuredStickers_addButtonPressed, resourcesProvider)));
+        ScaleStateListAnimator.apply(buttonTextView, .02f, 1.2f);
         container.addView(buttonTextView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.BOTTOM, 16, showRemoveYear ? 0 : 15, 16, showDelete ? 0 : 16));
         buttonTextView.setOnClickListener(v -> {
             TL_account.TL_birthday b = new TL_account.TL_birthday();
@@ -5239,6 +5239,7 @@ public class AlertsCreator {
         if (showDelete) {
             final ButtonWithCounterView button2 = new ButtonWithCounterView(context, false, resourcesProvider);
             button2.setText(getString(R.string.BirthdayRemove), false);
+            button2.setRound();
             button2.setOnClickListener(v -> {
                 builder.getDismissRunnable().run();
                 whenSelectedBirthday.run(null);

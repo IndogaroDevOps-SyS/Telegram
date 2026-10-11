@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.car.app.Screen;
 import androidx.car.app.Session;
 
-public class IndogaroCarSession extends Session {
+public class TelegramCarSession extends Session {
 
     @NonNull
     @Override

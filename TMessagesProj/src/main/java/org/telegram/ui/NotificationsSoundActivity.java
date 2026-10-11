@@ -683,7 +683,7 @@ public class NotificationsSoundActivity extends BaseFragment implements ChatAtta
                 case 1:
                     HeaderCell headerCell = (HeaderCell) holder.itemView;
                     if (position == serverTonesHeaderRow) {
-                        headerCell.setText(LocaleController.getString(R.string.IndogaroTones));
+                        headerCell.setText(LocaleController.getString(R.string.TelegramTones));
                     } else if (position == systemTonesHeaderRow) {
                         headerCell.setText(LocaleController.getString(R.string.SystemTones));
                     }

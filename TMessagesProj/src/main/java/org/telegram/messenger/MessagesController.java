@@ -1,5 +1,5 @@
 /*
- * This is the source code of Indogaro for Android v. 5.x.x.
+ * This is the source code of Telegram for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -621,8 +621,8 @@ public class MessagesController extends BaseController implements NotificationCe
     public int reactionsInChatMax;
     public int forumUpgradeParticipantsMin;
     public int topicsPinnedLimit;
-    public long indogaroAntispamUserId;
-    public int indogaroAntispamGroupSizeMin;
+    public long telegramAntispamUserId;
+    public int telegramAntispamGroupSizeMin;
     public int hiddenMembersGroupSizeMin;
     private int chatlistUpdatePeriod;
     public int storyExpiringLimitDefault;
@@ -1676,8 +1676,8 @@ public class MessagesController extends BaseController implements NotificationCe
         transcribeButtonPressed = mainPreferences.getInt("transcribeButtonPressed", 0);
         forumUpgradeParticipantsMin = mainPreferences.getInt("forumUpgradeParticipantsMin", 200);
         topicsPinnedLimit = mainPreferences.getInt("topicsPinnedLimit", 3);
-        indogaroAntispamUserId = mainPreferences.getLong("indogaroAntispamUserId", -1);
-        indogaroAntispamGroupSizeMin = mainPreferences.getInt("indogaroAntispamGroupSizeMin", 100);
+        telegramAntispamUserId = mainPreferences.getLong("telegramAntispamUserId", -1);
+        telegramAntispamGroupSizeMin = mainPreferences.getInt("telegramAntispamGroupSizeMin", 100);
         hiddenMembersGroupSizeMin = mainPreferences.getInt("hiddenMembersGroupSizeMin", 100);
         chatlistUpdatePeriod = mainPreferences.getInt("chatlistUpdatePeriod", 3600);
         uploadMarkupVideo = mainPreferences.getBoolean("uploadMarkupVideo", true);
@@ -1774,7 +1774,7 @@ public class MessagesController extends BaseController implements NotificationCe
         channelRevenueWithdrawalEnabled = mainPreferences.getBoolean("channelRevenueWithdrawalEnabled", false);
         newNoncontactPeersRequirePremiumWithoutOwnpremium = mainPreferences.getBoolean("newNoncontactPeersRequirePremiumWithoutOwnpremium", false);
         reactionsUniqMax = mainPreferences.getInt("reactionsUniqMax", 11);
-        premiumManageSubscriptionUrl = mainPreferences.getString("premiumManageSubscriptionUrl", ApplicationLoader.isStandaloneBuild() ? "https://t.me/premiumbot?start=status" : "https://play.google.com/store/account/subscriptions?sku=indogaro_premium&package=org.telegram.messenger");
+        premiumManageSubscriptionUrl = mainPreferences.getString("premiumManageSubscriptionUrl", ApplicationLoader.isStandaloneBuild() ? "https://t.me/premiumbot?start=status" : "https://play.google.com/store/account/subscriptions?sku=telegram_premium&package=org.telegram.messenger");
         androidDisableRoundCamera2 = mainPreferences.getBoolean("androidDisableRoundCamera2", true);
         storiesPinnedToTopCountMax = mainPreferences.getInt("storiesPinnedToTopCountMax", 3);
         showAnnualPerMonth = mainPreferences.getBoolean("showAnnualPerMonth", false);
@@ -3759,14 +3759,14 @@ public class MessagesController extends BaseController implements NotificationCe
                     }
                     break;
                 }
-                case "indogaro_antispam_user_id": {
+                case "telegram_antispam_user_id": {
                     if (value.value instanceof TLRPC.TL_jsonString) {
                         TLRPC.TL_jsonString string = (TLRPC.TL_jsonString) value.value;
                         try {
                             long number = Long.parseLong(string.value);
-                            if (number != indogaroAntispamUserId) {
-                                indogaroAntispamUserId = number;
-                                editor.putLong("indogaroAntispamUserId", indogaroAntispamUserId);
+                            if (number != telegramAntispamUserId) {
+                                telegramAntispamUserId = number;
+                                editor.putLong("telegramAntispamUserId", telegramAntispamUserId);
                                 changed = true;
                             }
                         } catch (Exception e) {
@@ -3775,12 +3775,12 @@ public class MessagesController extends BaseController implements NotificationCe
                     }
                     break;
                 }
-                case "indogaro_antispam_group_size_min": {
+                case "telegram_antispam_group_size_min": {
                     if (value.value instanceof TLRPC.TL_jsonNumber) {
                         TLRPC.TL_jsonNumber number = (TLRPC.TL_jsonNumber) value.value;
-                        if (number.value != indogaroAntispamGroupSizeMin) {
-                            indogaroAntispamGroupSizeMin = (int) number.value;
-                            editor.putInt("indogaroAntispamGroupSizeMin", indogaroAntispamGroupSizeMin);
+                        if (number.value != telegramAntispamGroupSizeMin) {
+                            telegramAntispamGroupSizeMin = (int) number.value;
+                            editor.putInt("telegramAntispamGroupSizeMin", telegramAntispamGroupSizeMin);
                             changed = true;
                         }
                     }
@@ -5737,7 +5737,7 @@ public class MessagesController extends BaseController implements NotificationCe
             Theme.checkCurrentRemoteTheme(false);
 
             if (config.static_maps_provider == null) {
-                config.static_maps_provider = "indogaro";
+                config.static_maps_provider = "telegram";
             }
 
             mapKey = null;
@@ -5766,7 +5766,7 @@ public class MessagesController extends BaseController implements NotificationCe
                                 }
                             }
                             availableMapProviders |= 1;
-                        } else if ("indogaro".equals(typeAndKey[0])) {
+                        } else if ("telegram".equals(typeAndKey[0])) {
                             if (a == 0) {
                                 mapProvider = 2;
                             }
@@ -5829,7 +5829,7 @@ public class MessagesController extends BaseController implements NotificationCe
         TLRPC.TL_userForeign_old2 user = new TLRPC.TL_userForeign_old2();
         user.phone = "333";
         user.id = 333000;
-        user.first_name = "Indogaro";
+        user.first_name = "Telegram";
         user.last_name = "";
         user.status = null;
         user.photo = new TLRPC.TL_userProfilePhotoEmpty();
@@ -5839,7 +5839,7 @@ public class MessagesController extends BaseController implements NotificationCe
         user.phone = "42777";
         user.id = 777000;
         user.verified = true;
-        user.first_name = "Indogaro";
+        user.first_name = "Telegram";
         user.last_name = "Notifications";
         user.status = null;
         user.photo = new TLRPC.TL_userProfilePhotoEmpty();
@@ -6699,23 +6699,36 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public boolean isChatNoForwards(TLRPC.Chat chat) {
-        return false;
+        if (chat == null) {
+            return false;
+        }
+        if (chat.migrated_to != null) {
+            TLRPC.Chat migratedTo = getChat(chat.migrated_to.channel_id);
+            if (migratedTo != null) {
+                return migratedTo.noforwards;
+            }
+        }
+        return chat.noforwards;
     }
 
     public boolean isChatNoForwards(long chatId) {
-        return false;
+        return isChatNoForwards(getChat(chatId));
     }
 
     public boolean isPeerNoForwards(long dialogId) {
-        return false;
+        return dialogId > 0 ? isUserNoForwards(dialogId) : isChatNoForwards(-dialogId);
     }
 
     public boolean isUserNoForwards(long userId) {
-        return false;
+        return isUserNoForwards(getUserFull(userId));
     }
-    
+
     public boolean isUserNoForwards(TLRPC.UserFull userFull) {
-        return false;
+        if (userFull == null) {
+            return false;
+        }
+
+        return userFull.noforwards_peer_enabled || userFull.noforwards_my_enabled;
     }
 
     public TLRPC.User getUser(Long id) {
@@ -8085,7 +8098,7 @@ public class MessagesController extends BaseController implements NotificationCe
         }
         if (dialogId == getUserConfig().getClientUserId()) {
             settings.business_bot_id = UserObject.REPLY_BOT;
-            settings.business_bot_manage_url = "https://indogaro.org/";
+            settings.business_bot_manage_url = "https://telegram.org/";
         }
         editor.apply();
         userPeerSettings.put(dialogId, settings);

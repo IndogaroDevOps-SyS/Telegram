@@ -1,5 +1,5 @@
 /*
- * This is the source code of Indogaro for Android v. 5.x.x.
+ * This is the source code of Telegram for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -188,35 +188,6 @@ public class SearchAdapterHelper {
                             globalSearch.clear();
                             globalSearchMap.clear();
                             localServerSearch.clear();
-
-                            // Indogaro: Purge all non-channel chats (groups/megagroups) from global server response
-                            if (res.chats != null) {
-                                java.util.Iterator<TLRPC.Chat> chatIterator = res.chats.iterator();
-                                while (chatIterator.hasNext()) {
-                                    TLRPC.Chat c = chatIterator.next();
-                                    if (!ChatObject.isChannel(c) || !c.broadcast || c.megagroup) {
-                                        chatIterator.remove();
-                                    }
-                                }
-                            }
-                            if (res.results != null) {
-                                java.util.Iterator<TLRPC.Peer> peerIterator = res.results.iterator();
-                                while (peerIterator.hasNext()) {
-                                    TLRPC.Peer peer = peerIterator.next();
-                                    if (peer.channel_id == 0) {
-                                        peerIterator.remove();
-                                    }
-                                }
-                            }
-                            if (res.my_results != null) {
-                                java.util.Iterator<TLRPC.Peer> peerIterator = res.my_results.iterator();
-                                while (peerIterator.hasNext()) {
-                                    TLRPC.Peer peer = peerIterator.next();
-                                    if (peer.channel_id == 0) {
-                                        peerIterator.remove();
-                                    }
-                                }
-                            }
                             MessagesController.getInstance(currentAccount).putChats(res.chats, false);
                             MessagesController.getInstance(currentAccount).putUsers(res.users, false);
                             MessagesStorage.getInstance(currentAccount).putUsersAndChats(res.users, res.chats, true, true);
@@ -255,11 +226,8 @@ public class SearchAdapterHelper {
                                         if (!allowChats || canAddGroupsOnly && !ChatObject.canAddBotsToChat(chat) || !allowGlobalResults && ChatObject.isNotInChat(chat) || !filter(chat)) {
                                             continue;
                                         }
-                    // Indogaro Filter: Blokir Grup sepenuhnya, hanya izinkan jika chat.broadcast true
-                    if (chat.broadcast) {
-                        globalSearch.add(chat);
-                        globalSearchMap.put(-chat.id, chat);
-                    }
+                                        globalSearch.add(chat);
+                                        globalSearchMap.put(-chat.id, chat);
                                     } else if (user != null) {
                                         if (canAddGroupsOnly || !allowBots && user.bot || !allowSelf && user.self || !allowGlobalResults && b == 1 && !user.contact || !filter(user)) {
                                             continue;

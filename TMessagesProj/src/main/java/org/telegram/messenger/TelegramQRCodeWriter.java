@@ -42,7 +42,7 @@ import java.util.Map;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-public final class IndogaroQRCodeWriter {
+public final class TelegramQRCodeWriter {
 
   private static final int QUIET_ZONE_SIZE = 4;
   private ByteMatrix input;

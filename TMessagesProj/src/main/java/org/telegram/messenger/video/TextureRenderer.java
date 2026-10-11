@@ -1,5 +1,5 @@
 /*
- * This is the source code of Indogaro for Android v. 6.x.x.
+ * This is the source code of Telegram for Android v. 6.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -1513,7 +1513,7 @@ public class TextureRenderer {
                 return;
             }
             entity.bitmap = Bitmap.createBitmap(entity.W, entity.H, Bitmap.Config.ARGB_8888);
-            entity.lottieNative = RLottieNative.createFromFile(entity.text, null, entity.W, entity.H, false, null, false, 0);
+            entity.lottieNative = RLottieNative.createFromFile(entity.text);
             entity.framesPerDraw = entity.lottieNative != null ? entity.lottieNative.getFps() / videoFps : 0;
         } else if ((entity.subType & 4) != 0) {
             entity.looped = false;

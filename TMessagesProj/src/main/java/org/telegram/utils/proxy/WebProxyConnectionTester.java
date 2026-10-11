@@ -1,4 +1,4 @@
-package org.telegram.proxy;
+package org.telegram.utils.proxy;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.tgnet.RequestTimeDelegate;
@@ -59,7 +59,11 @@ public final class WebProxyConnectionTester {
             RequestTimeDelegate delegate,
             TestImplementation testImplementation
     ) {
-        if (testImplementation == null || settings == null || delegate == null) {
+        if (testImplementation == null
+                || settings == null
+                || settings.getType() != ProxySettings.Type.WEB
+                || !settings.isValid()
+                || delegate == null) {
             if (delegate != null) {
                 delegate.run(-1);
             }

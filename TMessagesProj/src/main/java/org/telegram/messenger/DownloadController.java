@@ -1,5 +1,5 @@
 /*
- * This is the source code of Indogaro for Android v. 5.x.x.
+ * This is the source code of Telegram for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -45,18 +45,18 @@ public class DownloadController extends BaseController implements NotificationCe
         int getObserverTag();
     }
 
-    public static final int AUTODOWNLOAD_TYPE_PHOTO = 0;
+    public static final int AUTODOWNLOAD_TYPE_PHOTO = 1;
     public static final int AUTODOWNLOAD_TYPE_AUDIO = 2;
     public static final int AUTODOWNLOAD_TYPE_VIDEO = 4;
     public static final int AUTODOWNLOAD_TYPE_DOCUMENT = 8;
 
     public static final int PRESET_NUM_CONTACT = 0;
-    public static final int PRESET_NUM_PM = 0;
+    public static final int PRESET_NUM_PM = 1;
     public static final int PRESET_NUM_GROUP = 2;
     public static final int PRESET_NUM_CHANNEL = 3;
 
     public static final int PRESET_SIZE_NUM_PHOTO = 0;
-    public static final int PRESET_SIZE_NUM_VIDEO = 0;
+    public static final int PRESET_SIZE_NUM_VIDEO = 1;
     public static final int PRESET_SIZE_NUM_DOCUMENT = 2;
     public static final int PRESET_SIZE_NUM_AUDIO = 3;
 
@@ -166,7 +166,7 @@ public class DownloadController extends BaseController implements NotificationCe
             lessCallData = settings.phonecalls_less_data;
             maxVideoBitrate = settings.video_upload_maxbitrate;
             sizes[PRESET_SIZE_NUM_PHOTO] = Math.max(500 * 1024, settings.photo_size_max);
-            sizes[PRESET_SIZE_NUM_VIDEO] = 0;
+            sizes[PRESET_SIZE_NUM_VIDEO] = Math.max(500 * 1024, settings.video_size_max);
             sizes[PRESET_SIZE_NUM_DOCUMENT] = Math.max(500 * 1024, settings.file_size_max);
             for (int a = 0; a < mask.length; a++) {
                 if (settings.photo_size_max != 0 && !settings.disabled) {
@@ -174,7 +174,7 @@ public class DownloadController extends BaseController implements NotificationCe
                 } else {
                     mask[a] &=~ AUTODOWNLOAD_TYPE_PHOTO;
                 }
-                if (0 != 0 && !settings.disabled) {
+                if (settings.video_size_max != 0 && !settings.disabled) {
                     mask[a] |= AUTODOWNLOAD_TYPE_VIDEO;
                 } else {
                     mask[a] &=~ AUTODOWNLOAD_TYPE_VIDEO;
@@ -262,18 +262,9 @@ public class DownloadController extends BaseController implements NotificationCe
         String defaultMedium = "13_13_13_13_1048576_10485760_1048576_524288_1_1_1_0_100_1";
         String defaultHigh = "13_13_13_13_1048576_15728640_3145728_524288_1_1_1_0_100_1";
         lowPreset = new Preset(preferences.getString("preset0", defaultLow), defaultLow);
+        lowPreset.preloadStories = false;
         mediumPreset = new Preset(preferences.getString("preset1", defaultMedium), defaultMedium);
         highPreset = new Preset(preferences.getString("preset2", defaultHigh), defaultHigh);
-        mobilePreset = new Preset(preferences.getString("mobilePreset", defaultMedium), defaultMedium);
-        wifiPreset = new Preset(preferences.getString("wifiPreset", defaultHigh), defaultHigh);
-        roamingPreset = new Preset(preferences.getString("roamingPreset", defaultLow), defaultLow);
-        if (lowPreset.sizes != null) { for (int i = 0; i < lowPreset.sizes.length; i++) { lowPreset.sizes[i] = 0; } }
-        if (mediumPreset.sizes != null) { for (int i = 0; i < mediumPreset.sizes.length; i++) { mediumPreset.sizes[i] = 0; } }
-        if (highPreset.sizes != null) { for (int i = 0; i < highPreset.sizes.length; i++) { highPreset.sizes[i] = 0; } }
-        if (mobilePreset.sizes != null) { for (int i = 0; i < mobilePreset.sizes.length; i++) { mobilePreset.sizes[i] = 0; } }
-        if (wifiPreset.sizes != null) { for (int i = 0; i < wifiPreset.sizes.length; i++) { wifiPreset.sizes[i] = 0; } }
-        if (roamingPreset.sizes != null) { for (int i = 0; i < roamingPreset.sizes.length; i++) { roamingPreset.sizes[i] = 0; } }
-        lowPreset.preloadStories = false;
         boolean newConfig;
         if ((newConfig = preferences.contains("newConfig")) || !getUserConfig().isClientActivated()) {
             mobilePreset = new Preset(preferences.getString("mobilePreset", defaultMedium), defaultMedium);
@@ -296,9 +287,9 @@ public class DownloadController extends BaseController implements NotificationCe
             for (int a = 0; a < 4; a++) {
                 String key = "mobileDataDownloadMask" + (a == 0 ? "" : a);
                 if (a == 0 || preferences.contains(key)) {
-                    mobileDataDownloadMask[a] = preferences.getInt(key, 0);
-                    wifiDownloadMask[a] = preferences.getInt("wifiDownloadMask" + (a == 0 ? "" : a), 0);
-                    roamingDownloadMask[a] = preferences.getInt("roamingDownloadMask" + (a == 0 ? "" : a), 0);
+                    mobileDataDownloadMask[a] = preferences.getInt(key, AUTODOWNLOAD_TYPE_PHOTO | AUTODOWNLOAD_TYPE_VIDEO | AUTODOWNLOAD_TYPE_DOCUMENT);
+                    wifiDownloadMask[a] = preferences.getInt("wifiDownloadMask" + (a == 0 ? "" : a), AUTODOWNLOAD_TYPE_PHOTO | AUTODOWNLOAD_TYPE_VIDEO | AUTODOWNLOAD_TYPE_DOCUMENT);
+                    roamingDownloadMask[a] = preferences.getInt("roamingDownloadMask" + (a == 0 ? "" : a), AUTODOWNLOAD_TYPE_PHOTO);
                 } else {
                     mobileDataDownloadMask[a] = mobileDataDownloadMask[0];
                     wifiDownloadMask[a] = wifiDownloadMask[0];
@@ -313,11 +304,10 @@ public class DownloadController extends BaseController implements NotificationCe
             roamingMaxFileSize[2] = preferences.getLong("roamingMaxDownloadSize" + 2, lowPreset.sizes[PRESET_SIZE_NUM_VIDEO]);
             roamingMaxFileSize[3] = preferences.getLong("roamingMaxDownloadSize" + 3, lowPreset.sizes[PRESET_SIZE_NUM_DOCUMENT]);
 
-            // Indogaro: Paksa matikan total auto-download dengan menonaktifkan flag dan mengosongkan ukuran
-            boolean globalAutodownloadEnabled = false;
-            mobilePreset = new Preset(new int[10], 0, 0, 0, false, false, false, false, 0, false);
-            wifiPreset = new Preset(new int[10], 0, 0, 0, false, false, false, false, 0, false);
-            roamingPreset = new Preset(new int[10], 0, 0, 0, false, false, false, false, 0, false);
+            boolean globalAutodownloadEnabled = preferences.getBoolean("globalAutodownloadEnabled", true);
+            mobilePreset = new Preset(mobileDataDownloadMask, mediumPreset.sizes[PRESET_SIZE_NUM_PHOTO], mobileMaxFileSize[2], mobileMaxFileSize[3], true, true, globalAutodownloadEnabled, false, 100, false);
+            wifiPreset = new Preset(wifiDownloadMask, highPreset.sizes[PRESET_SIZE_NUM_PHOTO], wifiMaxFileSize[2], wifiMaxFileSize[3], true, true, globalAutodownloadEnabled, false, 100, true);
+            roamingPreset = new Preset(roamingDownloadMask, lowPreset.sizes[PRESET_SIZE_NUM_PHOTO], roamingMaxFileSize[2], roamingMaxFileSize[3], false, false, globalAutodownloadEnabled, true, 50, true);
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("newConfig", true);
@@ -362,7 +352,7 @@ public class DownloadController extends BaseController implements NotificationCe
         if (loadingAutoDownloadConfig || !force && Math.abs(System.currentTimeMillis() - getUserConfig().autoDownloadConfigLoadTime) < 24 * 60 * 60 * 1000) {
             return;
         }
-        loadingAutoDownloadConfig = false;
+        loadingAutoDownloadConfig = true;
         TL_account.getAutoDownloadSettings req = new TL_account.getAutoDownloadSettings();
         getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
             loadingAutoDownloadConfig = false;
@@ -412,7 +402,7 @@ public class DownloadController extends BaseController implements NotificationCe
     public Preset getCurrentMobilePreset() {
         if (currentMobilePreset == 0) {
             return lowPreset;
-        } else if (currentMobilePreset == 0) {
+        } else if (currentMobilePreset == 1) {
             return mediumPreset;
         } else if (currentMobilePreset == 2) {
             return highPreset;
@@ -424,7 +414,7 @@ public class DownloadController extends BaseController implements NotificationCe
     public Preset getCurrentWiFiPreset() {
         if (currentWifiPreset == 0) {
             return lowPreset;
-        } else if (currentWifiPreset == 0) {
+        } else if (currentWifiPreset == 1) {
             return mediumPreset;
         } else if (currentWifiPreset == 2) {
             return highPreset;
@@ -436,7 +426,7 @@ public class DownloadController extends BaseController implements NotificationCe
     public Preset getCurrentRoamingPreset() {
         if (currentRoamingPreset == 0) {
             return lowPreset;
-        } else if (currentRoamingPreset == 0) {
+        } else if (currentRoamingPreset == 1) {
             return mediumPreset;
         } else if (currentRoamingPreset == 2) {
             return highPreset;
@@ -617,13 +607,24 @@ public class DownloadController extends BaseController implements NotificationCe
     }
 
     public boolean canDownloadMedia(MessageObject messageObject) {
-        // Indogaro: Blokir total semua unduhan otomatis media
-        return false;
+        if (messageObject.type == MessageObject.TYPE_STORY) {
+            if (!SharedConfig.isAutoplayVideo()) return false;
+            TLRPC.TL_messageMediaStory mediaStory = (TLRPC.TL_messageMediaStory) MessageObject.getMedia(messageObject);
+            TL_stories.StoryItem storyItem = mediaStory.storyItem;
+            if (storyItem == null || storyItem.media == null || storyItem.media.document == null || !storyItem.isPublic) {
+                return false;
+            }
+            return true;
+        }
+        if (messageObject.sponsoredMedia != null) {
+            return true;
+        }
+        if (messageObject.isHiddenSensitive())
+            return false;
+        return canDownloadMediaInternal(messageObject) == 1;
     }
 
     public boolean canDownloadMedia(int type, long size) {
-        if (type == 1 || type == AUTODOWNLOAD_TYPE_VIDEO) { return false; }
-        if (type == AUTODOWNLOAD_TYPE_VIDEO) { return false; }
         Preset preset;
         int networkType = ApplicationLoader.getAutodownloadNetworkType();
         if (networkType == StatsController.TYPE_WIFI) {
@@ -858,9 +859,6 @@ public class DownloadController extends BaseController implements NotificationCe
     }
 
     public int canDownloadMedia(TLRPC.Message message) {
-        // Indogaro: Blokir total unduh otomatis video
-        if (message != null && MessageObject.isVideoMessage(message)) { return 0; }
-
         if (message == null || message.media instanceof TLRPC.TL_messageMediaStory) {
             return canPreloadStories() ? 2 : 0;
         }
@@ -1104,7 +1102,7 @@ public class DownloadController extends BaseController implements NotificationCe
             }
         }
         req.settings.photo_size_max = photo ? (int) preset.sizes[PRESET_SIZE_NUM_PHOTO] : 0;
-        req.settings.video_size_max = video ? (int) preset.sizes[PRESET_SIZE_NUM_VIDEO] : 0;
+        req.settings.video_size_max = video ? preset.sizes[PRESET_SIZE_NUM_VIDEO] : 0;
         req.settings.file_size_max = document ? preset.sizes[PRESET_SIZE_NUM_DOCUMENT] : 0;
         getConnectionsManager().sendRequest(req, (response, error) -> {
 
@@ -1132,10 +1130,6 @@ public class DownloadController extends BaseController implements NotificationCe
     }
 
     protected void processDownloadObjects(int type, ArrayList<DownloadObject> objects) {
-        // Indogaro: Blokir total semua pemrosesan antrean unduhan otomatis video
-        if (type == AUTODOWNLOAD_TYPE_VIDEO || type == 4) {
-            return;
-        }
         if (objects.isEmpty()) {
             return;
         }
@@ -1495,8 +1489,8 @@ public class DownloadController extends BaseController implements NotificationCe
                         state.bindByteBuffer(1, data);
                         state.bindInteger(2, parentObject.getDocument().dc_id);
                         state.bindLong(3, parentObject.getDocument().id);
-                        state.bindLong(4, System.currentTimeMillis());
                         state.bindInteger(4, 0);
+                        state.bindLong(5, System.currentTimeMillis());
 
                         state.step();
                         state.dispose();
@@ -1542,40 +1536,7 @@ public class DownloadController extends BaseController implements NotificationCe
                     try {
                         String req = String.format(Locale.ENGLISH, "UPDATE downloading_documents SET state = 1, date = %d WHERE hash = %d AND id = %d", System.currentTimeMillis(), parentObject.getDocument().dc_id,  parentObject.getDocument().id);
                         getMessagesStorage().getDatabase().executeFast(req).stepThis().dispose();
-                        SQLiteCursor cursor = getMessagesStorage().getDatabase().queryFinalized("SELECT COUNT(*) FROM downloading_documents WHERE state = 1");
-                        int count = 0;
-                        if (cursor.next()) {
-                            count = cursor.intValue(0);
-                        }
-                        cursor.dispose();
-
-                        cursor = getMessagesStorage().getDatabase().queryFinalized("SELECT state FROM downloading_documents WHERE state = 1");
-                        if (cursor.next()) {
-                            int state = cursor.intValue(0);
-                        }
-                        cursor.dispose();
-
-                        int limitDownloadsDocuments = 100;
-                        if (count > limitDownloadsDocuments) {
-                            cursor = getMessagesStorage().getDatabase().queryFinalized("SELECT hash, id FROM downloading_documents WHERE state = 1 ORDER BY date ASC LIMIT " + (limitDownloadsDocuments - count));
-                            ArrayList<DownloadingDocumentEntry> entriesToRemove = new ArrayList<>();
-                            while (cursor.next()) {
-                                DownloadingDocumentEntry entry = new DownloadingDocumentEntry();
-                                entry.hash = cursor.intValue(0);
-                                entry.id = cursor.longValue(1);
-                                entriesToRemove.add(entry);
-                            }
-                            cursor.dispose();
-
-                            SQLitePreparedStatement state = getMessagesStorage().getDatabase().executeFast("DELETE FROM downloading_documents WHERE hash = ? AND id = ?");
-                            for (int i = 0; i < entriesToRemove.size(); i++) {
-                                state.requery();
-                                state.bindInteger(1, entriesToRemove.get(i).hash);
-                                state.bindLong(2, entriesToRemove.get(i).id);
-                                state.step();
-                            }
-                            state.dispose();
-                        }
+                        getMessagesStorage().getDatabase().executeFast("DELETE FROM downloading_documents WHERE state = 1 AND rowid NOT IN (SELECT rowid FROM downloading_documents WHERE state = 1 ORDER BY date DESC LIMIT 100)").stepThis().dispose();
                     } catch (Exception e) {
                         FileLog.e(e);
                     }
@@ -1656,17 +1617,13 @@ public class DownloadController extends BaseController implements NotificationCe
         return unviewedDownloads.size() > 0;
     }
 
-    private class DownloadingDocumentEntry {
-        long id;
-        int hash;
-    }
-
     public void loadDownloadingFiles() {
         getMessagesStorage().getStorageQueue().postRunnable(() -> {
             ArrayList<MessageObject> downloadingMessages = new ArrayList<>();
             ArrayList<MessageObject> recentlyDownloadedMessages = new ArrayList<>();
             ArrayList<MessageObject> newMessages = new ArrayList<>();
             try {
+                getMessagesStorage().getDatabase().executeFast("DELETE FROM downloading_documents WHERE state = 1 AND rowid NOT IN (SELECT rowid FROM downloading_documents WHERE state = 1 ORDER BY date DESC LIMIT 100)").stepThis().dispose();
                 SQLiteCursor cursor2 = getMessagesStorage().getDatabase().queryFinalized("SELECT data, state FROM downloading_documents ORDER BY date DESC");
                 while (cursor2.next()) {
                     NativeByteBuffer data = cursor2.byteBufferValue(0);

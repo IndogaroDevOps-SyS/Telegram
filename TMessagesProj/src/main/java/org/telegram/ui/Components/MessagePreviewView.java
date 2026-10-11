@@ -307,7 +307,7 @@ public class MessagePreviewView extends FrameLayout {
                 @Override
                 protected boolean canCopy() {
                     if (isReplyToRichMessage()) return false;
-                    return true;
+                    return messagePreviewParams == null || !messagePreviewParams.noforwards;
                 }
 
                 @Override
@@ -349,7 +349,6 @@ public class MessagePreviewView extends FrameLayout {
                     return currentTab == TAB_REPLY && !messagePreviewParams.isSecret && isInSelectionMode();
                 }
             };
-            
             textSelectionHelper.setCallback(new TextSelectionHelper.Callback() {
                 @Override
                 public void onStateChanged(boolean isSelected) {
@@ -1059,7 +1058,7 @@ public class MessagePreviewView extends FrameLayout {
                 sendersNameButton.setOnClickListener(view -> {
                     if (!canHideSenderName) {
                         BulletinFactory.of(MessagePreviewView.this, resourcesProvider)
-                            .createSimpleBulletin(R.raw.star_premium_2, replaceSingleTag("Subscribe to **Indogaro Premium** to forward formatted messages without the sender’s name.", () -> {
+                            .createSimpleBulletin(R.raw.star_premium_2, replaceSingleTag("Subscribe to **Telegram Premium** to forward formatted messages without the sender’s name.", () -> {
                                 dismiss(false);
                                 AndroidUtilities.runOnUIThread(() -> {
                                     if (!AndroidUtilities.isContextSafe(context)) return;

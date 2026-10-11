@@ -1,5 +1,5 @@
 /*
- * This is the source code of Indogaro for Android v. 5.x.x.
+ * This is the source code of Telegram for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -977,7 +977,7 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
         if (files != null) {
             for (int a = 0; a < files.length; a++) {
                 File file = files[a];
-                if (file.isDirectory() && file.getName().equals("Indogaro")) {
+                if (file.isDirectory() && file.getName().equals("Telegram")) {
                     checkDirectory(file);
                     continue;
                 }
@@ -1351,13 +1351,13 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
 
         ListItem fs;
         try {
-            File indogaroPath = new File(ApplicationLoader.applicationContext.getExternalFilesDir(null), "Indogaro");
-            if (indogaroPath.exists()) {
+            File telegramPath = new File(ApplicationLoader.applicationContext.getExternalFilesDir(null), "Telegram");
+            if (telegramPath.exists()) {
                 fs = new ListItem();
-                fs.title = "Indogaro";
+                fs.title = "Telegram";
                 fs.subtitle = LocaleController.getString(R.string.AppFolderInfo);
                 fs.icon = R.drawable.files_folder;
-                fs.file = indogaroPath;
+                fs.file = telegramPath;
                 listAdapter.items.add(fs);
             }
         } catch (Exception e) {

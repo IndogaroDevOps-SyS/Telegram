@@ -1,5 +1,5 @@
 /*
- * This is the source code of Indogaro for Android v. 5.x.x.
+ * This is the source code of Telegram for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -111,6 +111,13 @@ public class VideoTimelineView extends View {
 
     public float getRightProgress() {
         return progressRight;
+    }
+
+    /** Updates both trim handles without notifying the delegate. */
+    public void setTrimProgress(float left, float right) {
+        progressLeft = Math.max(0f, Math.min(1f, left));
+        progressRight = Math.max(progressLeft, Math.min(1f, right));
+        invalidate();
     }
 
     public void setMinProgressDiff(float value) {

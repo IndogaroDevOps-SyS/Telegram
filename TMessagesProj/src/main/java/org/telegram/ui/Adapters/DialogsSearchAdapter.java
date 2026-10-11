@@ -1,5 +1,5 @@
 /*
- * This is the source code of Indogaro for Android v. 5.x.x.
+ * This is the source code of Telegram for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -294,11 +294,13 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
             return dialogsActivity.allowUsers;
         } else if (obj instanceof TLRPC.Chat) {
             TLRPC.Chat chat = (TLRPC.Chat) obj;
-            // Indogaro: Blokir total semua jenis grup, hanya izinkan Channel murni
-            if (ChatObject.isChannel(chat) && chat.broadcast && !chat.megagroup) {
+            if (ChatObject.isChannel(chat)) {
                 return dialogsActivity.allowChannels;
+            } else if (ChatObject.isMegagroup(chat)) {
+                return dialogsActivity.allowGroups || dialogsActivity.allowMegagroups;
+            } else {
+                return dialogsActivity.allowGroups || dialogsActivity.allowLegacyGroups;
             }
-            return false;
         }
         return false;
     }
@@ -756,16 +758,9 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                             add = true;
                         }
                     } else {
-                        // Indogaro: Blokir total grup/supergrup dari pencarian lokal
-                        long chatId = -did;
-                        TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(chatId);
-                        if (chat != null && ChatObject.isChannel(chat) && chat.broadcast && !chat.megagroup) {
-                            if (!chatsToLoad.contains(chatId)) {
-                                chatsToLoad.add(chatId);
-                                add = true;
-                            }
-                        } else {
-                            add = false;
+                        if (!chatsToLoad.contains(-did)) {
+                            chatsToLoad.add(-did);
+                            add = true;
                         }
                     }
                     if (add) {
@@ -2000,7 +1995,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                     }
                     if (!searchContacts.isEmpty()) {
                         if (position == 0) {
-                            title = LocaleController.getString(R.string.InviteToIndogaroShort);
+                            title = LocaleController.getString(R.string.InviteToTelegramShort);
                         }
                         position -= 1 + searchContacts.size();
                     }

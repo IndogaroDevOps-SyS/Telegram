@@ -47,7 +47,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Save Gradle Error Log
-        run: ./gradlew TMessagesProj_App:compileAfatDebugJavaWithJavac --no-daemon --stacktrace
+        run: ./gradlew TMessagesProj_App:compileAfatReleaseJavaWithJavac --no-daemon --stacktrace
 
       - name: Build Release APK (AFAT)
         run: ./gradlew TMessagesProj:assembleAfatRelease --no-daemon --stacktrace

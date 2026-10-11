@@ -1,5 +1,5 @@
 /*
- * This is the source code of Indogaro for Android v. 5.x.x.
+ * This is the source code of Telegram for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -213,9 +213,6 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
         themeIconView.setContentDescription(LocaleController.getString(Theme.getCurrentTheme().isDark() ? R.string.AccDescrSwitchToDayTheme : R.string.AccDescrSwitchToNightTheme));
 
         themeIconView.setAnimation(darkThemeDrawable);
-        RLottieDrawable logoDrawable = new RLottieDrawable(R.raw.plane_logo_plain, "" + R.raw.plane_logo_plain, dp(150), dp(150));
-        logoImageView.setAnimation(logoDrawable);
-        logoDrawable.start();
         themeFrameLayout.setOnClickListener(v -> {
             if (DialogsActivity.switchingTheme) return;
             DialogsActivity.switchingTheme = true;
@@ -660,7 +657,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
         private float maxRefreshRate;
         private long lastDrawFrame;
 
-        private final GenericProvider<Void, Bitmap> indogaroMaskProvider = v -> {
+        private final GenericProvider<Void, Bitmap> telegramMaskProvider = v -> {
             int size = dp(ICON_HEIGHT_DP);
             Bitmap bm = Bitmap.createBitmap(dp(ICON_WIDTH_DP), size, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(bm);
@@ -685,8 +682,6 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                     FileLog.e("eglGetDisplay failed " + GLUtils.getEGLErrorString(egl10.eglGetError()));
                 }
                 finish();
-        Intent intent = new Intent(IntroActivity.this, org.telegram.ui.LaunchActivity.class);
-        startActivity(intent);
                 return false;
             }
 
@@ -696,8 +691,6 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                     FileLog.e("eglInitialize failed " + GLUtils.getEGLErrorString(egl10.eglGetError()));
                 }
                 finish();
-        Intent intent = new Intent(IntroActivity.this, org.telegram.ui.LaunchActivity.class);
-        startActivity(intent);
                 return false;
             }
 
@@ -732,8 +725,6 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                     FileLog.e("eglChooseConfig failed " + GLUtils.getEGLErrorString(egl10.eglGetError()));
                 }
                 finish();
-        Intent intent = new Intent(IntroActivity.this, org.telegram.ui.LaunchActivity.class);
-        startActivity(intent);
                 return false;
             } else if (configsCount[0] > 0) {
                 eglConfig = configs[0];
@@ -742,8 +733,6 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                     FileLog.e("eglConfig not initialized");
                 }
                 finish();
-        Intent intent = new Intent(IntroActivity.this, org.telegram.ui.LaunchActivity.class);
-        startActivity(intent);
                 return false;
             }
 
@@ -754,8 +743,6 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                     FileLog.e("eglCreateContext failed " + GLUtils.getEGLErrorString(egl10.eglGetError()));
                 }
                 finish();
-        Intent intent = new Intent(IntroActivity.this, org.telegram.ui.LaunchActivity.class);
-        startActivity(intent);
                 return false;
             }
 
@@ -763,8 +750,6 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                 eglSurface = egl10.eglCreateWindowSurface(eglDisplay, eglConfig, surfaceTexture, null);
             } else {
                 finish();
-        Intent intent = new Intent(IntroActivity.this, org.telegram.ui.LaunchActivity.class);
-        startActivity(intent);
                 return false;
             }
 
@@ -773,8 +758,6 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                     FileLog.e("createWindowSurface failed " + GLUtils.getEGLErrorString(egl10.eglGetError()));
                 }
                 finish();
-        Intent intent = new Intent(IntroActivity.this, org.telegram.ui.LaunchActivity.class);
-        startActivity(intent);
                 return false;
             }
             if (!egl10.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext)) {
@@ -782,8 +765,6 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                     FileLog.e("eglMakeCurrent failed " + GLUtils.getEGLErrorString(egl10.eglGetError()));
                 }
                 finish();
-        Intent intent = new Intent(IntroActivity.this, org.telegram.ui.LaunchActivity.class);
-        startActivity(intent);
                 return false;
             }
 
@@ -819,9 +800,9 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                 c.drawCircle(size / 2f, size / 2f, size / 2f, paint);
                 return bm;
             }, 22);
-            loadTexture(indogaroMaskProvider, 23);
+            loadTexture(telegramMaskProvider, 23);
 
-            updateIndogaroTextures();
+            updateTelegramTextures();
             updatePowerfulTextures();
             Intro.setPrivateTextures(textures[19], textures[20]);
             Intro.setFreeTextures(textures[14], textures[13]);
@@ -833,8 +814,8 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
             return true;
         }
 
-        public void updateIndogaroTextures() {
-            Intro.setIndogaroTextures(textures[22], textures[21], textures[23]);
+        public void updateTelegramTextures() {
+            Intro.setTelegramTextures(textures[22], textures[21], textures[23]);
         }
 
         public void updatePowerfulTextures() {
@@ -923,12 +904,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
         }
 
         private void loadTexture(int resId, int index, int tintColor, boolean rebind) {
-            Drawable drawable;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                drawable = getParentActivity().getResources().getDrawable(resId, getParentActivity().getTheme());
-            } else {
-                drawable = getParentActivity().getResources().getDrawable(resId);
-            }
+            Drawable drawable = getParentActivity().getResources().getDrawable(resId);
             if (drawable instanceof BitmapDrawable) {
                 if (rebind) {
                     GLES20.glDeleteTextures(1, textures, index);
@@ -959,8 +935,6 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
         public void shutdown() {
             postRunnable(() -> {
                 finish();
-        Intent intent = new Intent(IntroActivity.this, org.telegram.ui.LaunchActivity.class);
-        startActivity(intent);
                 Looper looper = Looper.myLooper();
                 if (looper != null) {
                     looper.quit();
@@ -1001,8 +975,8 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                     eglThread.loadTexture(R.drawable.intro_powerful_mask, 17, Theme.getColor(Theme.key_windowBackgroundWhite), true);
                     eglThread.updatePowerfulTextures();
 
-                    eglThread.loadTexture(eglThread.indogaroMaskProvider, 23, true);
-                    eglThread.updateIndogaroTextures();
+                    eglThread.loadTexture(eglThread.telegramMaskProvider, 23, true);
+                    eglThread.updateTelegramTextures();
 
                     Intro.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                 });
