@@ -50,13 +50,13 @@ jobs:
         run: ./gradlew TMessagesProj_App:compileAfatDebugJavaWithJavac --no-daemon --stacktrace
 
       - name: Build Release APK (AFAT)
-        run: ./gradlew TMessagesProj:assembleAfatDebug --no-daemon --stacktrace
+        run: ./gradlew TMessagesProj:assembleAfatRelease --no-daemon --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Telegram-Official-Release-APKss
-          path: 'TMessagesProj_App/build/outputs/apk/afat/debug/app.apk'
+          path: 'TMessagesProj_App/build/outputs/apk/afat/release/app.apk'
           retention-days: 7
 
       - name: Create GitHub Release and Upload APK
