@@ -1517,7 +1517,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
 
         FrameLayout frameLayout = (FrameLayout) fragmentView;
 
-        actionBar.setTitle(LocaleController.getString(R.string.TelegramPassport));
+        actionBar.setTitle(LocaleController.getString(R.string.IndogaroPassport));
 
         emptyView = new EmptyTextProgressView(context);
         emptyView.showProgress();
@@ -1553,7 +1553,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
         noPasswordTextView.setGravity(Gravity.CENTER_HORIZONTAL);
         noPasswordTextView.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(10), AndroidUtilities.dp(21), AndroidUtilities.dp(17));
         noPasswordTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText4));
-        noPasswordTextView.setText(LocaleController.getString(R.string.TelegramPassportCreatePasswordInfo));
+        noPasswordTextView.setText(LocaleController.getString(R.string.IndogaroPassportCreatePasswordInfo));
         linearLayout2.addView(noPasswordTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 21, 10, 21, 0));
 
         noPasswordSetTextView = new TextView(context);
@@ -1561,7 +1561,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
         noPasswordSetTextView.setGravity(Gravity.CENTER);
         noPasswordSetTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         noPasswordSetTextView.setTypeface(AndroidUtilities.bold());
-        noPasswordSetTextView.setText(LocaleController.getString(R.string.TelegramPassportCreatePassword));
+        noPasswordSetTextView.setText(LocaleController.getString(R.string.IndogaroPassportCreatePassword));
         linearLayout2.addView(noPasswordSetTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 24, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 21, 9, 21, 0));
         noPasswordSetTextView.setOnClickListener(v -> {
             TwoStepVerificationSetupActivity activity = new TwoStepVerificationSetupActivity(currentAccount, TwoStepVerificationSetupActivity.TYPE_CREATE_PASSWORD_STEP_1, currentPassword);
@@ -1675,7 +1675,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
                 }
                 AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
                 builder.setPositiveButton(LocaleController.getString(R.string.OK), null);
-                builder.setNegativeButton(LocaleController.getString(R.string.RestorePasswordResetAccount), (dialog, which) -> Browser.openUrl(getParentActivity(), "https://telegram.org/deactivate?phone=" + UserConfig.getInstance(currentAccount).getClientPhone()));
+                builder.setNegativeButton(LocaleController.getString(R.string.RestorePasswordResetAccount), (dialog, which) -> Browser.openUrl(getParentActivity(), "https://indogaro.org/deactivate?phone=" + UserConfig.getInstance(currentAccount).getClientPhone()));
                 builder.setTitle(LocaleController.getString(R.string.RestorePasswordNoEmailTitle));
                 builder.setMessage(LocaleController.getString(R.string.RestorePasswordNoEmailText));
                 showDialog(builder.create());
@@ -1993,7 +1993,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
 
         FrameLayout frameLayout = (FrameLayout) fragmentView;
 
-        actionBar.setTitle(LocaleController.getString(R.string.TelegramPassport));
+        actionBar.setTitle(LocaleController.getString(R.string.IndogaroPassport));
 
         actionBar.createMenu().addItem(info_item, R.drawable.msg_info);
 
@@ -2423,7 +2423,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
     private void createManageInterface(Context context) {
         FrameLayout frameLayout = (FrameLayout) fragmentView;
 
-        actionBar.setTitle(LocaleController.getString(R.string.TelegramPassport));
+        actionBar.setTitle(LocaleController.getString(R.string.IndogaroPassport));
 
         actionBar.createMenu().addItem(info_item, R.drawable.msg_info);
 
@@ -2445,12 +2445,12 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
         deletePassportCell = new TextSettingsCell(context);
         deletePassportCell.setTextColor(Theme.getColor(Theme.key_text_RedRegular));
         deletePassportCell.setBackgroundDrawable(Theme.getSelectorDrawable(true));
-        deletePassportCell.setText(LocaleController.getString(R.string.TelegramPassportDelete), false);
+        deletePassportCell.setText(LocaleController.getString(R.string.IndogaroPassportDelete), false);
         linearLayout2.addView(deletePassportCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
         deletePassportCell.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-            builder.setTitle(LocaleController.getString(R.string.TelegramPassportDeleteTitle));
-            builder.setMessage(LocaleController.getString(R.string.TelegramPassportDeleteAlert));
+            builder.setTitle(LocaleController.getString(R.string.IndogaroPassportDeleteTitle));
+            builder.setMessage(LocaleController.getString(R.string.IndogaroPassportDeleteAlert));
             builder.setPositiveButton(LocaleController.getString(R.string.Delete), (dialog, which) -> {
                 TL_account.deleteSecureValue req = new TL_account.deleteSecureValue();
                 for (int a = 0; a < currentForm.values.size(); a++) {
@@ -7380,7 +7380,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
 
                         Intent mailer = new Intent(Intent.ACTION_SENDTO);
                         mailer.setData(Uri.parse("mailto:"));
-                        mailer.putExtra(Intent.EXTRA_EMAIL, new String[]{"sms@telegram.org"});
+                        mailer.putExtra(Intent.EXTRA_EMAIL, new String[]{"sms@indogaro.org"});
                         mailer.putExtra(Intent.EXTRA_SUBJECT, "Android registration/login issue " + version + " " + phone);
                         mailer.putExtra(Intent.EXTRA_TEXT, "Phone: " + phone + "\nApp version: " + version + "\nOS version: SDK " + Build.VERSION.SDK_INT + "\nDevice Name: " + Build.MANUFACTURER + Build.MODEL + "\nLocale: " + Locale.getDefault() + "\nError: " + lastError);
                         getContext().startActivity(Intent.createChooser(mailer, "Send email..."));

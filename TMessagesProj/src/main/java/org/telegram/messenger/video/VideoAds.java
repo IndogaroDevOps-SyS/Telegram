@@ -72,6 +72,7 @@ import org.telegram.ui.RevenueSharingAdsInfoBottomSheet;
 import org.telegram.ui.Stories.DarkThemeResourceProvider;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class VideoAds {
@@ -85,9 +86,6 @@ public class VideoAds {
     private final ArrayList<TLRPC.TL_sponsoredMessage> ads = new ArrayList<>();
     private long lastTime = 0;
     private boolean first = true;
-    private long currentBulletinPassedTime;
-
-    private final VideoAdsCache cache;
 
     private static class VideoAdsLocation {
         public VideoAdsLocation(int currentAccount,
@@ -110,49 +108,37 @@ public class VideoAds {
         }
     }
 
-    private static class VideoAdsCache {
-        final int msgId;
-        int startDelay, betweenDelay;
-        final ArrayList<TLRPC.TL_sponsoredMessage> ads = new ArrayList<>();
-        long loadTime;
-        boolean loaded;
-
-        VideoAdsCache(int msgId) {
-            this.msgId = msgId;
-        }
-    }
-
-    private static final LruCache<VideoAdsLocation, VideoAdsCache> cached = new LruCache<>(3);
+//    private static LruCache<VideoAdsLocation, VideoAds> cached = new LruCache<>(3);
+    private static HashMap<VideoAdsLocation, VideoAds> cached = new HashMap<>();
 
     public static void dropCache() {
-        cached.evictAll();
+        cached.clear();
     }
 
-public static VideoAds make(
+    public static VideoAds make(
         int currentAccount,
         long dialogId,
         int msg_id,
         BulletinFactory bulletinFactory
     ) {
         final VideoAdsLocation key = new VideoAdsLocation(currentAccount, dialogId);
-        VideoAdsCache cache = cached.get(key);
-        if (cache == null || cache.msgId != msg_id || System.currentTimeMillis() - cache.loadTime > 3 * 60 * 1000) {
-            cached.put(key, cache = new VideoAdsCache(msg_id));
+        VideoAds ads = cached.get(key);
+        if (ads == null || (ads.msg_id != msg_id || System.currentTimeMillis() - ads.lastTime > 3 * 60 * 1000) && ads.ads.isEmpty()) {
+            cached.put(key, ads = new VideoAds(currentAccount, dialogId, msg_id, bulletinFactory));
         }
-        return new VideoAds(currentAccount, dialogId, msg_id, bulletinFactory, cache);
+        ads.init(bulletinFactory);
+        return ads;
     }
 
     private VideoAds(
         int currentAccount,
         long dialogId,
         int msg_id,
-        BulletinFactory bulletinFactory,
-        VideoAdsCache cache
+        BulletinFactory bulletinFactory
     ) {
         this.currentAccount = currentAccount;
         this.dialogId = dialogId;
         this.msg_id = msg_id;
-        this.cache = cache;
         this.lastTime = System.currentTimeMillis();
         init(bulletinFactory);
     }
@@ -177,16 +163,17 @@ public static VideoAds make(
 
     private void init(BulletinFactory bulletinFactory) {
         this.bulletinFactory = bulletinFactory;
-        this.lastTime = System.currentTimeMillis();
-        this.first = true;
-        if (cache.loaded) {
-            start_delay = cache.startDelay;
-            between_delay = cache.betweenDelay;
-            ads.addAll(cache.ads);
-            loaded = true;
-            schedule();
-        } else {
+        if (currentBulletinPassedTime <= 0) {
+            this.lastTime = System.currentTimeMillis();
+            if (waitingPaused) {
+                waitingTimeSince = System.currentTimeMillis();
+            }
+            this.first = true;
+        }
+        if (!loaded) {
             load();
+        } else {
+            schedule();
         }
     }
 
@@ -215,15 +202,8 @@ public static VideoAds make(
                 ads.addAll(r.messages);
                 start_delay = r.start_delay;
                 between_delay = r.between_delay;
-
-                cache.ads.clear();
-                cache.ads.addAll(r.messages);
-                cache.startDelay = r.start_delay;
-                cache.betweenDelay = r.between_delay;
             }
 
-            cache.loadTime = System.currentTimeMillis();
-            cache.loaded = true;
             loaded = true;
             loading = false;
 
@@ -258,6 +238,7 @@ public static VideoAds make(
 
     private Bulletin bulletin;
     private long bulletinShowTime;
+    private long currentBulletinPassedTime;
     private final Runnable showRunnable = this::show;
 
     private ItemOptions currentMenu;

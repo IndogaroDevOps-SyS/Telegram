@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 1.3.x.
+ * This is the source code of Indogaro for Android v. 1.3.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -1122,10 +1122,9 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
             setImageBackup.parentObject = currentParentObject;
         }
         if (!ignoreNotifications) {
-            if (observersGroup != null) {
-                observersGroup.removeAllObservers();
-                observersGroup = null;
-            }
+            NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.didReplacedPhotoInMemCache);
+            NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.stopAllHeavyOperations);
+            NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.startAllHeavyOperations);
         }
         if (staticThumbDrawable instanceof AttachableDrawable) {
             ((AttachableDrawable) staticThumbDrawable).onDetachedFromWindow(this);
@@ -1185,8 +1184,6 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
         return false;
     }
 
-    private NotificationCenter.ObserversGroup observersGroup;
-
     public boolean onAttachedToWindow() {
         if (attachedToWindow) {
             return false;
@@ -1195,15 +1192,9 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
         currentOpenedLayerFlags = NotificationCenter.getGlobalInstance().getCurrentHeavyOperationFlags();
         currentOpenedLayerFlags &= ~currentLayerNum;
         if (!ignoreNotifications) {
-            if (observersGroup != null) {
-                observersGroup.removeAllObservers();
-                observersGroup = null;
-            }
-            observersGroup = NotificationCenter.getGlobalInstance()
-                .createWeakObserversGroup(this)
-                .add(NotificationCenter.didReplacedPhotoInMemCache)
-                .add(NotificationCenter.stopAllHeavyOperations)
-                .add(NotificationCenter.startAllHeavyOperations);
+            NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.didReplacedPhotoInMemCache);
+            NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.stopAllHeavyOperations);
+            NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.startAllHeavyOperations);
         }
         if (setBackupImage()) {
             return true;
@@ -3088,7 +3079,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
                         fileDrawable.stop();
                     }
                 } else {
-                    if (!fileDrawable.hasParents()) {
+                    if (fileDrawable.getParents().isEmpty()) {
                         fileDrawable.recycle();
                     }
                 }

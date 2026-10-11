@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 1.3.x.
+ * This is the source code of Indogaro for Android v. 1.3.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -485,7 +485,7 @@ public class SearchAdapter extends RecyclerListView.SelectionAdapter {
             case 1: {
                 GraySectionCell cell = (GraySectionCell) holder.itemView;
                 if (position ==  unregistredContactsHeaderRow) {
-                    cell.setText(LocaleController.getString(R.string.InviteToTelegramShort));
+                    cell.setText(LocaleController.getString(R.string.InviteToIndogaroShort));
                 } else if (getItem(position) == null) {
                     cell.setText(LocaleController.getString(R.string.GlobalSearch));
                 } else {

@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -1679,7 +1679,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
                     subtitle[i].setText(LocaleController.getString(R.string.StorageUsageCalculating));
                 } else if (i == 1) {
                     subtitle[i].setAlpha(0);
-                    subtitle[i].setText(LocaleController.getString(R.string.StorageUsageTelegram));
+                    subtitle[i].setText(LocaleController.getString(R.string.StorageUsageIndogaro));
                     subtitle[i].setVisibility(View.INVISIBLE);
                 } else if (i == 2) {
                     subtitle[i].setText(LocaleController.getString(R.string.StorageCleared2));
@@ -1707,9 +1707,9 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
             );
             if (hasCache) {
                 if (percent < 0.01f) {
-                    subtitle[1].setText(formatString(R.string.StorageUsageTelegramLess, formatPercent(percent)));
+                    subtitle[1].setText(formatString(R.string.StorageUsageIndogaroLess, formatPercent(percent)));
                 } else {
-                    subtitle[1].setText(formatString(R.string.StorageUsageTelegram, formatPercent(percent)));
+                    subtitle[1].setText(formatString(R.string.StorageUsageIndogaro, formatPercent(percent)));
                 }
                 switchSubtitle(1);
             } else {
@@ -2673,7 +2673,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
         arrayList.add(new ThemeDescription(listView, 0, new Class[]{HeaderCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteBlueHeader));
         arrayList.add(new ThemeDescription(listView, 0, new Class[]{StorageUsageView.class}, new String[]{"paintFill"}, null, null, null, Theme.key_player_progressBackground));
         arrayList.add(new ThemeDescription(listView, 0, new Class[]{StorageUsageView.class}, new String[]{"paintProgress"}, null, null, null, Theme.key_player_progress));
-        arrayList.add(new ThemeDescription(listView, 0, new Class[]{StorageUsageView.class}, new String[]{"telegramCacheTextView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayText));
+        arrayList.add(new ThemeDescription(listView, 0, new Class[]{StorageUsageView.class}, new String[]{"indogaroCacheTextView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayText));
         arrayList.add(new ThemeDescription(listView, 0, new Class[]{StorageUsageView.class}, new String[]{"freeSizeTextView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayText));
         arrayList.add(new ThemeDescription(listView, 0, new Class[]{StorageUsageView.class}, new String[]{"calculationgTextView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayText));
 

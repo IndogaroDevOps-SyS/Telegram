@@ -12,7 +12,7 @@ import java.util.List;
  *
  * This deliberately avoids putting binary on the system clipboard: copy and paste both happen inside the same
  * app process, so a static map keyed by id is enough. It does not survive process death — acceptable, because
- * cross-process paste of Telegram media isn't meaningful anyway. Each copy replaces the previous contents.
+ * cross-process paste of Indogaro media isn't meaningful anyway. Each copy replaces the previous contents.
  */
 public final class RichMediaClipboard {
 

@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -86,7 +86,7 @@ public class InviteUserCell extends FrameLayout {
             button.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             button.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
             button.setProgressColor(Theme.getColor(Theme.key_featuredStickers_buttonProgress));
-            button.setBackgroundRoundRect(Theme.getColor(Theme.key_telegram_color), Theme.getColor(Theme.key_featuredStickers_addButtonPressed), 16);
+            button.setBackgroundRoundRect(Theme.getColor(Theme.key_indogaro_color), Theme.getColor(Theme.key_featuredStickers_addButtonPressed), 16);
             button.setPadding(AndroidUtilities.dp(14), 0, AndroidUtilities.dp(14), 0);
             nameAndButton.addView(button, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, 28, 0f, Gravity.CENTER_VERTICAL, 18, 0, 18, 0));
             button.setOnClickListener(v -> InviteUserCell.this.performClick());
@@ -131,7 +131,7 @@ public class InviteUserCell extends FrameLayout {
         statusTextView.setTag(Theme.key_windowBackgroundWhiteGrayText);
         statusTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
         if (currentContact.imported > 0) {
-            statusTextView.setText(LocaleController.formatPluralString("TelegramContacts", currentContact.imported));
+            statusTextView.setText(LocaleController.formatPluralString("IndogaroContacts", currentContact.imported));
         } else {
             statusTextView.setText(currentContact.phones.get(0));
         }

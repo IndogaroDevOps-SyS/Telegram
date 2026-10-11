@@ -34,7 +34,7 @@ public class WebPagePreviewView extends FrameLayout {
         this.resourcesProvider = resourcesProvider;
         this.currentAccount = currentAccount;
 
-        line.color1 = line.color2 = line.color3 = Theme.getColor(Theme.key_telegram_color_text, resourcesProvider);
+        line.color1 = line.color2 = line.color3 = Theme.getColor(Theme.key_indogaro_color_text, resourcesProvider);
         line.backgroundColor = Theme.multAlpha(line.color1, 0.10f);
         line.hasColor2 = line.hasColor3 = false;
         line.resetAnimation();
@@ -68,7 +68,7 @@ public class WebPagePreviewView extends FrameLayout {
             siteNameView.setTypeface(AndroidUtilities.bold());
             siteNameView.setText(webPage.site_name);
             siteNameView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            siteNameView.setTextColor(Theme.getColor(Theme.key_telegram_color_text, resourcesProvider));
+            siteNameView.setTextColor(Theme.getColor(Theme.key_indogaro_color_text, resourcesProvider));
             siteNameView.setSingleLine(true);
             siteNameView.setEllipsize(TextUtils.TruncateAt.END);
             textBlock.addView(siteNameView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 0));

@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 1.3.x.
+ * This is the source code of Indogaro for Android v. 1.3.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -28,14 +28,14 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.util.SparseArray;
 import android.util.Xml;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
 
-import org.telegram.utils.localization.Localization;
+import org.telegram.localization.Localization;
 import org.telegram.localization.LocalizationUtils;
 import org.telegram.messenger.time.FastDateFormat;
 import org.telegram.tgnet.Vector;
@@ -1440,13 +1440,30 @@ public class LocaleController {
     }
 
     private String getStringInternal(String key, int res) {
-        return getStringInternal(key, null, res);
+        return getStringInternal(key, null, 0, res);
     }
 
-    private String getStringInternal(String key, String fallback, int res) {
-        final String value = getStringV2(key, res, fallback);
+    private String getStringInternal(String key, String fallback, int fallbackRes, int res) {
+        String value = BuildVars.USE_CLOUD_STRINGS ? localizationExternal.getByResNameOrResId(ApplicationLoader.applicationContext, key, res) : null;
         if (value == null) {
-            return "LOC_ERR:" + key;
+            if (BuildVars.USE_CLOUD_STRINGS && fallback != null) {
+                value = localizationExternal.getByResNameOrResId(ApplicationLoader.applicationContext, fallback, fallbackRes);
+            }
+            if (value == null) {
+                try {
+                    value = getLocalizedString(res);
+                } catch (Exception e) {
+                    if (fallbackRes != 0) {
+                        try {
+                            value = getLocalizedString(fallbackRes);
+                        } catch (Exception ignored) {}
+                    }
+                    FileLog.e(e);
+                }
+            }
+        }
+        if (value == null) {
+            value = "LOC_ERR:" + key;
         }
         return value;
     }
@@ -1454,7 +1471,10 @@ public class LocaleController {
     public static String getServerString(String key) {
         String value = getInstance().localizationExternal.getByResName(key);
         if (value == null) {
-            value = getInstance().getLocalizedString(key);
+            int resourceId = getLocalizedStringByName(key);
+            if (resourceId != 0) {
+                value = getInstance().getLocalizedString(resourceId);
+            }
         }
         return value;
     }
@@ -1475,7 +1495,15 @@ public class LocaleController {
         if (TextUtils.isEmpty(key)) {
             return "LOC_ERR:" + key;
         }
-        return getString(key, 0);
+        int resourceId = getStringResId(key);
+        if (resourceId != 0) {
+            return getString(key, resourceId);
+        }
+        return getServerString(key);
+    }
+
+    public static int getStringResId(String key) {
+        return getLocalizedStringByName(key);
     }
 
     public static String nullable(String val) {
@@ -1489,7 +1517,9 @@ public class LocaleController {
         }
         String param = getInstance().stringForQuantity(getInstance().currentPluralRules.quantityForNumber(plural));
         param = key + "_" + param;
-        return getInstance().getStringInternal(param, key + "_other", 0);
+        int resourceId = getLocalizedStringByName(param);
+        int fallbackResourceId = getLocalizedStringByName(key + "_other");
+        return getInstance().getStringInternal(param, key + "_other", fallbackResourceId, resourceId);
     }
 
     public static String formatPluralString(String key, int plural, Object... args) {
@@ -1498,10 +1528,12 @@ public class LocaleController {
         }
         String param = getInstance().stringForQuantity(getInstance().currentPluralRules.quantityForNumber(plural));
         param = key + "_" + param;
+        int resourceId = getLocalizedStringByName(param);
+        int fallbackResourceId = getLocalizedStringByName(key + "_other");
         Object[] argsWithPlural = new Object[args.length + 1];
         argsWithPlural[0] = plural;
         System.arraycopy(args, 0, argsWithPlural, 1, args.length);
-        return formatString(param, key + "_other", 0, argsWithPlural);
+        return formatString(param, key + "_other", resourceId, fallbackResourceId, argsWithPlural);
     }
 
     public static CharSequence formatPluralSpannable(String key, int plural, CharSequence... args) {
@@ -1510,10 +1542,12 @@ public class LocaleController {
         }
         String param = getInstance().stringForQuantity(getInstance().currentPluralRules.quantityForNumber(plural));
         param = key + "_" + param;
+        int resourceId = getLocalizedStringByName(param);
+        int fallbackResourceId = getLocalizedStringByName(key + "_other");
         Object[] argsWithPlural = new Object[args.length + 1];
         argsWithPlural[0] = plural;
         System.arraycopy(args, 0, argsWithPlural, 1, args.length);
-        return formatSpannable(param, key + "_other", 0, argsWithPlural);
+        return formatSpannable(param, key + "_other", resourceId, fallbackResourceId, argsWithPlural);
     }
 
     public static String getStringParamForNumber(int number) {
@@ -1570,11 +1604,13 @@ public class LocaleController {
             }
             if (value == null) {
                 try {
-                    value = getInstance().getLocalizedString(param);
+                    int resourceId = getLocalizedStringByName(param);
+                    value = getInstance().getLocalizedString(resourceId);
                 } catch (Exception e2) {}
             }
             if (value == null) {
-                value = getInstance().getLocalizedString(key + "_other");
+                int resourceId = getLocalizedStringByName(key + "_other");
+                value = getInstance().getLocalizedString(resourceId);
             }
             value = value.replace("%d", "%1$s");
             value = value.replace("%1$d", "%1$s");
@@ -1621,14 +1657,33 @@ public class LocaleController {
     // deprecated: String key is no longer necessary
     @Deprecated
     public static String formatString(String key, int res, Object... args) {
-        return formatString(key, null, res, args);
+        return formatString(key, null, res, 0, args);
     }
 
-    private static String formatString(String key, String fallback, int res, Object... args) {
+    private static String formatString(String key, String fallback, int res, int fallbackRes, Object... args) {
         try {
-            final String value = getInstance().getStringV2(key, res, fallback);
+            String value = BuildVars.USE_CLOUD_STRINGS ? getInstance().localizationExternal.getByResNameOrResId(ApplicationLoader.applicationContext, key, res) : null;
             if (value == null) {
-                return "LOC_ERR: " + key;
+                if (BuildVars.USE_CLOUD_STRINGS && fallback != null) {
+                    value = getInstance().localizationExternal.getByResNameOrResId(ApplicationLoader.applicationContext, fallback, fallbackRes);
+                }
+                if (value == null) {
+                    if (res != 0) {
+                        try {
+                            value = getInstance().getLocalizedString(res);
+                        } catch (Exception e) {
+                            if (fallbackRes != 0) {
+                                try {
+                                    value = getInstance().getLocalizedString(fallbackRes);
+                                } catch (Exception ignored) {}
+                            }
+                        }
+                    } else if (fallbackRes != 0) {
+                        try {
+                            value = getInstance().getLocalizedString(fallbackRes);
+                        } catch (Exception ignored) {}
+                    }
+                }
             }
 
             if (getInstance().currentLocale != null) {
@@ -1647,14 +1702,33 @@ public class LocaleController {
     }
 
     public static CharSequence formatSpannable(String key, int res, Object... args) {
-        return formatSpannable(key, null, res, args);
+        return formatSpannable(key, null, res, 0, args);
     }
 
-    private static CharSequence formatSpannable(String key, String fallback, int res, Object... args) {
+    private static CharSequence formatSpannable(String key, String fallback, int res, int fallbackRes, Object... args) {
         try {
-            final String value = getInstance().getStringV2(key, res, fallback);
+            String value = BuildVars.USE_CLOUD_STRINGS ? getInstance().localizationExternal.getByResNameOrResId(ApplicationLoader.applicationContext, key, res) : null;
             if (value == null) {
-                return "LOC_ERR: " + key;
+                if (BuildVars.USE_CLOUD_STRINGS && fallback != null) {
+                    value = getInstance().localizationExternal.getByResNameOrResId(ApplicationLoader.applicationContext, fallback, fallbackRes);
+                }
+                if (value == null) {
+                    if (res != 0) {
+                        try {
+                            value = getInstance().getLocalizedString(res);
+                        } catch (Exception e) {
+                            if (fallbackRes != 0) {
+                                try {
+                                    value = getInstance().getLocalizedString(fallbackRes);
+                                } catch (Exception ignored) {}
+                            }
+                        }
+                    } else if (fallbackRes != 0) {
+                        try {
+                            value = getInstance().getLocalizedString(fallbackRes);
+                        } catch (Exception ignored) {}
+                    }
+                }
             }
 
             SpannableStringBuilder builder = new SpannableStringBuilder(value);
@@ -4435,35 +4509,15 @@ public class LocaleController {
             return f.format(value, dir, unit);
         }
     }
-    private String getLocalizedString(String key) {
-        checkLocalizationInternal();
-        return localizationInternal.getByResName(key);
+
+
+    private static int getLocalizedStringByName(String key) {
+        return ApplicationLoader.applicationContext.getResources().getIdentifier(key, "string", ApplicationLoader.applicationContext.getPackageName());
     }
 
-    @Nullable
-    private String getStringV2(String key, @StringRes int stringRes, String fallback) {
-        final Context context = ApplicationLoader.applicationContext;
-        String value;
-
-        if (BuildVars.USE_CLOUD_STRINGS) {
-            value = localizationExternal.getByResNameOrResId(context, key, stringRes);
-            if (value != null) {
-                return value;
-            }
-
-            value = localizationExternal.getByResName(fallback);
-            if (value != null) {
-                return value;
-            }
-        }
-
+    private String getLocalizedString(@StringRes int stringRes) {
         checkLocalizationInternal();
-        value = localizationInternal.getByResNameOrResId(context, key, stringRes);
-        if (value != null) {
-            return value;
-        }
-
-        return localizationInternal.getByResName(fallback);
+        return localizationInternal.getByResId(ApplicationLoader.applicationContext, stringRes);
     }
 
 

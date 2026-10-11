@@ -1701,7 +1701,7 @@ public class RichTextCell extends FrameLayout implements Theme.Colorable, TextSe
         CheckBoxView(Context context, Theme.ResourcesProvider resourcesProvider) {
             super(context);
             checkBox = new CheckBoxBase(this, 20, resourcesProvider);
-            checkBox.setColor(Theme.key_telegram_color, Theme.key_dialogCheckboxSquareDisabled, Theme.key_checkboxCheck);
+            checkBox.setColor(Theme.key_indogaro_color, Theme.key_dialogCheckboxSquareDisabled, Theme.key_checkboxCheck);
             checkBox.setBackgroundType(10);
             checkBox.setDrawUnchecked(true);
             checkBox.setCustomRadius(dp(5));

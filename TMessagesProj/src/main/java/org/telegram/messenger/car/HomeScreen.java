@@ -46,7 +46,7 @@ import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.NotificationsController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SendMessagesHelper;
-import org.telegram.messenger.TelegramMediaSession;
+import org.telegram.messenger.IndogaroMediaSession;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLRPC;
@@ -240,7 +240,7 @@ public class HomeScreen extends Screen
                 .setSelf(selfPerson)
                 .setMessages(carMessages)
                 .setGroupConversation(isGroup)
-                .setConversationCallback(new TelegramConversationCallback(currentAccount, dialogId, latestMid));
+                .setConversationCallback(new IndogaroConversationCallback(currentAccount, dialogId, latestMid));
         if (icon != null) {
             cb.setIcon(new CarIcon.Builder(icon).build());
         }
@@ -282,7 +282,7 @@ public class HomeScreen extends Screen
     // ===== Music tab =====
 
     private Template buildMusicTemplate() {
-        TelegramMediaSession session = TelegramMediaSession.getInstance(getCarContext().getApplicationContext());
+        IndogaroMediaSession session = IndogaroMediaSession.getInstance(getCarContext().getApplicationContext());
         if (!session.isChatsLoaded()) {
             if (!musicLoadKicked) {
                 musicLoadKicked = true;
@@ -396,12 +396,12 @@ public class HomeScreen extends Screen
         }
     }
 
-    private static final class TelegramConversationCallback implements ConversationCallback {
+    private static final class IndogaroConversationCallback implements ConversationCallback {
         private final int currentAccount;
         private final long dialogId;
         private final int maxId;
 
-        TelegramConversationCallback(int currentAccount, long dialogId, int maxId) {
+        IndogaroConversationCallback(int currentAccount, long dialogId, int maxId) {
             this.currentAccount = currentAccount;
             this.dialogId = dialogId;
             this.maxId = maxId;

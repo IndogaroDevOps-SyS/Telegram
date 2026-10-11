@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -625,7 +625,6 @@ public class ChatActivityEnterView extends FrameLayout implements
     private RLottieImageView recordDeleteImageView;
     protected RecordedAudioPlayerView audioTimelineView;
     private long millisecondsRecorded;
-    private boolean roundVideoUiFrameClockActive;
     @Nullable
     private SlideTextView slideText;
     @Nullable
@@ -975,8 +974,6 @@ public class ChatActivityEnterView extends FrameLayout implements
         boolean playing;
         RLottieDrawable drawable;
         private boolean enterAnimation;
-        private boolean externalFrameClock;
-        private long externalBlinkStartMs = -1L;
 
         @Override
         protected void onAttachedToWindow() {
@@ -1007,51 +1004,22 @@ public class ChatActivityEnterView extends FrameLayout implements
         public void updateColors() {
             int dotColor = getThemedColor(Theme.key_chat_recordedVoiceDot);
             int background = getThemedColor(Theme.key_chat_messagePanelBackground);
-            int greyColor = getThemedColor(Theme.key_chat_messagePanelVoiceDelete);
             redDotPaint.setColor(dotColor);
             drawable.beginApplyLayerColors();
             drawable.setLayerColor("Cup Red", dotColor);
-            drawable.setLayerColor("Box Red", dotColor);
-            drawable.setLayerColor("Cup Grey", greyColor);
-            drawable.setLayerColor("Box Grey", greyColor);
-            drawable.setLayerColor("Box_Grey 2", greyColor);
-            drawable.setLayerColor("Line 1", greyColor);
-            drawable.setLayerColor("Line 2", greyColor);
-            drawable.setLayerColor("Line 3", greyColor);
-            drawable.setLayerColor("Line 1 Dup", background);
-            drawable.setLayerColor("Line 2 Dup", background);
-            drawable.setLayerColor("Line 3 Dup", background);
+            drawable.setLayerColor("Box", dotColor);
+            drawable.setLayerColor("Line 1", background);
+            drawable.setLayerColor("Line 2", background);
+            drawable.setLayerColor("Line 3", background);
             drawable.commitApplyLayerColors();
         }
 
         public void resetAlpha() {
             alpha = 1.0f;
             lastUpdateTime = System.currentTimeMillis();
-            externalBlinkStartMs = -1L;
             isIncr = false;
             playing = false;
             drawable.stop();
-            invalidate();
-        }
-
-        void setExternalFrameClock(boolean enabled) {
-            externalFrameClock = enabled;
-            lastUpdateTime = System.currentTimeMillis();
-            externalBlinkStartMs = -1L;
-            invalidate();
-        }
-
-        void onExternalFrame(long durationMs) {
-            if (!externalFrameClock) return;
-            if (enterAnimation || externalBlinkStartMs < 0L) {
-                externalBlinkStartMs = durationMs;
-                alpha = 1f;
-            } else if (!playing) {
-                long phaseMs = Math.max(0L, durationMs - externalBlinkStartMs) % 1200L;
-                alpha = phaseMs < 600L
-                        ? 1f - phaseMs / 600f
-                        : (phaseMs - 600L) / 600f;
-            }
             invalidate();
         }
 
@@ -1068,35 +1036,32 @@ public class ChatActivityEnterView extends FrameLayout implements
             }
             redDotPaint.setAlpha((int) (255 * alpha));
 
-            if (!externalFrameClock) {
-                long now = System.currentTimeMillis();
-                long dt = now - lastUpdateTime;
-                if (enterAnimation) {
-                    alpha = 1;
+            long dt = (System.currentTimeMillis() - lastUpdateTime);
+            if (enterAnimation) {
+                alpha = 1;
+            } else {
+                if (!isIncr && !playing) {
+                    alpha -= dt / 600.0f;
+                    if (alpha <= 0) {
+                        alpha = 0;
+                        isIncr = true;
+                    }
                 } else {
-                    if (!isIncr && !playing) {
-                        alpha -= dt / 600.0f;
-                        if (alpha <= 0) {
-                            alpha = 0;
-                            isIncr = true;
-                        }
-                    } else {
-                        alpha += dt / 600.0f;
-                        if (alpha >= 1) {
-                            alpha = 1;
-                            isIncr = false;
-                        }
+                    alpha += dt / 600.0f;
+                    if (alpha >= 1) {
+                        alpha = 1;
+                        isIncr = false;
                     }
                 }
-                lastUpdateTime = now;
             }
+            lastUpdateTime = System.currentTimeMillis();
             if (playing) {
                 drawable.draw(canvas);
             }
             if (!playing || !drawable.hasBitmap()) {
                 canvas.drawCircle(this.getMeasuredWidth() >> 1, this.getMeasuredHeight() >> 1, dp(5), redDotPaint);
             }
-            if (!externalFrameClock) invalidate();
+            invalidate();
         }
 
         public void playDeleteAnimation() {
@@ -2937,7 +2902,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         sendOutlineView.setImageResource(R.drawable.send_outline);
         sendOutlineView.setScaleType(ImageView.ScaleType.CENTER);
         sendOutlineView.setVisibility(View.GONE);
-        sendOutlineView.setColorFilter(getThemedColor(Theme.key_telegram_color), PorterDuff.Mode.SRC_IN);
+        sendOutlineView.setColorFilter(getThemedColor(Theme.key_indogaro_color), PorterDuff.Mode.SRC_IN);
         textFieldContainer.addView(sendOutlineView, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.RIGHT));
 
         sendButtonContainer = new FrameLayout(context) {
@@ -8851,7 +8816,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             try {
                 if (wakeLock == null) {
                     PowerManager pm = (PowerManager) ApplicationLoader.applicationContext.getSystemService(Context.POWER_SERVICE);
-                    wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "telegram:audio_record_lock");
+                    wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "indogaro:audio_record_lock");
                     wakeLock.acquire();
                 }
             } catch (Exception e) {
@@ -10415,7 +10380,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         emojiButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
         deleteRichDraftButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.SRC_IN));
         deleteRichDraftButton.setBackground(Theme.createInsetRoundRectDrawable(getThemedColor(Theme.key_listSelector), dp(19), dp(1), dp(3)));
-        sendOutlineView.setColorFilter(getThemedColor(Theme.key_telegram_color), PorterDuff.Mode.SRC_IN);
+        sendOutlineView.setColorFilter(getThemedColor(Theme.key_indogaro_color), PorterDuff.Mode.SRC_IN);
     }
 
     private void updateRecordedDeleteIconColors() {
@@ -10428,13 +10393,10 @@ public class ChatActivityEnterView extends FrameLayout implements
             recordDeleteImageView.setLayerColor("Box Red", dotColor);
             recordDeleteImageView.setLayerColor("Cup Grey", greyColor);
             recordDeleteImageView.setLayerColor("Box Grey", greyColor);
-            recordDeleteImageView.setLayerColor("Box_Grey 2", greyColor);
-            recordDeleteImageView.setLayerColor("Line 1", greyColor);
-            recordDeleteImageView.setLayerColor("Line 2", greyColor);
-            recordDeleteImageView.setLayerColor("Line 3", greyColor);
-            recordDeleteImageView.setLayerColor("Line 1 Dup", background);
-            recordDeleteImageView.setLayerColor("Line 2 Dup", background);
-            recordDeleteImageView.setLayerColor("Line 3 Dup", background);
+
+            recordDeleteImageView.setLayerColor("Line 1", background);
+            recordDeleteImageView.setLayerColor("Line 2", background);
+            recordDeleteImageView.setLayerColor("Line 3", background);
         }
     }
 
@@ -10475,31 +10437,6 @@ public class ChatActivityEnterView extends FrameLayout implements
             return;
         }
         messageEditText.setSelection(start, messageEditText.length());
-    }
-
-    /** Synchronizes the video timeline with an external trim control. */
-    public void setVideoTimelineTrim(float start, float end) {
-        if (videoTimelineView != null) {
-            videoTimelineView.setTrimProgress(start, end);
-        }
-    }
-
-    /** Selects camera-preview-driven animation ticks for the new round-video recorder. */
-    public void setRoundVideoUiFrameClockActive(boolean active) {
-        if (roundVideoUiFrameClockActive == active) return;
-        roundVideoUiFrameClockActive = active;
-        if (recordTimerView != null) recordTimerView.setExternalFrameClock(active);
-        if (recordDot != null) recordDot.setExternalFrameClock(active);
-        if (slideText != null) slideText.setExternalFrameClock(active);
-    }
-
-    /** Advances recording UI on the frame consumed by the camera preview TextureView. */
-    public void onRoundVideoUiFrame(long durationMs) {
-        if (!roundVideoUiFrameClockActive) return;
-        millisecondsRecorded = durationMs;
-        if (recordTimerView != null) recordTimerView.onExternalFrame(durationMs);
-        if (recordDot != null) recordDot.onExternalFrame(durationMs);
-        if (slideText != null) slideText.onExternalFrame();
     }
 
     public int getCursorPosition() {
@@ -14014,18 +13951,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         StaticLayout cancelLayout;
 
         private boolean pressed;
-        private boolean externalFrameClock;
         public Rect cancelRect = new Rect();
-
-        void setExternalFrameClock(boolean enabled) {
-            externalFrameClock = enabled;
-            lastUpdateTime = System.currentTimeMillis();
-            invalidate();
-        }
-
-        void onExternalFrame() {
-            if (externalFrameClock && cancelToProgress != 1f) invalidate();
-        }
 
         Drawable selectableBackground;
         private int lastSize;
@@ -14251,7 +14177,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                 setPressed(false);
             }
 
-            if (cancelToProgress != 1 && !externalFrameClock) {
+            if (cancelToProgress != 1) {
                 invalidate();
             }
         }
@@ -14278,9 +14204,6 @@ public class ChatActivityEnterView extends FrameLayout implements
         long startTime;
         long stopTime;
         long lastSendTypingTime;
-        long externalElapsedMs;
-        long lastDrawRealtimeMs;
-        boolean externalFrameClock;
 
         SpannableStringBuilder replaceIn = new SpannableStringBuilder();
         SpannableStringBuilder replaceOut = new SpannableStringBuilder();
@@ -14302,20 +14225,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         public void start(long milliseconds) {
             isRunning = true;
             startTime = System.currentTimeMillis() - milliseconds;
-            externalElapsedMs = milliseconds;
             lastSendTypingTime = startTime;
-            invalidate();
-        }
-
-        void setExternalFrameClock(boolean enabled) {
-            externalFrameClock = enabled;
-            lastDrawRealtimeMs = SystemClock.elapsedRealtime();
-            invalidate();
-        }
-
-        void onExternalFrame(long durationMs) {
-            if (!externalFrameClock) return;
-            externalElapsedMs = durationMs;
             invalidate();
         }
 
@@ -14340,9 +14250,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                 textPaint.setColor(getThemedColor(Theme.key_chat_recordTime));
             }
             long currentTimeMillis = System.currentTimeMillis();
-            long t = isRunning
-                    ? externalFrameClock ? externalElapsedMs : currentTimeMillis - startTime
-                    : stopTime - startTime;
+            long t = isRunning ? (currentTimeMillis - startTime) : stopTime - startTime;
             long time = t / 1000;
             int ms = (int) (t % 1000L) / 10;
 
@@ -14430,13 +14338,8 @@ public class ChatActivityEnterView extends FrameLayout implements
                 }
             }
 
-            long drawRealtimeMs = SystemClock.elapsedRealtime();
-            long drawDeltaMs = lastDrawRealtimeMs == 0L
-                    ? 16L
-                    : Math.min(50L, drawRealtimeMs - lastDrawRealtimeMs);
-            lastDrawRealtimeMs = drawRealtimeMs;
             if (replaceTransition != 0) {
-                replaceTransition -= drawDeltaMs / 116f;
+                replaceTransition -= 0.15f;
                 if (replaceTransition < 0f) {
                     replaceTransition = 0f;
                 }
@@ -14481,7 +14384,7 @@ public class ChatActivityEnterView extends FrameLayout implements
 
             oldString = newString;
 
-            if ((isRunning || replaceTransition != 0) && !externalFrameClock) {
+            if (isRunning || replaceTransition != 0) {
                 invalidate();
             }
         }
@@ -14499,8 +14402,6 @@ public class ChatActivityEnterView extends FrameLayout implements
         public void reset() {
             isRunning = false;
             stopTime = startTime = 0;
-            externalElapsedMs = 0;
-            lastDrawRealtimeMs = 0;
             stoppedInternal = false;
         }
     }

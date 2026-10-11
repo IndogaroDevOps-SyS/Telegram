@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -1110,7 +1110,6 @@ public class FileLoader extends BaseController {
             if (parentObject instanceof MessageObject) {
                 messageObject = (MessageObject) parentObject;
                 if (messageObject.isRoundVideo() || messageObject.isVoice() || messageObject.isAnyKindOfSticker() || messageObject.messageOwner.noforwards) {
-                    return false;
                 }
             } else {
                 if (metadata.messageType == MessageObject.TYPE_ROUND_VIDEO || metadata.messageType == MessageObject.TYPE_STICKER || metadata.messageType == MessageObject.TYPE_VOICE) {

@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -168,10 +168,11 @@ public class Utilities {
                 if (allowedChar && start < 0) {
                     start = end;
                 } else if (!allowedChar && start >= 0) {
+                    end++;
                     break;
                 }
             }
-            if (start >= 0 && (end - start > 1 || value.charAt(start) != '-')) {
+            if (start >= 0) {
                 String str = value.subSequence(start, end).toString();
 //                val = parseInt(str);
                 val = Integer.parseInt(str);

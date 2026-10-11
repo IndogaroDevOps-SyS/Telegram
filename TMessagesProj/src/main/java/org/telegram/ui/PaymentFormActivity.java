@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -363,7 +363,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
         }
     }
 
-    private class TelegramWebviewProxy {
+    private class IndogaroWebviewProxy {
         @Keep
         @JavascriptInterface
         public void postEvent(final String eventName, final String eventData) {
@@ -1223,7 +1223,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
                     cookieManager.setAcceptThirdPartyCookies(webView, true);
                 }
                 if (Build.VERSION.SDK_INT >= 17) {
-                    webView.addJavascriptInterface(new TelegramWebviewProxy(), "TelegramWebviewProxy");
+                    webView.addJavascriptInterface(new IndogaroWebviewProxy(), "IndogaroWebviewProxy");
                 }
                 webView.setWebViewClient(new WebViewClient() {
                     @Override

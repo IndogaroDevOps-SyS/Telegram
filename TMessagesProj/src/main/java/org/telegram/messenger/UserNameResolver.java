@@ -3,6 +3,8 @@ package org.telegram.messenger;
 import android.text.TextUtils;
 import android.util.LruCache;
 
+import androidx.media3.common.util.Consumer;
+
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
@@ -23,22 +25,22 @@ public class UserNameResolver {
     }
 
     LruCache<String, CachedPeer> resolvedCache = new LruCache<>(100);
-    HashMap<String, ArrayList<Utilities.Callback<Long>>> resolvingConsumers = new HashMap<>();
+    HashMap<String, ArrayList<Consumer<Long>>> resolvingConsumers = new HashMap<>();
 
-    public Runnable resolve(String username, Utilities.Callback<Long> resolveConsumer) {
+    public Runnable resolve(String username, Consumer<Long> resolveConsumer) {
         return resolve(username, null, resolveConsumer);
     }
 
-    public Runnable resolve(String username, String referrer, Utilities.Callback<Long> resolveConsumer) {
+    public Runnable resolve(String username, String referrer, Consumer<Long> resolveConsumer) {
         return resolve(username, referrer, false, resolveConsumer);
     }
 
-    public Runnable resolve(String username, String referrer, boolean force, Utilities.Callback<Long> resolveConsumer) {
+    public Runnable resolve(String username, String referrer, boolean force, Consumer<Long> resolveConsumer) {
         if (TextUtils.isEmpty(referrer) && !force) {
             CachedPeer cachedPeer = resolvedCache.get(username);
             if (cachedPeer != null) {
                 if (System.currentTimeMillis() - cachedPeer.time < CACHE_TIME) {
-                    resolveConsumer.run(cachedPeer.peerId);
+                    resolveConsumer.accept(cachedPeer.peerId);
                     FileLog.d("resolve username from cache " + username + " " + cachedPeer.peerId);
                     return null;
                 } else {
@@ -47,7 +49,7 @@ public class UserNameResolver {
             }
         }
 
-        ArrayList<Utilities.Callback<Long>> consumers = resolvingConsumers.get(username);
+        ArrayList<Consumer<Long>> consumers = resolvingConsumers.get(username);
         if (consumers != null) {
             consumers.add(resolveConsumer);
             return null;
@@ -72,19 +74,19 @@ public class UserNameResolver {
             req = resolveUsername;
         }
         final int reqId = ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
-            ArrayList<Utilities.Callback<Long>> finalConsumers = resolvingConsumers.remove(username);
+            ArrayList<Consumer<Long>> finalConsumers = resolvingConsumers.remove(username);
             if (finalConsumers == null) {
                 return;
             }
             if (error != null) {
                 if (error != null && error.text != null && "STARREF_EXPIRED".equals(error.text)) {
                     for (int i = 0; i < finalConsumers.size(); i++) {
-                        finalConsumers.get(i).run(Long.MAX_VALUE);
+                        finalConsumers.get(i).accept(Long.MAX_VALUE);
                     }
                     return;
                 }
                 for (int i = 0; i < finalConsumers.size(); i++) {
-                    finalConsumers.get(i).run(null);
+                    finalConsumers.get(i).accept(null);
                 }
 
                 if (error != null && error.text != null && error.text.contains("FLOOD_WAIT")) {
@@ -104,7 +106,7 @@ public class UserNameResolver {
             long peerId = MessageObject.getPeerId(res.peer);
             resolvedCache.put(username, new CachedPeer(peerId));
             for (int i = 0; i < finalConsumers.size(); i++) {
-                finalConsumers.get(i).run(peerId);
+                finalConsumers.get(i).accept(peerId);
             }
         }, ConnectionsManager.RequestFlagFailOnServerErrors));
         return () -> {

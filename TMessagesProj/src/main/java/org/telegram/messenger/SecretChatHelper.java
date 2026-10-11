@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 2.0.x.
+ * This is the source code of Indogaro for Android v. 2.0.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -1362,56 +1362,42 @@ public class SecretChatHelper extends BaseController {
         return newMsg;
     }
 
-    private void resendMessages(int startSeq_, int endSeq_, TLRPC.EncryptedChat encryptedChat) {
-        if (encryptedChat == null) {
+    private void resendMessages(int startSeq, int endSeq, TLRPC.EncryptedChat encryptedChat) {
+        if (encryptedChat == null || endSeq - startSeq < 0) {
             return;
         }
-
-        final long startSeq = startSeq_;
-        final long endSeq = endSeq_;
-        final long range = endSeq - startSeq;
-        if (startSeq < 0 || endSeq < 0 || endSeq >= Integer.MAX_VALUE || range < 0 || range > 10_000L) {
+        if (endSeq - startSeq > 10000) {
             return;
         }
-
         getMessagesStorage().getStorageQueue().postRunnable(() -> {
             try {
-                long sSeqLong = startSeq;
-                if (encryptedChat.admin_id == getUserConfig().getClientUserId() && (sSeqLong & 1L) == 0L) {
-                    sSeqLong++;
+                int sSeq = startSeq;
+                if (encryptedChat.admin_id == getUserConfig().getClientUserId() && sSeq % 2 == 0) {
+                    sSeq++;
                 }
 
-                if (sSeqLong > endSeq) {
-                    return;
-                }
-
-                final int sSeq = (int) sSeqLong;
-                final int safeEndSeq = (int) endSeq;
-                SQLiteCursor cursor = getMessagesStorage().getDatabase().queryFinalized(String.format(Locale.US, "SELECT uid FROM requested_holes WHERE uid = %d AND ((seq_out_start >= %d AND %d <= seq_out_end) OR (seq_out_start >= %d AND %d <= seq_out_end))", encryptedChat.id, sSeq, sSeq, safeEndSeq, safeEndSeq));
+                SQLiteCursor cursor = getMessagesStorage().getDatabase().queryFinalized(String.format(Locale.US, "SELECT uid FROM requested_holes WHERE uid = %d AND ((seq_out_start >= %d AND %d <= seq_out_end) OR (seq_out_start >= %d AND %d <= seq_out_end))", encryptedChat.id, sSeq, sSeq, endSeq, endSeq));
                 boolean exists = cursor.next();
                 cursor.dispose();
                 if (exists) {
                     return;
                 }
 
-                long dialogId = DialogObject.makeEncryptedDialogId(encryptedChat.id);
+                long dialog_id = DialogObject.makeEncryptedDialogId(encryptedChat.id);
                 SparseArray<TLRPC.Message> messagesToResend = new SparseArray<>();
                 ArrayList<TLRPC.Message> messages = new ArrayList<>();
-                for (long seq = sSeqLong; seq <= endSeq; seq += 2L) {
-                    messagesToResend.put((int) seq, null);
+                for (int a = sSeq; a <= endSeq; a += 2) {
+                    messagesToResend.put(a, null);
                 }
-
-                cursor = getMessagesStorage().getDatabase().queryFinalized(String.format(Locale.US, "SELECT m.data, r.random_id, s.seq_in, s.seq_out, m.ttl, s.mid FROM messages_seq as s LEFT JOIN randoms_v2 as r ON r.mid = s.mid LEFT JOIN messages_v2 as m ON m.mid = s.mid WHERE m.uid = %d AND m.out = 1 AND s.seq_out >= %d AND s.seq_out <= %d ORDER BY seq_out ASC", dialogId, sSeq, safeEndSeq));
-
+                cursor = getMessagesStorage().getDatabase().queryFinalized(String.format(Locale.US, "SELECT m.data, r.random_id, s.seq_in, s.seq_out, m.ttl, s.mid FROM messages_seq as s LEFT JOIN randoms_v2 as r ON r.mid = s.mid LEFT JOIN messages_v2 as m ON m.mid = s.mid WHERE m.uid = %d AND m.out = 1 AND s.seq_out >= %d AND s.seq_out <= %d ORDER BY seq_out ASC", dialog_id, sSeq, endSeq));
                 while (cursor.next()) {
                     TLRPC.Message message;
-                    long randomId = cursor.longValue(1);
-                    if (randomId == 0) {
-                        randomId = Utilities.random.nextLong();
+                    long random_id = cursor.longValue(1);
+                    if (random_id == 0) {
+                        random_id = Utilities.random.nextLong();
                     }
-
-                    int seqIn = cursor.intValue(2);
-                    int seqOut = cursor.intValue(3);
+                    int seq_in = cursor.intValue(2);
+                    int seq_out = cursor.intValue(3);
                     int mid = cursor.intValue(5);
 
                     NativeByteBuffer data = cursor.byteBufferValue(0);
@@ -1419,23 +1405,21 @@ public class SecretChatHelper extends BaseController {
                         message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                         message.readAttachPath(data, getUserConfig().clientUserId);
                         data.reuse();
-
-                        message.random_id = randomId;
-                        message.dialog_id = dialogId;
-                        message.seq_in = seqIn;
-                        message.seq_out = seqOut;
+                        message.random_id = random_id;
+                        message.dialog_id = dialog_id;
+                        message.seq_in = seq_in;
+                        message.seq_out = seq_out;
                         message.ttl = cursor.intValue(4);
                     } else {
-                        message = createDeleteMessage(mid, seqOut, seqIn, randomId, encryptedChat);
+                        message = createDeleteMessage(mid, seq_out, seq_in, random_id, encryptedChat);
                     }
                     messages.add(message);
-                    messagesToResend.remove(seqOut);
+                    messagesToResend.remove(seq_out);
                 }
                 cursor.dispose();
-
                 if (messagesToResend.size() != 0) {
-                    for (int i = 0; i < messagesToResend.size(); i++) {
-                        int seq = messagesToResend.keyAt(i);
+                    for (int a = 0; a < messagesToResend.size(); a++) {
+                        int seq = messagesToResend.keyAt(a);
                         messages.add(createDeleteMessage(getUserConfig().getNewMessageId(), seq, seq + 1, Utilities.random.nextLong(), encryptedChat));
                     }
                     getUserConfig().saveConfig(false);
@@ -1445,8 +1429,8 @@ public class SecretChatHelper extends BaseController {
                 encryptedChats.add(encryptedChat);
 
                 AndroidUtilities.runOnUIThread(() -> {
-                    for (int i = 0; i < messages.size(); i++) {
-                        TLRPC.Message message = messages.get(i);
+                    for (int a = 0; a < messages.size(); a++) {
+                        TLRPC.Message message = messages.get(a);
                         MessageObject messageObject = new MessageObject(currentAccount, message, false, true);
                         messageObject.resendAsIs = true;
                         getSendMessagesHelper().retrySendMessage(messageObject, true, 0);
@@ -1454,7 +1438,7 @@ public class SecretChatHelper extends BaseController {
                 });
 
                 getSendMessagesHelper().processUnsentMessages(messages, null, new ArrayList<>(), new ArrayList<>(), encryptedChats);
-                getMessagesStorage().getDatabase().executeFast(String.format(Locale.US, "REPLACE INTO requested_holes VALUES(%d, %d, %d)", encryptedChat.id, sSeq, safeEndSeq)).stepThis().dispose();
+                getMessagesStorage().getDatabase().executeFast(String.format(Locale.US, "REPLACE INTO requested_holes VALUES(%d, %d, %d)", encryptedChat.id, sSeq, endSeq)).stepThis().dispose();
             } catch (Exception e) {
                 FileLog.e(e);
             }

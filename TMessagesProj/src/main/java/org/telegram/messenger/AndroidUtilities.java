@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -146,13 +146,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.internal.telephony.ITelephony;
+import androidx.media3.common.util.Consumer;
 import com.google.android.gms.auth.api.phone.SmsRetriever;
 import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
 import com.google.android.gms.tasks.Task;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.browser.Browser;
-import org.telegram.utils.proxy.ProxySettings;
+import org.telegram.proxy.ProxySettings;
 import org.telegram.messenger.utils.CustomHtml;
 import org.telegram.messenger.utils.DebugRecordingCanvas;
 import org.telegram.tgnet.ConnectionsManager;
@@ -3669,7 +3670,7 @@ public class AndroidUtilities {
         }
         File storageDir = null;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Telegram");
+            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Indogaro");
             if (!storageDir.mkdirs()) {
                 if (!storageDir.exists()) {
                     if (BuildVars.LOGS_ENABLED) {
@@ -4726,7 +4727,7 @@ public class AndroidUtilities {
             }
         }));
         if (!TextUtils.isEmpty(secret)) {
-            final TableView.TableRowFullContent tableRow = tableView.addFullRow(getString(R.string.UseProxyTelegramInfo2));
+            final TableView.TableRowFullContent tableRow = tableView.addFullRow(getString(R.string.UseProxyIndogaroInfo2));
             tableRow.setFilled(true);
             final SpoilersTextView textView = (SpoilersTextView) tableRow.getChildAt(0);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11);
@@ -6317,33 +6318,33 @@ public class AndroidUtilities {
         return new Pair<>(0, 0);
     }
 
-    public static void forEachViews(View view, Utilities.Callback<View> consumer) {
+    public static void forEachViews(View view, Consumer<View> consumer) {
         if (view instanceof ViewGroup) {
             ViewGroup viewGroup = (ViewGroup) view;
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
-                consumer.run(view);
+                consumer.accept(view);
                 forEachViews(viewGroup.getChildAt(i), consumer);
             }
         } else {
-            consumer.run(view);
+            consumer.accept(view);
         }
     }
 
-    public static void forEachViews(RecyclerView recyclerView, Utilities.Callback<View> consumer) {
+    public static void forEachViews(RecyclerView recyclerView, Consumer<View> consumer) {
         if (recyclerView == null) {
             return;
         }
         for (int i = 0; i < recyclerView.getChildCount(); i++) {
-            consumer.run(recyclerView.getChildAt(i));
+            consumer.accept(recyclerView.getChildAt(i));
         }
         for (int i = 0; i < recyclerView.getCachedChildCount(); i++) {
-            consumer.run(recyclerView.getCachedChildAt(i));
+            consumer.accept(recyclerView.getCachedChildAt(i));
         }
         for (int i = 0; i < recyclerView.getHiddenChildCount(); i++) {
-            consumer.run(recyclerView.getHiddenChildAt(i));
+            consumer.accept(recyclerView.getHiddenChildAt(i));
         }
         for (int i = 0; i < recyclerView.getAttachedScrapChildCount(); i++) {
-            consumer.run(recyclerView.getAttachedScrapChildAt(i));
+            consumer.accept(recyclerView.getAttachedScrapChildAt(i));
         }
     }
 
@@ -6657,32 +6658,21 @@ public class AndroidUtilities {
                     }
                     break;
             }
-            return formatString("TelegramVersion", R.string.TelegramVersion, String.format(Locale.US, "v%s (%d) %s", pInfo.versionName, code, abi));
+            return formatString("IndogaroVersion", R.string.IndogaroVersion, String.format(Locale.US, "v%s (%d) %s", pInfo.versionName, code, abi));
         } catch (Exception e) {
             FileLog.e(e);
         }
         return null;
     }
 
-    public static StackTraceElement[] dumpStackTrace() {
-        return Thread.currentThread().getStackTrace();
-    }
 
     public static void printStackTrace(String tag) {
         if (!BuildConfig.DEBUG_PRIVATE_VERSION) {
             return;
         }
 
-        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-        printStackTrace(elements, tag);
-    }
-
-    public static void printStackTrace(StackTraceElement[] elements, String tag) {
-        if (!BuildConfig.DEBUG_PRIVATE_VERSION) {
-            return;
-        }
-
         final String t = "[" + tag + "]";
+        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
         for (int a = 3, N = Math.min(elements.length, 14); a < N; a++) {
             FileLog.d(t + " " + elements[a]);
         }
@@ -6832,9 +6822,7 @@ public class AndroidUtilities {
 
     public static Insets getDefaultWindowInsets(WindowInsetsCompat insets, boolean withIme) {
         final int insetsType = WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout();
-        final Insets systemInsets = Insets.max(
-            insets.getInsetsIgnoringVisibility(insetsType),
-            insets.getInsets(insetsType));
+        final Insets systemInsets = insets.getInsetsIgnoringVisibility(insetsType);
 
         if (withIme) {
             final Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());

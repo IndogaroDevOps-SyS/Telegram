@@ -482,14 +482,14 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 			addView(avatarsImageView, LayoutHelper.createFrame(72, LayoutHelper.MATCH_PARENT, LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT, -2, 0, 0, 0));
 
 			imageView = new ImageView(context);
-			imageView.setColorFilter(Theme.getColor(Theme.key_telegram_color_text), PorterDuff.Mode.SRC_IN);
+			imageView.setColorFilter(Theme.getColor(Theme.key_indogaro_color_text), PorterDuff.Mode.SRC_IN);
 			imageView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 1));
 			imageView.setScaleType(ImageView.ScaleType.CENTER);
 			imageView.setContentDescription(getString(R.string.Call));
 			addView(imageView, LayoutHelper.createFrame(48, 48, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.CENTER_VERTICAL, 8, 0, 8, 0));
 
 			checkBox = new CheckBox2(context, 21);
-			checkBox.getCheckBoxBase().setBackgroundColor(Theme.getColor(Theme.key_telegram_color));
+			checkBox.getCheckBoxBase().setBackgroundColor(Theme.getColor(Theme.key_indogaro_color));
 			checkBox.setColor(-1, Theme.key_windowBackgroundWhite, Theme.key_checkboxCheck);
 			checkBox.setDrawUnchecked(false);
 			checkBox.setDrawBackgroundAsArc(3);
@@ -639,7 +639,7 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 			button.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
 			button.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
 			button.setProgressColor(Theme.getColor(Theme.key_featuredStickers_buttonProgress));
-			button.setBackgroundRoundRect(Theme.getColor(Theme.key_telegram_color), Theme.getColor(Theme.key_featuredStickers_addButtonPressed), 16);
+			button.setBackgroundRoundRect(Theme.getColor(Theme.key_indogaro_color), Theme.getColor(Theme.key_featuredStickers_addButtonPressed), 16);
 			button.setPadding(AndroidUtilities.dp(14), 0, AndroidUtilities.dp(14), 0);
 			addView(button, LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, 28, Gravity.TOP | Gravity.END, 0, 16, 14, 0));
 		}
@@ -1614,7 +1614,7 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 			themeDescriptions.add(new ThemeDescription(floatingButton.imageView, ThemeDescription.FLAG_BACKGROUNDFILTER, null, null, null, null, Theme.key_chats_actionBackground));
 			themeDescriptions.add(new ThemeDescription(floatingButton.imageView, ThemeDescription.FLAG_BACKGROUNDFILTER | ThemeDescription.FLAG_DRAWABLESELECTEDSTATE, null, null, null, null, Theme.key_chats_actionPressedBackground));
 		}
-		themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{CallCell.class}, new String[]{"imageView"}, null, null, null, Theme.key_telegram_color_text));
+		themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{CallCell.class}, new String[]{"imageView"}, null, null, null, Theme.key_indogaro_color_text));
 		themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{CallCell.class}, null, new Drawable[]{Theme.dialogs_verifiedCheckDrawable}, null, Theme.key_chats_verifiedCheck));
 		themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{CallCell.class}, null, new Drawable[]{Theme.dialogs_verifiedDrawable}, null, Theme.key_chats_verifiedBackground));
 		themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{CallCell.class}, Theme.dialogs_offlinePaint, null, null, Theme.key_windowBackgroundWhiteGrayText3));

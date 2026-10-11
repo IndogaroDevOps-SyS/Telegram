@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -8,9 +8,6 @@
 
 package org.telegram.messenger;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.SparseArray;
@@ -19,12 +16,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
-import androidx.collection.MutableIntList;
 
-import org.telegram.ui.ActionBar.BaseFragment;
-import org.telegram.ui.ActionBar.BottomSheet;
-
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -695,7 +687,7 @@ public class NotificationCenter {
                     int key = addAfterBroadcast.keyAt(a);
                     ArrayList<NotificationCenterDelegate> arrayList = addAfterBroadcast.get(key);
                     for (int b = 0; b < arrayList.size(); b++) {
-                        addObserverInternal(arrayList.get(b), key);
+                        addObserver(arrayList.get(b), key);
                     }
                 }
                 addAfterBroadcast.clear();
@@ -711,119 +703,48 @@ public class NotificationCenter {
         }
     }
 
-    public interface ObserversGroup {
-        ObserversGroup add(int id);
-        ObserversGroup addGlobal(int id);
-        void removeAllObservers();
-    }
-
-    private static final class ObserversGroupImpl implements ObserversGroup {
+    public static class ObserversGroup {
         private NotificationCenter notificationCenter;
         private NotificationCenterDelegate delegate;
-        private final MutableIntList ids = new MutableIntList();
-        private ObserversGroupImpl globalGroup;
+        private final ArrayList<Observer> observers = new ArrayList<>();
 
-        private ObserversGroupImpl(NotificationCenter center, NotificationCenterDelegate delegate) {
+        private ObserversGroup(NotificationCenter center, NotificationCenterDelegate delegate) {
             this.notificationCenter = center;
             this.delegate = delegate;
         }
 
-        @Override
+        private static class Observer {
+            private final NotificationCenterDelegate observer;
+            private final int id;
+
+            private Observer(NotificationCenterDelegate observer, int id) {
+                this.observer = observer;
+                this.id = id;
+            }
+        }
+
         public ObserversGroup add(int id) {
-            if (delegate == null) {
-                return this;
-            }
-
-            ids.add(id);
-            notificationCenter.addObserverInternal(delegate, id);
+            notificationCenter.addObserver(delegate, id);
+            observers.add(new Observer(delegate, id));
             return this;
         }
 
-        @Override
-        public ObserversGroup addGlobal(int id) {
-            if (delegate == null) {
-                return this;
-            }
-
-            if (globalGroup == null) {
-                globalGroup = new ObserversGroupImpl(getGlobalInstance(), delegate);
-            }
-
-            globalGroup.add(id);
-            return this;
-        }
-
-        @Override
         public void removeAllObservers() {
-            if (delegate == null) {
-                return;
+            for (Observer observer : observers) {
+                notificationCenter.removeObserver(observer.observer, observer.id);
             }
-
-            if (globalGroup != null) {
-                globalGroup.removeAllObservers();
-                globalGroup = null;
-            }
-
-            for (int a = 0, N = ids.getSize(); a < N; a++) {
-                notificationCenter.removeObserver(delegate, ids.get(a));
-            }
-            ids.clear();
+            observers.clear();
             notificationCenter = null;
             delegate = null;
         }
     }
 
-    private static final class WeakObserversGroupImpl implements ObserversGroup, NotificationCenterDelegate {
-        private final ObserversGroupImpl observersGroup;
-        private final WeakReference<NotificationCenterDelegate> reference;
-
-        private WeakObserversGroupImpl(NotificationCenter center, NotificationCenterDelegate delegate) {
-            observersGroup = new ObserversGroupImpl(center, this);
-            reference = new WeakReference<>(delegate);
-        }
-
-        @Override
-        public void didReceivedNotification(int id, int account, Object... args) {
-            final NotificationCenterDelegate delegate = reference.get();
-            if (delegate != null) {
-                delegate.didReceivedNotification(id, account, args);
-            } else {
-                FileLog.e("MEMORY_LEAK observer " + id + " with destroyed WeakReference");
-                removeAllObservers();
-            }
-        }
-
-        @Override
-        public ObserversGroup add(int id) {
-            return observersGroup.add(id);
-        }
-
-        @Override
-        public ObserversGroup addGlobal(int id) {
-            return observersGroup.addGlobal(id);
-        }
-
-        @Override
-        public void removeAllObservers() {
-            observersGroup.removeAllObservers();
-        }
-    }
-
-
     public ObserversGroup createObserversGroup(NotificationCenterDelegate delegate) {
-        return new ObserversGroupImpl(this, delegate);
+        return new ObserversGroup(this, delegate);
     }
 
-    public ObserversGroup createWeakObserversGroup(NotificationCenterDelegate delegate) {
-        return new WeakObserversGroupImpl(this, delegate);
-    }
 
-    @Deprecated(since = "use createWeakObserversGroup or createObserversGroup")
     public void addObserver(NotificationCenterDelegate observer, int id) {
-        addObserverInternal(observer, id);
-    }
-
-    private void addObserverInternal(NotificationCenterDelegate observer, int id) {
         if (BuildVars.DEBUG_VERSION) {
             if (Thread.currentThread() != ApplicationLoader.applicationHandler.getLooper().getThread()) {
                 throw new RuntimeException("addObserver allowed only from MAIN thread");
@@ -948,7 +869,7 @@ public class NotificationCenter {
         final View.OnAttachStateChangeListener viewListener = new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View view) {
-                addObserverInternal(delegate, id);
+                addObserver(delegate, id);
             }
             @Override
             public void onViewDetachedFromWindow(View view) {
@@ -1035,74 +956,6 @@ public class NotificationCenter {
         }
     }
 
-    public static void sanitize() {
-        sanitizeInternal(globalInstance);
-        for (NotificationCenter notificationCenter : Instance) {
-            sanitizeInternal(notificationCenter);
-        }
-    }
-
-    private static void sanitizeInternal(NotificationCenter notificationCenter) {
-        if (notificationCenter == null) {
-            return;
-        }
-
-        int unknownObservers = 0;
-        for (int i = 0; i < notificationCenter.observers.size(); i++) {
-            final int observerId = notificationCenter.observers.keyAt(i);
-            final ArrayList<NotificationCenterDelegate> list = notificationCenter.observers.valueAt(i);
-
-            for (int N = list.size(), a = N - 1; a >= 0; a--) {
-                final NotificationCenterDelegate delegate = list.get(a);
-                if (delegate instanceof WeakObserversGroupImpl) {
-                    continue;
-                }
-                if (delegate instanceof BaseController) {
-                    continue;
-                }
-
-                if (delegate instanceof Context) {
-                    if (isContextDestroyed((Context) delegate)) {
-                        FileLog.e("MEMORY_LEAK observer " + observerId + " with destroyed Context");
-                        list.remove(a);
-                    }
-                } else if (delegate instanceof View) {
-                    if (isContextDestroyed(((View) delegate).getContext())) {
-                        FileLog.e("MEMORY_LEAK observer " + observerId + " with View with destroyed Context");
-                        list.remove(a);
-                    }
-                } else if (delegate instanceof BaseFragment) {
-                    if (((BaseFragment) delegate).isFinished) {
-                        FileLog.e("MEMORY_LEAK observer " + observerId + " with destroyed BaseFragment");
-                        list.remove(a);
-                    }
-                } else if (delegate instanceof BottomSheet) {
-                    if (((BottomSheet) delegate).isDismissed()) {
-                        FileLog.e("MEMORY_LEAK observer " + observerId + " with destroyed BottomSheet");
-                        list.remove(a);
-                    }
-                } else {
-                    unknownObservers++;
-                }
-            }
-        }
-        if (unknownObservers > 0) {
-            // Log.i("MEMORY_LEAK", "unknown observers: " + unknownObservers);
-        }
-    }
-
-    private static boolean isContextDestroyed(Context context) {
-        if (context == null) return false;
-        if (context instanceof Activity) {
-            final Activity activity = (Activity) context;
-            return activity.isDestroyed();
-        }
-        if (context instanceof ContextWrapper) {
-            final Context baseContext = ((ContextWrapper) context).getBaseContext();
-            return isContextDestroyed(baseContext);
-        }
-        return false;
-    }
 
     public int getObserversSize() {
         int totalSize = 0;

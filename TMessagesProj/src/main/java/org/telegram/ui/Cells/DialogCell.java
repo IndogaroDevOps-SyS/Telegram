@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 1.3.x.
+ * This is the source code of Indogaro for Android v. 1.3.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -5661,7 +5661,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                 MessageObject message = groupMessages.get(i);
                 if (message != null && !message.needDrawBluredPreview() && (message.isPhoto() || message.isNewGif() || message.isVideo() || message.isRoundVideo() || message.isStoryMedia())) {
                     String type = message.isWebpage() ? message.messageOwner.media.webpage.type : null;
-                    if (!("app".equals(type) || "profile".equals(type) || "article".equals(type) || type != null && type.startsWith("telegram_"))) {
+                    if (!("app".equals(type) || "profile".equals(type) || "article".equals(type) || type != null && type.startsWith("indogaro_"))) {
                         setThumb(i, message);
                     }
                 }
@@ -5671,7 +5671,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             hasVideoThumb = false;
             if (!message.needDrawBluredPreview() && (message.isPhoto() || message.isNewGif() || message.isVideo() || message.isRoundVideo() || message.isStoryMedia())) {
                 String type = message.isWebpage() ? message.messageOwner.media.webpage.type : null;
-                if (!("app".equals(type) || "profile".equals(type) || "article".equals(type) || type != null && type.startsWith("telegram_"))) {
+                if (!("app".equals(type) || "profile".equals(type) || "article".equals(type) || type != null && type.startsWith("indogaro_"))) {
                     setThumb(0, message);
                 }
             }

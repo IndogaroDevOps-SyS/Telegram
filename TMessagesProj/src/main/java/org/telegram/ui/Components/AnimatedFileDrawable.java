@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -48,12 +48,9 @@ import org.telegram.messenger.utils.Choreographer60FpsContent;
 import org.telegram.tgnet.TLRPC;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
-
-import me.vkryl.core.reference.ReferenceList;
 
 public final class AnimatedFileDrawable extends BitmapDrawable implements Animatable, BitmapsCache.Cacheable {
 
@@ -127,11 +124,10 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
     private final RectF[] dstRectBackground = new RectF[DrawingInBackgroundThreadDrawable.THREAD_COUNT];
     private final Paint[] backgroundPaint = new Paint[DrawingInBackgroundThreadDrawable.THREAD_COUNT];
 
-    private @Nullable WeakReference<View> parentView;
+    private View parentView;
+    private final ArrayList<View> secondParentViews = new ArrayList<>();
 
-    private final ReferenceList<View> secondParentViews = new ReferenceList<>(true);
-
-    private final ReferenceList<ImageReceiver> parents = new ReferenceList<>(true);
+    private final ArrayList<ImageReceiver> parents = new ArrayList<>();
 
     private AnimatedFileDrawableStream stream;
 
@@ -214,8 +210,8 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
 
     @UiThread
     public void invalidateInternal() {
-        for (ImageReceiver imageReceiver : parents) {
-            imageReceiver.invalidate();
+        for (int i = 0; i < parents.size(); i++) {
+            parents.get(i).invalidate();
         }
     }
 
@@ -278,8 +274,8 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
             invalidateAfter = 0;
         }
         lastTimeStamp = metaData[3];
-        for (View view : secondParentViews) {
-            view.invalidate();
+        for (int a = 0, N = secondParentViews.size(); a < N; a++) {
+            secondParentViews.get(a).invalidate();
         }
         // Static frame: Choreographer won't tick when !isRunning, invalidate manually.
         if (!isRunning && decodeSingleFrame || renderingBuffer == null && nextRenderingBuffer != null) {
@@ -292,18 +288,17 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
 
     public void checkRepeat() {
         int count = 0;
-        int oCount = 0;
-        for (ImageReceiver parent : parents) {
+        for (int j = 0; j < parents.size(); j++) {
+            ImageReceiver parent = parents.get(j);
             if (!parent.isAttachedToWindow()) {
-                parents.remove(parent);
-            } else {
-                oCount++;
+                parents.remove(j);
+                j--;
             }
             if (parent.animatedFileDrawableRepeatMaxCount > 0 && repeatCount >= parent.animatedFileDrawableRepeatMaxCount) {
                 count++;
             }
         }
-        if (oCount == count) {
+        if (parents.size() == count) {
             stop();
         } else {
             start();
@@ -450,10 +445,9 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
 
     @UiThread
     private void uiStartTaskImpl() {
-        for (View view : secondParentViews) {
-            view.invalidate();
+        for (int a = 0, N = secondParentViews.size(); a < N; a++) {
+            secondParentViews.get(a).invalidate();
         }
-        final View parentView = this.parentView != null ? this.parentView.get() : null;
         if ((secondParentViews.isEmpty() || invalidateParentViewWithSecond) && parentView != null) {
             parentView.invalidate();
         }
@@ -567,15 +561,14 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
         if (parentView != null) {
             return;
         }
-        parentView = new WeakReference<>(view);
+        parentView = view;
     }
 
     public void addParent(ImageReceiver imageReceiver) {
-        if (imageReceiver != null) {
-            if (parents.add(imageReceiver)) {
-                if (isRunning) {
-                    scheduleNextGetFrame();
-                }
+        if (imageReceiver != null && !parents.contains(imageReceiver)) {
+            parents.add(imageReceiver);
+            if (isRunning) {
+                scheduleNextGetFrame();
             }
         }
         checkCacheCancel();
@@ -613,9 +606,10 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
     }
 
     public void addSecondParentView(View view) {
-        if (view != null) {
-            secondParentViews.add(view);
+        if (view == null || secondParentViews.contains(view)) {
+            return;
         }
+        secondParentViews.add(view);
     }
 
     public void removeSecondParentView(View view) {
@@ -1204,8 +1198,10 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
         mDecoder.getVideoFrame(null, false, startTime, endTime, loop);
     }
 
-    public boolean hasParents() {
-        return !parents.isEmpty();
+
+
+    public ArrayList<ImageReceiver> getParents() {
+        return parents;
     }
 
     public File getFilePath() {

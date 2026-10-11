@@ -152,7 +152,7 @@ public class JoinToSendSettingsView extends LinearLayout {
                     (isPublic ?
                         R.string.GroupPublicSettingsJoinRequestInfoManagedBy :
                         R.string.GroupPrivateSettingsJoinRequestInfoManagedBy), name
-            ), Theme.getColor(Theme.key_telegram_color_text), () -> {
+            ), Theme.getColor(Theme.key_indogaro_color_text), () -> {
                 Bundle bundle = new Bundle();
                 bundle.putLong("user_id", chatFull.guard_bot_id);
                 fragment.presentFragment(new ProfileActivity(bundle));

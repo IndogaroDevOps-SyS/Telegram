@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -1061,15 +1061,15 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                     return;
                 } else if (position == antiSpamRow) {
                     final TextCell textCell = (TextCell) view;
-                    if (info != null && !info.antispam && getParticipantsCount() < getMessagesController().telegramAntispamGroupSizeMin) {
-                        BulletinFactory.of(this).createSimpleBulletin(R.raw.msg_antispam, AndroidUtilities.replaceTags(LocaleController.formatPluralString("ChannelAntiSpamForbidden", getMessagesController().telegramAntispamGroupSizeMin))).show();
+                    if (info != null && !info.antispam && getParticipantsCount() < getMessagesController().indogaroAntispamGroupSizeMin) {
+                        BulletinFactory.of(this).createSimpleBulletin(R.raw.msg_antispam, AndroidUtilities.replaceTags(LocaleController.formatPluralString("ChannelAntiSpamForbidden", getMessagesController().indogaroAntispamGroupSizeMin))).show();
                     } else if (info != null && ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_DELETE_MESSAGES) && !antiSpamToggleLoading) {
                         antiSpamToggleLoading = true;
                         boolean wasAntispam = info.antispam;
                         TLRPC.TL_channels_toggleAntiSpam req = new TLRPC.TL_channels_toggleAntiSpam();
                         req.channel = getMessagesController().getInputChannel(chatId);
                         textCell.setChecked(req.enabled = (info.antispam = !info.antispam));
-                        textCell.getCheckBox().setIcon(ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_DELETE_MESSAGES) && (info == null || info.antispam || getParticipantsCount() >= getMessagesController().telegramAntispamGroupSizeMin) ? 0 : R.drawable.permission_locked);
+                        textCell.getCheckBox().setIcon(ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_DELETE_MESSAGES) && (info == null || info.antispam || getParticipantsCount() >= getMessagesController().indogaroAntispamGroupSizeMin) ? 0 : R.drawable.permission_locked);
                         getConnectionsManager().sendRequest(req, (res, err) -> {
                             if (res != null) {
                                 getMessagesController().processUpdates((TLRPC.Updates) res, false);
@@ -1081,7 +1081,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                                         return;
                                     }
                                     textCell.setChecked(info.antispam = wasAntispam);
-                                    textCell.getCheckBox().setIcon(ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_DELETE_MESSAGES) && (info == null || !info.antispam || getParticipantsCount() >= getMessagesController().telegramAntispamGroupSizeMin) ? 0 : R.drawable.permission_locked);
+                                    textCell.getCheckBox().setIcon(ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_DELETE_MESSAGES) && (info == null || !info.antispam || getParticipantsCount() >= getMessagesController().indogaroAntispamGroupSizeMin) ? 0 : R.drawable.permission_locked);
                                     BulletinFactory.of(ChatUsersActivity.this).createSimpleBulletin(R.raw.error, getString("UnknownError", R.string.UnknownError)).show();
                                 });
                             }
@@ -3744,7 +3744,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                 case 12:
                     TextCell textCell = (TextCell) holder.itemView;
                     if (position == antiSpamRow) {
-                        textCell.getCheckBox().setIcon(ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_DELETE_MESSAGES) && (info == null || info.antispam || getParticipantsCount() >= getMessagesController().telegramAntispamGroupSizeMin) ? 0 : R.drawable.permission_locked);
+                        textCell.getCheckBox().setIcon(ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_DELETE_MESSAGES) && (info == null || info.antispam || getParticipantsCount() >= getMessagesController().indogaroAntispamGroupSizeMin) ? 0 : R.drawable.permission_locked);
                         textCell.setTextAndCheckAndIcon(getString("ChannelAntiSpam", R.string.ChannelAntiSpam), info != null && info.antispam, R.drawable.msg_policy, false);
                     } else if (position == hideMembersRow) {
                         textCell.getCheckBox().setIcon(ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_BLOCK_USERS) && (info == null || info.participants_hidden || getParticipantsCount() >= getMessagesController().hiddenMembersGroupSizeMin) ? 0 : R.drawable.permission_locked);

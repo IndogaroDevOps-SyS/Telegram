@@ -1,5 +1,6 @@
+
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -154,7 +155,7 @@ public class ImageLoader {
     private volatile long lastCacheOutTime = 0;
     private int lastImageNum = 0;
 
-    private File telegramPath = null;
+    private File indogaroPath = null;
 
     public static final String AUTOPLAY_FILTER = "g";
     public static final String AUTOPLAY_FILTER_NONLOOP = "gl";
@@ -412,7 +413,6 @@ public class ImageLoader {
                 String location = cacheImage.imageLocation.path;
                 URL downloadUrl = new URL(location.replace("athumb://", "https://"));
                 httpConnection = (HttpURLConnection) downloadUrl.openConnection();
-                //httpConnection.addRequestProperty("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 10_0 like Mac OS X) AppleWebKit/602.1.38 (KHTML, like Gecko) Version/10.0 Mobile/14A5297c Safari/602.1");
                 httpConnection.setConnectTimeout(5000);
                 httpConnection.setReadTimeout(5000);
                 httpConnection.connect();
@@ -2445,14 +2445,14 @@ public class ImageLoader {
                     try {
                         if (ApplicationLoader.applicationContext.getExternalMediaDirs().length > 0) {
                             publicMediaDir = getPublicStorageDir();
-                            publicMediaDir = new File(publicMediaDir, "Telegram");
+                            publicMediaDir = new File(publicMediaDir, "Indogaro");
                             publicMediaDir.mkdirs();
                         }
                     } catch (Exception e) {
                         FileLog.e(e);
                     }
                     newPath = ApplicationLoader.applicationContext.getExternalFilesDir(null);
-                    telegramPath = new File(newPath, "Telegram");
+                    indogaroPath = new File(newPath, "Indogaro");
                 } else {
                     boolean isSdCard = !TextUtils.isEmpty(SharedConfig.storageCacheDir) && path.getAbsolutePath().startsWith(SharedConfig.storageCacheDir);
                     if (!isSdCard) {
@@ -2461,26 +2461,26 @@ public class ImageLoader {
                             path = ApplicationLoader.applicationContext.getExternalFilesDir(null);
                         }
                     }
-                    telegramPath = new File(path, "Telegram");
+                    indogaroPath = new File(path, "Indogaro");
                 }
-                telegramPath.mkdirs();
+                indogaroPath.mkdirs();
 
-                if (!telegramPath.isDirectory()) {
+                if (!indogaroPath.isDirectory()) {
                     ArrayList<File> dirs = AndroidUtilities.getDataDirs();
                     for (int a = 0, N = dirs.size(); a < N; a++) {
                         File dir = dirs.get(a);
                         if (dir != null && !TextUtils.isEmpty(SharedConfig.storageCacheDir) && dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
                             path = dir;
-                            telegramPath = new File(path, "Telegram");
-                            telegramPath.mkdirs();
+                            indogaroPath = new File(path, "Indogaro");
+                            indogaroPath.mkdirs();
                             break;
                         }
                     }
                 }
 
-                if (telegramPath.isDirectory()) {
+                if (indogaroPath.isDirectory()) {
                     try {
-                        File imagePath = new File(telegramPath, "Telegram Images");
+                        File imagePath = new File(indogaroPath, "Indogaro Images");
                         imagePath.mkdir();
                         if (imagePath.isDirectory() && canMoveFiles(cachePath, imagePath, FileLoader.MEDIA_DIR_IMAGE)) {
                             mediaDirs.put(FileLoader.MEDIA_DIR_IMAGE, imagePath);
@@ -2493,7 +2493,7 @@ public class ImageLoader {
                     }
 
                     try {
-                        File videoPath = new File(telegramPath, "Telegram Video");
+                        File videoPath = new File(indogaroPath, "Indogaro Video");
                         videoPath.mkdir();
                         if (videoPath.isDirectory() && canMoveFiles(cachePath, videoPath, FileLoader.MEDIA_DIR_VIDEO)) {
                             mediaDirs.put(FileLoader.MEDIA_DIR_VIDEO, videoPath);
@@ -2506,7 +2506,7 @@ public class ImageLoader {
                     }
 
                     try {
-                        File audioPath = new File(telegramPath, "Telegram Audio");
+                        File audioPath = new File(indogaroPath, "Indogaro Audio");
                         audioPath.mkdir();
                         if (audioPath.isDirectory() && canMoveFiles(cachePath, audioPath, FileLoader.MEDIA_DIR_AUDIO)) {
                             AndroidUtilities.createEmptyFile(new File(audioPath, ".nomedia"));
@@ -2520,7 +2520,7 @@ public class ImageLoader {
                     }
 
                     try {
-                        File documentPath = new File(telegramPath, "Telegram Documents");
+                        File documentPath = new File(indogaroPath, "Indogaro Documents");
                         documentPath.mkdir();
                         if (documentPath.isDirectory() && canMoveFiles(cachePath, documentPath, FileLoader.MEDIA_DIR_DOCUMENT)) {
                             AndroidUtilities.createEmptyFile(new File(documentPath, ".nomedia"));
@@ -2534,7 +2534,7 @@ public class ImageLoader {
                     }
 
                     try {
-                        File normalNamesPath = new File(telegramPath, "Telegram Files");
+                        File normalNamesPath = new File(indogaroPath, "Indogaro Files");
                         normalNamesPath.mkdir();
                         if (normalNamesPath.isDirectory() && canMoveFiles(cachePath, normalNamesPath, FileLoader.MEDIA_DIR_FILES)) {
                             AndroidUtilities.createEmptyFile(new File(normalNamesPath, ".nomedia"));
@@ -2548,7 +2548,7 @@ public class ImageLoader {
                     }
 
                     try {
-                        File normalNamesPath = new File(telegramPath, "Telegram Stories");
+                        File normalNamesPath = new File(indogaroPath, "Indogaro Stories");
                         normalNamesPath.mkdir();
                         if (normalNamesPath.isDirectory() && canMoveFiles(cachePath, normalNamesPath, FileLoader.MEDIA_DIR_STORIES)) {
                             AndroidUtilities.createEmptyFile(new File(normalNamesPath, ".nomedia"));
@@ -2563,7 +2563,7 @@ public class ImageLoader {
                 }
                 if (publicMediaDir != null && publicMediaDir.isDirectory()) {
                     try {
-                        File imagePath = new File(publicMediaDir, "Telegram Images");
+                        File imagePath = new File(publicMediaDir, "Indogaro Images");
                         imagePath.mkdir();
                         if (imagePath.isDirectory() && canMoveFiles(cachePath, imagePath, FileLoader.MEDIA_DIR_IMAGE)) {
                             mediaDirs.put(FileLoader.MEDIA_DIR_IMAGE_PUBLIC, imagePath);
@@ -2576,7 +2576,7 @@ public class ImageLoader {
                     }
 
                     try {
-                        File videoPath = new File(publicMediaDir, "Telegram Video");
+                        File videoPath = new File(publicMediaDir, "Indogaro Video");
                         videoPath.mkdir();
                         if (videoPath.isDirectory() && canMoveFiles(cachePath, videoPath, FileLoader.MEDIA_DIR_VIDEO)) {
                             mediaDirs.put(FileLoader.MEDIA_DIR_VIDEO_PUBLIC, videoPath);
@@ -2759,9 +2759,36 @@ public class ImageLoader {
     }
 
     public void clearMemory() {
-        smallImagesMemCache.evictAll();
-        memCache.evictAll();
-        lottieMemCache.evictAll();
+        boolean memOpt = true;
+        try {
+            memOpt = MessagesController.getGlobalMainSettings().getBoolean("indogaro_mem_opt", true);
+        } catch (Exception ignored) {}
+
+        if (memOpt) {
+            if (smallImagesMemCache != null) {
+                smallImagesMemCache.evictAll();
+            }
+            if (memCache != null) {
+                memCache.evictAll();
+            }
+            if (lottieMemCache != null) {
+                lottieMemCache.evictAll();
+            }
+            if (wallpaperMemCache != null) {
+                wallpaperMemCache.evictAll();
+            }
+            System.gc();
+        } else {
+            if (smallImagesMemCache != null) {
+                smallImagesMemCache.evictAll();
+            }
+            if (memCache != null) {
+                memCache.evictAll();
+            }
+            if (lottieMemCache != null) {
+                lottieMemCache.evictAll();
+            }
+        }
     }
 
     private void removeFromWaitingForThumb(int TAG, ImageReceiver imageReceiver) {
@@ -4179,17 +4206,13 @@ public class ImageLoader {
             fileDir = location.volume_id != Integer.MIN_VALUE ? FileLoader.getDirectory(FileLoader.MEDIA_DIR_IMAGE) : FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE);
         }
         final File cacheFile = new File(fileDir, fileName);
-        //TODO was crash in DEBUG_PRIVATE
-//        if (compressFormat == Bitmap.CompressFormat.JPEG && progressive && BuildVars.DEBUG_VERSION) {
-//            photoSize.size = Utilities.saveProgressiveJpeg(scaledBitmap, scaledBitmap.getWidth(), scaledBitmap.getHeight(), scaledBitmap.getRowBytes(), quality, cacheFile.getAbsolutePath());
-//        } else {
         FileOutputStream stream = new FileOutputStream(cacheFile);
         scaledBitmap.compress(compressFormat, quality, stream);
         if (!cache) {
             photoSize.size = (int) stream.getChannel().size();
         }
         stream.close();
-        // }
+
         if (cache) {
             ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
             scaledBitmap.compress(compressFormat, quality, stream2);

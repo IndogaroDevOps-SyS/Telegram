@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x
+ * This is the source code of Indogaro for Android v. 5.x.x
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -203,8 +203,6 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
         }
     };
 
-    private final NotificationCenter.ObserversGroup observersGroup;
-
     public MentionsAdapter(Context context, boolean darkTheme, long did, long threadMessageId, MentionsAdapterDelegate mentionsAdapterDelegate, Theme.ResourcesProvider resourcesProvider, boolean stories) {
         this.resourcesProvider = resourcesProvider;
         mContext = context;
@@ -227,17 +225,12 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
                 }
             }
         });
-
-        observersGroup = NotificationCenter.getInstance(currentAccount)
-            .createWeakObserversGroup(this)
-            .add(NotificationCenter.recentDocumentsDidLoad)
-            .add(NotificationCenter.stickersDidLoad);
-
         if (!darkTheme) {
-            observersGroup
-                .add(NotificationCenter.fileLoaded)
-                .add(NotificationCenter.fileLoadFailed);
+            NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.fileLoaded);
+            NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.fileLoadFailed);
         }
+        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.recentDocumentsDidLoad);
+        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.stickersDidLoad);
     }
 
     public TLRPC.User getFoundContextBot() {
@@ -482,7 +475,12 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
         searchingContextUsername = null;
         searchingContextQuery = null;
         noUserName = false;
-        observersGroup.removeAllObservers();
+        if (!isDarkTheme) {
+            NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.fileLoaded);
+            NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.fileLoadFailed);
+        }
+        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.recentDocumentsDidLoad);
+        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.stickersDidLoad);
     }
 
     public void setParentFragment(ChatActivity fragment) {

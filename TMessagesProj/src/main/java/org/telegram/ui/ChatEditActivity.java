@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -1548,7 +1548,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
             } else {
                 communityCell = new TextCell(context);
                 communityCell.setColors(Theme.key_windowBackgroundWhiteBlueIcon, Theme.key_windowBackgroundWhiteBlueButton);
-                communityCell.setTextColor(Theme.getColor(Theme.key_telegram_color_text));
+                communityCell.setTextColor(Theme.getColor(Theme.key_indogaro_color_text));
                 communityCell.setBackground(Theme.getSelectorDrawable(false));
                 communityCell.setTextAndIcon(getString(isBot ?
                     R.string.CommunityAddBotToCommunity : isChannel ?

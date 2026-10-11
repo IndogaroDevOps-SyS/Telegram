@@ -261,7 +261,7 @@ public class CommunityPendingRequestCell extends FrameLayout implements Theme.Co
                 R.string.CommunityPendingRequestSuggestedBot : ChatObject.isChannelAndNotMegaGroup(chatToAdd) ?
                 R.string.CommunityPendingRequestSuggestedChannel :
                 R.string.CommunityPendingRequestSuggestedGroup, DialogObject.getShortName(user)),
-            Theme.getColor(Theme.key_telegram_color_text), () -> {
+            Theme.getColor(Theme.key_indogaro_color_text), () -> {
                 //if (delegate != null) {
                 //    delegate.onClickGroupOwner(userDialogId);
                 //}

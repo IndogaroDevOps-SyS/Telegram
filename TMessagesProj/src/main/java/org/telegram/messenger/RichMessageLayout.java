@@ -9478,7 +9478,7 @@ public class RichMessageLayout {
             this.checkboxItem = sourceItem;
             if (checkbox == null) {
                 checkbox = new CheckBoxBase(null, 20, root.resourcesProvider);
-                checkbox.setColor(Theme.key_telegram_color, Theme.key_dialogCheckboxSquareDisabled, Theme.key_checkboxCheck);
+                checkbox.setColor(Theme.key_indogaro_color, Theme.key_dialogCheckboxSquareDisabled, Theme.key_checkboxCheck);
                 checkbox.setBackgroundType(10);
                 checkbox.setDrawUnchecked(true);
                 checkbox.setCustomRadius(dp(5));

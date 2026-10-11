@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -20,6 +20,11 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.tgnet.tl.TL_account;
 
 import java.util.Arrays;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 
 public class UserConfig extends BaseController {
 
@@ -114,7 +119,7 @@ public class UserConfig extends BaseController {
 
     public static boolean hasPremiumOnAccounts() {
         for (int a = 0; a < MAX_ACCOUNT_COUNT; a++) {
-            if (AccountInstance.getInstance(a).getUserConfig().isClientActivated() && AccountInstance.getInstance(a).getUserConfig().getUserConfig().isPremium()) {
+            if (AccountInstance.getInstance(a).getUserConfig().isClientActivated() && AccountInstance.getInstance(a).getUserConfig().isPremium()) {
                 return true;
             }
         }
@@ -132,6 +137,36 @@ public class UserConfig extends BaseController {
             lastSendMessageId--;
         }
         return id;
+    }
+
+    public static void createSafeBackup(File sourceFile, File backupFile) {
+        if (sourceFile == null || !sourceFile.exists() || sourceFile.length() == 0) {
+            return;
+        }
+        
+        File tempBackup = new File(backupFile.getParent(), backupFile.getName() + ".tmp");
+        try (FileInputStream fis = new FileInputStream(sourceFile);
+             FileOutputStream fos = new FileOutputStream(tempBackup)) {
+            
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) > 0) {
+                fos.write(buffer, 0, length);
+            }
+            fos.getFD().sync();
+            
+            if (tempBackup.exists()) {
+                if (backupFile.exists()) {
+                    backupFile.delete();
+                }
+                tempBackup.renameTo(backupFile);
+            }
+        } catch (Exception e) {
+            FileLog.e("Gagal membuat backup config aman", e);
+            if (tempBackup.exists()) {
+                tempBackup.delete();
+            }
+        }
     }
 
     public void saveConfig(boolean withFile) {
@@ -171,8 +206,7 @@ public class UserConfig extends BaseController {
                     editor.putInt("lastMyLocationShareTime", lastMyLocationShareTime);
                     editor.putBoolean("filtersLoaded", filtersLoaded);
                     editor.putString("premiumGiftsStickerPack", premiumGiftsStickerPack);
-                    editor.putLong("lastUpdatedPremiumGiftsStickerPack", lastUpdatedPremiumGiftsStickerPack);
-
+                    editor.putLong("lastUpdatedPremiumGiftsStickerPack", lastUpdatedPremiumGiftsStickerPack);                        
                     editor.putString("genericAnimationsStickerPack", genericAnimationsStickerPack);
                     editor.putLong("lastUpdatedGenericAnimations", lastUpdatedGenericAnimations);
 
@@ -198,8 +232,6 @@ public class UserConfig extends BaseController {
                         editor.remove("terms");
                     }
 
-                    SharedConfig.saveConfig();
-
                     if (tmpPassword != null) {
                         SerializedData data = new SerializedData();
                         tmpPassword.serializeToStream(data);
@@ -223,12 +255,27 @@ public class UserConfig extends BaseController {
                     }
 
                     editor.apply();
+
+                    if (withFile && isClientActivated()) {
+                        try {
+                            File configFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "config_" + currentAccount + ".json");
+                            if (configFile.exists() && configFile.length() > 0) {
+                                File backupFile = new File(configFile.getParent(), configFile.getName() + ".bak");
+                                createSafeBackup(configFile, backupFile);
+                            }
+                        } catch (Exception e) {
+                            FileLog.e(e);
+                        }
+                    }
+
+                    SharedConfig.saveConfig();
                 } catch (Exception e) {
                     FileLog.e(e);
                 }
             }
         });
     }
+
 
     public static boolean isValidAccount(int num) {
          return num >= 0 && num < UserConfig.MAX_ACCOUNT_COUNT && getInstance(num).isClientActivated();
@@ -287,12 +334,22 @@ public class UserConfig extends BaseController {
         }
     }
 
-    public void
-    loadConfig() {
+    public void loadConfig() {
         synchronized (sync) {
             if (configLoaded) {
                 return;
             }
+
+            try {
+                File configFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "config_" + currentAccount + ".json");
+                File backupFile = new File(configFile.getParent(), configFile.getName() + ".bak");
+                if ((!configFile.exists() || configFile.length() == 0) && backupFile.exists() && backupFile.length() > 0) {
+                    createSafeBackup(backupFile, configFile);
+                }
+            } catch (Exception e) {
+                FileLog.e("Gagal memproses auto-recovery config", e);
+            }
+
             SharedPreferences preferences = getPreferences();
             if (currentAccount == 0) {
                 selectedAccount = preferences.getInt("selectedAccount", 0);
@@ -328,14 +385,16 @@ public class UserConfig extends BaseController {
             genericAnimationsStickerPack = preferences.getString("genericAnimationsStickerPack", null);
             lastUpdatedGenericAnimations = preferences.getLong("lastUpdatedGenericAnimations", 0);
 
-
             try {
                 String terms = preferences.getString("terms", null);
                 if (terms != null) {
                     byte[] arr = Base64.decode(terms, Base64.DEFAULT);
-                    if (arr != null) {
+                    if (arr != null && arr.length > 0) {
                         SerializedData data = new SerializedData(arr);
-                        unacceptedTermsOfService = TLRPC.TL_help_termsOfService.TLdeserialize(data, data.readInt32(false), false);
+                        TLRPC.TL_help_termsOfService termsObj = TLRPC.TL_help_termsOfService.TLdeserialize(data, data.readInt32(false), false);
+                        if (termsObj != null) {
+                            unacceptedTermsOfService = termsObj;
+                        }
                         data.cleanup();
                     }
                 }
@@ -352,25 +411,40 @@ public class UserConfig extends BaseController {
                 migrateOffsetAccess = preferences.getLong("6migrateOffsetAccess", 0);
             }
 
-            String string = preferences.getString("tmpPassword", null);
-            if (string != null) {
-                byte[] bytes = Base64.decode(string, Base64.DEFAULT);
-                if (bytes != null) {
-                    SerializedData data = new SerializedData(bytes);
-                    tmpPassword = TL_account.tmpPassword.TLdeserialize(data, data.readInt32(false), false);
-                    data.cleanup();
+            try {
+                String string = preferences.getString("tmpPassword", null);
+                if (string != null) {
+                    byte[] bytes = Base64.decode(string, Base64.DEFAULT);
+                    if (bytes != null && bytes.length > 0) {
+                        SerializedData data = new SerializedData(bytes);
+                        TL_account.tmpPassword pwdObj = TL_account.tmpPassword.TLdeserialize(data, data.readInt32(false), false);
+                        if (pwdObj != null) {
+                            tmpPassword = pwdObj;
+                        }
+                        data.cleanup();
+                    }
                 }
+            } catch (Exception e) {
+                FileLog.e(e);
             }
 
-            string = preferences.getString("user", null);
-            if (string != null) {
-                byte[] bytes = Base64.decode(string, Base64.DEFAULT);
-                if (bytes != null) {
-                    SerializedData data = new SerializedData(bytes);
-                    currentUser = TLRPC.User.TLdeserialize(data, data.readInt32(false), false);
-                    data.cleanup();
+            try {
+                String string = preferences.getString("user", null);
+                if (string != null) {
+                    byte[] bytes = Base64.decode(string, Base64.DEFAULT);
+                    if (bytes != null && bytes.length > 0) {
+                        SerializedData data = new SerializedData(bytes);
+                        TLRPC.User userObj = TLRPC.User.TLdeserialize(data, data.readInt32(false), false);
+                        if (userObj != null) {
+                            currentUser = userObj;
+                        }
+                        data.cleanup();
+                    }
                 }
+            } catch (Exception e) {
+                FileLog.e(e);
             }
+
             if (currentUser != null) {
                 checkPremiumSelf(null, currentUser);
                 clientUserId = currentUser.id;
@@ -378,6 +452,7 @@ public class UserConfig extends BaseController {
             configLoaded = true;
         }
     }
+
 
     public boolean isConfigLoaded() {
         return configLoaded;
@@ -572,6 +647,12 @@ public class UserConfig extends BaseController {
     }
 
     public boolean isPremium() {
+        try {
+            if (MessagesController.getGlobalMainSettings().getBoolean("indogaro_unlock_limits", false)) {
+                return true;
+            }
+        } catch (Exception ignored) {}
+
         TLRPC.User user = currentUser;
         if (user == null) {
             return false;

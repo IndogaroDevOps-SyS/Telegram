@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -157,12 +157,10 @@ import org.telegram.ui.Components.blur3.source.BlurredBackgroundSource;
 import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceBitmap;
 import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceRenderNode;
 import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceWrapped;
+import org.telegram.ui.Components.chat.ViewPositionWatcher;
 import org.telegram.ui.Components.chat.WallpaperBitmapProvider;
 import org.telegram.ui.Components.chat.layouts.ChatActivityChannelButtonsLayout;
 import org.telegram.ui.Components.chat.layouts.ChatActivityFadeView;
-import org.telegram.utils.glass.GlassEngine;
-import org.telegram.utils.glass.positions.GlassPositionsArray;
-import org.telegram.utils.glass.positions.GlassPositionsMerger;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -184,7 +182,9 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
     private final @Nullable BlurredBackgroundSourceRenderNode glassBackgroundSourceFrostedRenderNode;
 
     private final @NonNull BlurredBackgroundDrawableViewFactory glassBackgroundDrawableFactory;
+    private final @NonNull BlurredBackgroundDrawableViewFactory glassBackgroundDrawableFactoryFrosted;
 
+    private final ReferenceList<View> glassAttachedViews = new ReferenceList<>();
     private final @Nullable DownscaleScrollableNoiseSuppressor scrollableViewNoiseSuppressor;
     private final int recommendedAdditionalSizeY;
 
@@ -341,34 +341,31 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
     private ChatListItemAnimator chatListItemAnimator;
 
     public ChannelAdminLogActivity(TLRPC.Chat chat) {
-        glassEngine.setGlassInvalidationListener(this::invalidateMergedVisibleBlurredPositionsAndSourcesImpl);
-        glassEngine.setPositionsMerger(new GlassPositionsMerger(Float.POSITIVE_INFINITY, dp(48)));
-
         navbarContentSourceWallpaper = new BlurredBackgroundSourceWrapped();
         navbarContentDrawableFactory = new BlurredBackgroundDrawableViewFactory(navbarContentSourceWallpaper);
-        navbarContentDrawableFactory.setGlassEngine(glassEngine);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SharedConfig.chatBlurEnabled()) {
             scrollableViewNoiseSuppressor = new DownscaleScrollableNoiseSuppressor();
 
             glassBackgroundSourceFrostedRenderNode = new BlurredBackgroundSourceRenderNode(navbarContentSourceWallpaper);
+            glassBackgroundSourceFrostedRenderNode.setOnDrawablesRelativePositionChangeListener(this::invalidateMergedVisibleBlurredPositionsAndSourcesPositions);
             glassBackgroundSourceFrostedRenderNode.setScrollableNoiseSuppressor(scrollableViewNoiseSuppressor, DownscaleScrollableNoiseSuppressor.DRAW_FROSTED_GLASS);
             glassBackgroundSourceFrostedRenderNode.setUnderSource(navbarContentSourceWallpaper);
 
+            glassBackgroundDrawableFactoryFrosted = new BlurredBackgroundDrawableViewFactory(glassBackgroundSourceFrostedRenderNode);
+            glassBackgroundDrawableFactoryFrosted.setLiquidGlassEffectAllowed(LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS));
+
             if (LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS)) {
                 glassBackgroundSourceRenderNode = new BlurredBackgroundSourceRenderNode(navbarContentSourceWallpaper);
+                glassBackgroundSourceRenderNode.setOnDrawablesRelativePositionChangeListener(this::invalidateMergedVisibleBlurredPositionsAndSourcesPositions);
                 glassBackgroundSourceRenderNode.setScrollableNoiseSuppressor(scrollableViewNoiseSuppressor, DownscaleScrollableNoiseSuppressor.DRAW_GLASS);
                 glassBackgroundSourceRenderNode.setUnderSource(navbarContentSourceWallpaper);
                 glassBackgroundDrawableFactory = new BlurredBackgroundDrawableViewFactory(glassBackgroundSourceRenderNode);
-                glassBackgroundDrawableFactory.setGlassEngine(glassEngine);
-                glassBackgroundDrawableFactory.setOutset(LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS) ? dp(8) : dp(48));
                 glassBackgroundDrawableFactory.setLiquidGlassEffectAllowed(LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS));
                 recommendedAdditionalSizeY = 0;
             } else {
                 glassBackgroundSourceRenderNode = null;
-                glassBackgroundDrawableFactory = new BlurredBackgroundDrawableViewFactory(glassBackgroundSourceFrostedRenderNode);
-                glassBackgroundDrawableFactory.setGlassEngine(glassEngine);
-                glassBackgroundDrawableFactory.setOutset(LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS) ? dp(8) : dp(48));
+                glassBackgroundDrawableFactory = glassBackgroundDrawableFactoryFrosted;
                 recommendedAdditionalSizeY = dp(48);
             }
         } else {
@@ -379,8 +376,11 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
             glassBackgroundSourceFrostedRenderNode = null;
 
             glassBackgroundDrawableFactory = new BlurredBackgroundDrawableViewFactory(navbarContentSourceWallpaper);
-            glassBackgroundDrawableFactory.setGlassEngine(glassEngine);
+            glassBackgroundDrawableFactoryFrosted = new BlurredBackgroundDrawableViewFactory(navbarContentSourceWallpaper);
         }
+        navbarContentDrawableFactory.setLinkedViewsRef(glassAttachedViews);
+        glassBackgroundDrawableFactory.setLinkedViewsRef(glassAttachedViews);
+        glassBackgroundDrawableFactoryFrosted.setLinkedViewsRef(glassAttachedViews);
 
         currentChat = chat;
     }
@@ -1003,6 +1003,8 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
 
             @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                invalidateBlurredSourcesView.bringToFrontIfNeeded();
+
                 int allHeight;
                 int widthSize = MeasureSpec.getSize(widthMeasureSpec);
                 int heightSize = MeasureSpec.getSize(heightMeasureSpec);
@@ -1145,6 +1147,15 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
         };
 
         contentView = (ChatActivityFragmentView) fragmentView;
+
+        invalidateBlurredSourcesView = new OnPostDrawView(context, true, this::invalidateMergedVisibleBlurredPositionsAndSourcesImpl);
+        contentView.addView(invalidateBlurredSourcesView);
+
+        final ViewPositionWatcher viewPositionWatcher = new ViewPositionWatcher(contentView);
+
+        glassBackgroundDrawableFactory.setSourceRootView(viewPositionWatcher, contentView);
+        glassBackgroundDrawableFactoryFrosted.setSourceRootView(viewPositionWatcher, contentView);
+        navbarContentDrawableFactory.setSourceRootView(viewPositionWatcher, contentView);
 
         contentView.setOccupyStatusBar(!AndroidUtilities.isTablet());
         contentView.setBackgroundImage(Theme.getCachedWallpaper(), Theme.isWallpaperMotion());
@@ -1443,11 +1454,13 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
                         floatingDateAnimation.start();
                     }
                 }
+                if (dy != 0) {
+                    invalidateMergedVisibleBlurredPositionsAndSources(BLUR_INVALIDATE_FLAG_SCROLL);
+                }
                 checkScrollForLoad(true);
                 updateMessagesVisiblePart();
             }
         });
-        glassEngine.addScrolledView(chatListView);
         if (scrollToPositionOnRecreate != -1) {
             chatLayoutManager.scrollToPositionWithOffset(scrollToPositionOnRecreate, scrollToOffsetOnRecreate);
             scrollToPositionOnRecreate = -1;
@@ -1658,7 +1671,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
             }
         }
 
-        if (message.currentEvent != null && (message.currentEvent.action instanceof TLRPC.TL_channelAdminLogEventActionDeleteMessage && message.currentEvent.user_id == getMessagesController().telegramAntispamUserId || message.currentEvent.action instanceof TLRPC.TL_channelAdminLogEventActionToggleAntiSpam)) {
+        if (message.currentEvent != null && (message.currentEvent.action instanceof TLRPC.TL_channelAdminLogEventActionDeleteMessage && message.currentEvent.user_id == getMessagesController().indogaroAntispamUserId || message.currentEvent.action instanceof TLRPC.TL_channelAdminLogEventActionToggleAntiSpam)) {
             if (v instanceof ChatActionCell) {
                 SpannableString arrow = new SpannableString(">");
                 Drawable arrowDrawable = getContext().getResources().getDrawable(R.drawable.attach_arrow_right).mutate();
@@ -2436,9 +2449,9 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
                     TLRPC.ChatFull chatFull = getMessagesController().getChatFull(currentChat.id);
                     if (chatFull != null && chatFull.antispam) {
                         TLRPC.ChannelParticipant antispamParticipant = new TLRPC.ChannelParticipant() {};
-                        antispamParticipant.user_id = getMessagesController().telegramAntispamUserId;
+                        antispamParticipant.user_id = getMessagesController().indogaroAntispamUserId;
                         antispamParticipant.peer = getMessagesController().getPeer(antispamParticipant.user_id);
-                        loadAntispamUser(getMessagesController().telegramAntispamUserId);
+                        loadAntispamUser(getMessagesController().indogaroAntispamUserId);
                         admins.add(0, antispamParticipant);
                     }
                 }
@@ -4350,19 +4363,120 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
         return false;
     }
 
+
+    private OnPostDrawView invalidateBlurredSourcesView;
+
+    private static final int BLUR_INVALIDATE_FLAG_SCROLL = 1;
+    private static final int BLUR_INVALIDATE_FLAG_POSITIONS = 1 << 1;
+    private static final int BLUR_INVALIDATE_FLAG_CLIP = 1 << 2;
+
+    private void invalidateMergedVisibleBlurredPositionsAndSourcesPositions() {
+        invalidateMergedVisibleBlurredPositionsAndSources(BLUR_INVALIDATE_FLAG_POSITIONS);
+    }
+
+    private void invalidateMergedVisibleBlurredPositionsAndSources(int flags) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || scrollableViewNoiseSuppressor == null) {
+            return;
+        }
+
+        invalidateBlurredSourcesView.invalidate(flags);
+    }
+
+    private final ArrayList<RectF> glassDrawablesPositions = new ArrayList<>();
+    private final ArrayList<RectF> glassDrawablesPositionsMerged = new ArrayList<>();
+    private int glassDrawablesPositionsCount;
+
     private void invalidateMergedVisibleBlurredPositionsAndSourcesImpl(int flags) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || scrollableViewNoiseSuppressor == null) {
             return;
         }
 
-        if (BitwiseUtils.hasFlag(flags, GlassEngine.FLAG_INVALIDATED_POSITIONS)) {
-            GlassPositionsArray glassPositionsArray = glassEngine.getAllVisibleDrawablesWithDisplayListPositionsMerged();
-            glassPositionsArray.clip(0, chatListView.getY(), contentView.getWidth(), chatListView.getY() + chatListView.getHeight());
-            scrollableViewNoiseSuppressor.setupRenderNodes(glassPositionsArray);
+        if (BitwiseUtils.hasFlag(flags, BLUR_INVALIDATE_FLAG_CLIP)) {
+        //    invalidateClipRectForBackgroundAndChatList();
         }
 
-        scrollableViewNoiseSuppressor.invalidateResultRenderNodes(contentView::drawList, contentView.getWidth(), contentView.getHeight());
+        if (BitwiseUtils.hasFlag(flags, BLUR_INVALIDATE_FLAG_POSITIONS)) {
+            glassDrawablesPositionsCount = getMergedVisibleBlurredPositions(glassDrawablesPositionsMerged);
+            scrollableViewNoiseSuppressor.setupRenderNodes(glassDrawablesPositionsMerged, glassDrawablesPositionsCount);
+        }
+
+        //if (BitwiseUtils.hasFlag(flags, BLUR_INVALIDATE_FLAG_POSITIONS | BLUR_INVALIDATE_FLAG_SCROLL)) {
+        final boolean hasChanges = scrollableViewNoiseSuppressor.invalidateResultRenderNodes(contentView::drawList, contentView.getWidth(), contentView.getHeight());
+        if (hasChanges) {
+            if (glassBackgroundSourceRenderNode != null) {
+                glassBackgroundSourceRenderNode.invalidateDisplayListForDrawables();
+            }
+            if (glassBackgroundSourceFrostedRenderNode != null) {
+                glassBackgroundSourceFrostedRenderNode.invalidateDisplayListForDrawables();
+            }
+            if (actionBar != null) {
+                actionBar.invalidate();
+            }
+            invalidateAllGlassAttachedViews();
+        }
+
+        //}
     }
+
+    private int getMergedVisibleBlurredPositions(List<RectF> positions) {
+        final int positionsCount = getVisibleBlurredPositions(glassDrawablesPositions);
+        final int mergedPositionsCount = RectFMergeBounding.mergeOverlapping(glassDrawablesPositions, positionsCount, positions);
+        final int maxX = contentView.getMeasuredWidth();
+        for (int a = 0; a < mergedPositionsCount; a++) {
+            final RectF position = positions.get(a);
+            position.left = androidx.core.math.MathUtils.clamp(position.left, 0, maxX);
+            position.top = Math.max(chatListView.getY(), position.top);
+            position.right = androidx.core.math.MathUtils.clamp(position.right, 0, maxX);
+            position.bottom = Math.min(chatListView.getY() + chatListView.getMeasuredHeight(), position.bottom);
+            /*if (drawDebug) {
+                ((Canvas) null).drawRect(position, Theme.DEBUG_GREEN_STROKE);
+            }*/
+        }
+
+        return mergedPositionsCount;
+    }
+
+    private int getVisibleBlurredPositions(List<RectF> positions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            int count = 0;
+
+            if (glassBackgroundSourceFrostedRenderNode != null) {
+                final int blurAlpha = ChatActivity.ACTION_BAR_BLUR_ALPHA;
+                if (blurAlpha < 255) {
+                    final RectF rectf;
+                    if (positions.isEmpty()) {
+                        positions.add(rectf = new RectF());
+                    } else {
+                        rectf = positions.get(0);
+                    }
+
+                    rectf.set(0, 0, contentView.getMeasuredWidth(), chatListView.getPaddingTop() + chatListView.getY());
+                    rectf.inset(0, -dp(45));
+                    count += 1;
+                }
+
+                count += glassBackgroundSourceFrostedRenderNode.getVisiblePositions(positions, count, dp(48));
+            }
+
+            if (glassBackgroundSourceRenderNode != null) {
+                count += glassBackgroundSourceRenderNode.getVisiblePositions(positions, count, dp(8));
+            }
+
+            return count;
+        } else {
+            return 0;
+        }
+    }
+
+    private void invalidateAllGlassAttachedViews() {
+        contentView.invalidate();
+        for (View v: glassAttachedViews) {
+            v.invalidate();
+        }
+    }
+
+
+
 
     private final RectF tmpViewRectF = new RectF();
     private boolean quickRejectChild(View child, @Nullable RectF position) {

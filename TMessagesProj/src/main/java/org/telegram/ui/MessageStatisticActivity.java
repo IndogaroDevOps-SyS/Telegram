@@ -1,5 +1,5 @@
 /*
- * This is the source code of Telegram for Android v. 5.x.x.
+ * This is the source code of Indogaro for Android v. 5.x.x.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
  *
@@ -463,7 +463,7 @@ public class MessageStatisticActivity extends BaseFragment implements Notificati
         if (!messageObject.isStory()) {
             if (!messageObject.needDrawBluredPreview() && (messageObject.isPhoto() || messageObject.isNewGif() || messageObject.isVideo())) {
                 String type = messageObject.isWebpage() ? messageObject.messageOwner.media.webpage.type : null;
-                if (!("app".equals(type) || "profile".equals(type) || "article".equals(type) || type != null && type.startsWith("telegram_"))) {
+                if (!("app".equals(type) || "profile".equals(type) || "article".equals(type) || type != null && type.startsWith("indogaro_"))) {
                     TLRPC.PhotoSize smallThumb = FileLoader.getClosestPhotoSizeWithSize(messageObject.photoThumbs, 50);
                     TLRPC.PhotoSize bigThumb = FileLoader.getClosestPhotoSizeWithSize(messageObject.photoThumbs, AndroidUtilities.getPhotoSize());
                     if (smallThumb == bigThumb) {

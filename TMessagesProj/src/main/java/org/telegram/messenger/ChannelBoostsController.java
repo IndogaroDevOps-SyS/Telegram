@@ -1,5 +1,7 @@
 package org.telegram.messenger;
 
+import androidx.media3.common.util.Consumer;
+
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.tgnet.tl.TL_stories;
@@ -32,12 +34,12 @@ public class ChannelBoostsController {
         connectionsManager = ConnectionsManager.getInstance(currentAccount);
     }
 
-    public void getBoostsStats(long dialogId, Utilities.Callback<TL_stories.TL_premium_boostsStatus> consumer) {
+    public void getBoostsStats(long dialogId, Consumer<TL_stories.TL_premium_boostsStatus> consumer) {
         TL_stories.TL_premium_getBoostsStatus req = new TL_stories.TL_premium_getBoostsStatus();
         req.peer = messagesController.getInputPeer(dialogId);
         connectionsManager.sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
             if (response != null) {
-                consumer.run((TL_stories.TL_premium_boostsStatus) response);
+                consumer.accept((TL_stories.TL_premium_boostsStatus) response);
             } else {
                 BaseFragment fragment = LaunchActivity.getLastFragment();
                 if (error != null && fragment != null && "CHANNEL_PRIVATE".equals(error.text)) {
@@ -57,12 +59,12 @@ public class ChannelBoostsController {
                 } else {
                     BulletinFactory.global().showForError(error);
                 }
-                consumer.run(null);
+                consumer.accept(null);
             }
         }));
     }
 
-    public void userCanBoostChannel(long dialogId, TL_stories.TL_premium_boostsStatus boostsStatus, Utilities.Callback<CanApplyBoost> consumer) {
+    public void userCanBoostChannel(long dialogId, TL_stories.TL_premium_boostsStatus boostsStatus, Consumer<CanApplyBoost> consumer) {
         CanApplyBoost canApplyBoost = new CanApplyBoost();
         canApplyBoost.currentPeer = messagesController.getPeer(dialogId);
         canApplyBoost.currentDialogId = dialogId;
@@ -70,7 +72,7 @@ public class ChannelBoostsController {
         BoostRepository.getMyBoosts(myBoosts -> {
             canApplyBoost.isMaxLvl = boostsStatus.next_level_boosts <= 0;
             canApplyBoost.setMyBoosts(myBoosts);
-            consumer.run(canApplyBoost);
+            consumer.accept(canApplyBoost);
         }, error -> {
             if (error.text.startsWith("FLOOD_WAIT")) {
                 canApplyBoost.floodWait = Utilities.parseInt(error.text);
@@ -78,7 +80,7 @@ public class ChannelBoostsController {
                 canApplyBoost.empty = true;
             }
             canApplyBoost.canApply = false;
-            consumer.run(canApplyBoost);
+            consumer.accept(canApplyBoost);
         });
     }
 

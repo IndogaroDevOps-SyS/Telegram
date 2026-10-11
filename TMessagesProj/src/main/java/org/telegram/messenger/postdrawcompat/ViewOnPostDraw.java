@@ -44,7 +44,7 @@ class ViewOnPostDraw extends View {
     }
 
     private void dispatchOnPostDrawListeners() {
-        Trace.beginSection("OnPostDraw");
+        Trace.beginSection("dispatchOnPostDrawListeners");
         try {
             for (OnPostDrawListener callback : callbacks) {
                 callback.onPostDraw();

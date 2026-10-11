@@ -8093,7 +8093,7 @@ public class StarGiftSheet extends BottomSheetWithRecyclerListView implements No
                 } else if (info.last_sale_on_fragment) {
                     textView.setText(AndroidUtilities.replaceTags(formatString(R.string.GiftValueLastFragment, giftName)));
                 } else {
-                    textView.setText(AndroidUtilities.replaceTags(formatString(R.string.GiftValueLastTelegram, giftName)));
+                    textView.setText(AndroidUtilities.replaceTags(formatString(R.string.GiftValueLastIndogaro, giftName)));
                 }
 
                 final FrameLayout tableLayout = new FrameLayout(getContext());
@@ -8172,7 +8172,7 @@ public class StarGiftSheet extends BottomSheetWithRecyclerListView implements No
                     sb.append("e");
                     sb.setSpan(new AnimatedEmojiSpan(sticker, 1.5f, button1.getTextPaint().getFontMetricsInt()), sb.length() - 1, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     sb.append(" ");
-                    sb.append(getString(R.string.GiftValueOnSaleTelegram));
+                    sb.append(getString(R.string.GiftValueOnSaleIndogaro));
                     button1.setText(AndroidUtilities.replaceArrows(sb, false, dp(2), dp(1)), false);
                     button1.setOnClickListener(v -> {
                         final BaseFragment lastFragment = LaunchActivity.getLastFragment();
