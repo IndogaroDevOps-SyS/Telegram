@@ -1,4 +1,4 @@
-name: DEBUG
+name: Debug
 
 on:
   push:
@@ -38,10 +38,33 @@ jobs:
         with:
           packages: 'platform-tools build-tools;34.0.0'
 
+      
       - name: Inject Telegram API Credentials
+        env:
+          TG_APP_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TG_APP_HASH: ${{ secrets.TELEGRAM_API_HASH }}
         run: |
-          sed -i 's/public static int APP_ID = .*/public static int APP_ID = ${{ secrets.TELEGRAM_APP_ID }};/' TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
-          sed -i 's/public static String APP_HASH = .*/public static String APP_HASH = "${{ secrets.TELEGRAM_APP_HASH }}";/' TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+          python3 -c '
+          import os
+          app_id = os.environ.get("TG_APP_ID", "").strip()
+          app_hash = os.environ.get("TG_APP_HASH", "").strip()
+          
+          print(f"Panjang APP_ID: {len(app_id)}, Panjang APP_HASH: {len(app_hash)}")
+          if not app_id or not app_hash:
+              raise ValueError("ERROR: Secret GitHub kosong atau tidak terbaca!")
+              
+          path = "TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java"
+          with open(path, "r") as f:
+              content = f.read()
+              
+          content = content.replace("public static int APP_ID = 4;", f"public static int APP_ID = {app_id};")
+          content = content.replace("public static String APP_HASH = \"014b35b6184100b085b8d0572f9b5103\";", f"public static String APP_HASH = \"{app_hash}\";")
+          
+          with open(path, "w") as f:
+              f.write(content)
+          print("Berhasil menyuntikkan API ID & Hash ke BuildVars.java!")
+          '
+
 
       - name: Make Gradlew Executable
         run: chmod +x gradlew
@@ -50,7 +73,7 @@ jobs:
         run: ./gradlew TMessagesProj_App:compileAfatDebugJavaWithJavac --no-daemon --stacktrace
 
       - name: Build Release APK (AFAT)
-        run: ./gradlew TMessagesProj_App:assembleAfatDebug --no-daemon --stacktrace
+        run: ./gradlew TMessagesProj_App:assembleAfatRelease --no-daemon --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
