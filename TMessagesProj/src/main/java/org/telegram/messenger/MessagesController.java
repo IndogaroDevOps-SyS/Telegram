@@ -3441,13 +3441,13 @@ public class MessagesController extends BaseController implements NotificationCe
                     break;
                 }
                 case "channels_limit_default": {
-                    channelsLimitDefault = 99999;
-                    editor.putInt("channelsLimitDefault", 99999);
+                    channelsLimitDefault = 900000;
+                    editor.putInt("channelsLimitDefault", 900000);
                     break;
                 }
                 case "channels_limit_premium": {
-                    channelsLimitPremium = 99999;
-                    editor.putInt("channelsLimitPremium", 99999);
+                    channelsLimitPremium = 900000;
+                    editor.putInt("channelsLimitPremium", 900000);
                     break;
                 }
 
