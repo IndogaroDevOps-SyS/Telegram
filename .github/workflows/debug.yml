@@ -62,7 +62,7 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Telegram-Official-Release-APKss
+          name: DEBUGING-TELEGRAM
           path: 'TMessagesProj_App/build/outputs/apk/afat/debug/app.apk'
           retention-days: 20
       - name: Print Direct Download Link

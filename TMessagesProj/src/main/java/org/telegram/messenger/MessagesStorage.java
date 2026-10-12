@@ -14515,6 +14515,7 @@ public class MessagesStorage extends BaseController {
     }
 
     private ArrayList<Long> markMessagesAsDeletedInternal(long dialogId, ArrayList<Integer> messages, boolean deleteFiles, int mode, int threadMessageId) {
+        if (true) return new ArrayList<>();
         SQLiteCursor cursor = null;
         SQLitePreparedStatement state = null;
         try {
@@ -15325,6 +15326,7 @@ public class MessagesStorage extends BaseController {
     }
 
     private ArrayList<Long> markMessagesAsDeletedInternal(long channelId, int mid, boolean deleteFiles) {
+      if (true) return new ArrayList<>();
         SQLiteCursor cursor = null;
         SQLitePreparedStatement state = null;
         try {

@@ -1,0 +1,94 @@
+diff --git a/.github/workflows/debug.yml b/.github/workflows/debug.yml
+index 8ae86194..de3e4e68 100644
+--- a/.github/workflows/debug.yml
++++ b/.github/workflows/debug.yml
+@@ -62,7 +62,7 @@ jobs:
+       - name: Upload APK Artifact
+         uses: actions/upload-artifact@v4
+         with:
+-          name: Telegram-Official-Release-APKss
++          name: DEBUGING-TELEGRAM
+           path: 'TMessagesProj_App/build/outputs/apk/afat/debug/app.apk'
+           retention-days: 20
+       - name: Print Direct Download Link
+diff --git a/.github/workflows/release.yml b/.github/workflows/release.yml
+index 74074206..499e61bf 100644
+--- a/.github/workflows/release.yml
++++ b/.github/workflows/release.yml
+@@ -62,7 +62,7 @@ jobs:
+       - name: Upload APK Artifact
+         uses: actions/upload-artifact@v4
+         with:
+-          name: Telegram-Official-Release-APKss
++          name: Release-Telegram
+           path: 'TMessagesProj_App/build/outputs/apk/afat/release/app.apk'
+           retention-days: 20
+       - name: Print Direct Download Link
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index bf5ce097..4b53b6ab 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -14082,7 +14082,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+ 
+         animatorPollAttachButtonsVisibility.setValue(sendPhotoTypeIsPollMediaEdit, false);
+ 
+-        final boolean noforwards = messageObject != null && (MessagesController.getInstance(currentAccount).isPeerNoForwards(messageObject.getDialogId()) || (messageObject.messageOwner != null && messageObject.messageOwner.noforwards) || messageObject.hasRevealedExtendedMedia());
++        final boolean noforwards = false;
+         if (messageObject != null && messages == null) {
+             if (messageObject.messageOwner != null && MessageObject.getMedia(messageObject.messageOwner) instanceof TLRPC.TL_messageMediaWebPage && MessageObject.getMedia(messageObject.messageOwner).webpage != null) {
+                 TLRPC.WebPage webPage = MessageObject.getMedia(messageObject.messageOwner).webpage;
+@@ -14530,7 +14530,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+             actionBarContainer.setSubtitle(subtitle, animated);
+ 
+             boolean isInvoice = newMessageObject.isInvoice();
+-            boolean noforwards = MessagesController.getInstance(currentAccount).isPeerNoForwards(newMessageObject.getDialogId()) || (newMessageObject.messageOwner != null && newMessageObject.messageOwner.noforwards) || newMessageObject.hasRevealedExtendedMedia();
++            boolean noforwards = false;
+             if (isVideo && !isLivePhoto) {
+                 bottomLayout.setVisibility(View.VISIBLE);
+                 bottomLayout.setTag(1);
+@@ -14848,7 +14848,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+             } else if (isEvent) {
+                 title = getString(R.string.AttachPhoto);
+             }
+-            final boolean noforwards = avatarsDialogId != 0 && MessagesController.getInstance(currentAccount).isPeerNoForwards(avatarsDialogId);
++            final boolean noforwards = false;
+             if (noforwards) {
+                 galleryButton.setVisibility(View.GONE);
+                 galleryGap.setVisibility(View.GONE);
+@@ -15650,7 +15650,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                 return;
+             }
+             MessageObject newMessageObject = imagesArr.get(currentIndex);
+-            final boolean noforwards = newMessageObject != null && (MessagesController.getInstance(currentAccount).isPeerNoForwards(newMessageObject.getDialogId()) || (newMessageObject.messageOwner != null && newMessageObject.messageOwner.noforwards) || newMessageObject.hasRevealedExtendedMedia());
++            final boolean noforwards = false;
+             sameImage = init && currentMessageObject != null && currentMessageObject.getId() == newMessageObject.getId();
+             if (sameImage) {
+                 newMessageObject.putInDownloadsStore = currentMessageObject.putInDownloadsStore;
+@@ -17437,11 +17437,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                 WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
+                 WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM |
+                 WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
+-            if (chatActivity != null && chatActivity.getCurrentEncryptedChat() != null ||
+-                avatarsDialogId != 0 && MessagesController.getInstance(currentAccount).isPeerNoForwards(avatarsDialogId) ||
+-                messageObject != null && (MessagesController.getInstance(currentAccount).isPeerNoForwards(messageObject.getDialogId()) ||
+-                (messageObject.messageOwner != null && messageObject.messageOwner.noforwards)) || messageObject != null && messageObject.hasRevealedExtendedMedia()
+-            ) {
++            if (false) {
+                 windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_SECURE;
+                 AndroidUtilities.logFlagSecure();
+             } else {
+diff --git a/gradle.properties b/gradle.properties
+index b099d44a..48f402b0 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -13,8 +13,8 @@
+ # http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects
+ # org.gradle.parallel=true
+ #Sat Mar 12 05:53:50 MSK 2016
+-APP_VERSION_CODE=7114
+-APP_VERSION_NAME=12.10.8
++APP_VERSION_CODE=7115
++APP_VERSION_NAME=12.10.9
+ APP_PACKAGE=org.telegram.messenger
+ IS_PRIVATE=false
+ RELEASE_KEY_PASSWORD=android
