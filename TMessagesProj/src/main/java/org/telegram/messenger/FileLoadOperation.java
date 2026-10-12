@@ -287,13 +287,13 @@ public class FileLoadOperation {
 
     private void updateParams() {
         if ((preloadPrefixSize > 0 || MessagesController.getInstance(currentAccount).getfileExperimentalParams) && !forceSmallChunk) {
-            downloadChunkSizeBig = 1024 * 512;
-            maxDownloadRequests = 16;
+            downloadChunkSizeBig = 1024 * 256;
+            maxDownloadRequests = 32;
             maxDownloadRequestsBig = 16;
         } else {
             downloadChunkSizeBig = 1024 * 128;
-            maxDownloadRequests = 16;
-            maxDownloadRequestsBig = 16;
+            maxDownloadRequests = 8;
+            maxDownloadRequestsBig = 4;
         }
         maxCdnParts = (int) (FileLoader.DEFAULT_MAX_FILE_SIZE / downloadChunkSizeBig);
     }
