@@ -1978,7 +1978,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
             return false;
         }
 
-        if (ignoreDelete && byDelete) {
+        if (byDelete) {
             return false;
         }
 

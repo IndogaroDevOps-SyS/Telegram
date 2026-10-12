@@ -1643,8 +1643,8 @@ public class MessagesController extends BaseController implements NotificationCe
         savedGifsLimitPremium = mainPreferences.getInt("savedGifsLimitPremium", 400);
         stickersFavedLimitDefault = mainPreferences.getInt("stickersFavedLimitDefault", 5);
         stickersFavedLimitPremium = mainPreferences.getInt("stickersFavedLimitPremium", 200);
-        maxPinnedDialogsCountDefault = mainPreferences.getInt("maxPinnedDialogsCountDefault", 5);
-        maxPinnedDialogsCountPremium = mainPreferences.getInt("maxPinnedDialogsCountPremium", 5);
+        maxPinnedDialogsCountDefault = mainPreferences.getInt("maxPinnedDialogsCountDefault", 600);
+        maxPinnedDialogsCountPremium = mainPreferences.getInt("maxPinnedDialogsCountPremium", 600);
         maxPinnedDialogsCountDefault = mainPreferences.getInt("maxPinnedDialogsCountDefault", 5);
         maxPinnedDialogsCountPremium = mainPreferences.getInt("maxPinnedDialogsCountPremium", 5);
         dialogFiltersLimitDefault = mainPreferences.getInt("dialogFiltersLimitDefault", 10);
@@ -3507,25 +3507,15 @@ public class MessagesController extends BaseController implements NotificationCe
                     break;
                 }
                 case "pinned_dialogs_count_max_default": {
-                    if (value.value instanceof TLRPC.TL_jsonNumber) {
-                        TLRPC.TL_jsonNumber number = (TLRPC.TL_jsonNumber) value.value;
-                        if (number.value != maxPinnedDialogsCountDefault) {
-                            maxPinnedDialogsCountDefault = (int) number.value;
-                            editor.putInt("maxPinnedDialogsCountDefault", maxPinnedDialogsCountDefault);
-                            changed = true;
-                        }
-                    }
+                    maxPinnedDialogsCountDefault = 100;
+                    editor.putInt("maxPinnedDialogsCountDefault", 100);
+                    changed = true;
                     break;
                 }
                 case "pinned_dialogs_count_max_premium": {
-                    if (value.value instanceof TLRPC.TL_jsonNumber) {
-                        TLRPC.TL_jsonNumber number = (TLRPC.TL_jsonNumber) value.value;
-                        if (number.value != maxPinnedDialogsCountPremium) {
-                            maxPinnedDialogsCountPremium = (int) number.value;
-                            editor.putInt("maxPinnedDialogsCountPremium", maxPinnedDialogsCountPremium);
-                            changed = true;
-                        }
-                    }
+                    maxPinnedDialogsCountPremium = 100;
+                    editor.putInt("maxPinnedDialogsCountPremium", 100);
+                    changed = true;
                     break;
                 }
                 case "dialog_filters_limit_default": {
@@ -21611,6 +21601,7 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public SponsoredMessagesInfo getSponsoredMessages(long dialogId) {
+       if (true) return null;
         SponsoredMessagesInfo info = sponsoredMessages.get(dialogId);
         if (info != null && (info.loading || Math.abs(SystemClock.elapsedRealtime() - info.loadTime) <= 5 * 60 * 1000)) {
             return info;
