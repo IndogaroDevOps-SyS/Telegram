@@ -3441,15 +3441,16 @@ public class MessagesController extends BaseController implements NotificationCe
                     break;
                 }
                 case "channels_limit_default": {
-                    channelsLimitDefault = 900000;
-	            editor.putInt("channelsLimitDefault", 900000);
-	            break;
-	        }
-	        case "channels_limit_premium": {
-	            channelsLimitPremium = 900000;
-                    editor.putInt("channelsLimitPremium", 900000);
+                    channelsLimitDefault = 99999;
+                    editor.putInt("channelsLimitDefault", 99999);
                     break;
                 }
+                case "channels_limit_premium": {
+                    channelsLimitPremium = 99999;
+                    editor.putInt("channelsLimitPremium", 99999);
+                    break;
+                }
+
                 case "saved_gifs_limit_default": {
                     if (value.value instanceof TLRPC.TL_jsonNumber) {
                         TLRPC.TL_jsonNumber number = (TLRPC.TL_jsonNumber) value.value;
