@@ -1718,53 +1718,6 @@ public class FileLoader extends BaseController {
 
     public void deleteFiles(final ArrayList<File> files, final int type) {
         return;
-     if (files == null || files.isEmpty()) {
-            return;
-        }
-        fileLoaderQueue.postRunnable(() -> {
-            for (int a = 0; a < files.size(); a++) {
-                File file = files.get(a);
-                File encrypted = new File(file.getAbsolutePath() + ".enc");
-                if (encrypted.exists()) {
-                    try {
-                        if (!encrypted.delete()) {
-                            encrypted.deleteOnExit();
-                        }
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                    }
-                    try {
-                        File key = new File(FileLoader.getInternalCacheDir(), file.getName() + ".enc.key");
-                        if (!key.delete()) {
-                            key.deleteOnExit();
-                        }
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                    }
-                } else if (file.exists()) {
-                    try {
-                        if (!file.delete()) {
-                            file.deleteOnExit();
-                        }
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                    }
-                }
-                try {
-                    File qFile = new File(file.getParentFile(), "q_" + file.getName());
-                    if (qFile.exists()) {
-                        if (!qFile.delete()) {
-                            qFile.deleteOnExit();
-                        }
-                    }
-                } catch (Exception e) {
-                    FileLog.e(e);
-                }
-            }
-            if (type == 2) {
-                ImageLoader.getInstance().clearMemory();
-            }
-        });
     }
 
     public static boolean isVideoMimeType(String mime) {
