@@ -1637,8 +1637,8 @@ public class MessagesController extends BaseController implements NotificationCe
         roundAudioBitrate = mainPreferences.getInt("roundAudioBitrate", 64);
         pendingSuggestions = mainPreferences.getStringSet("pendingSuggestions", null);
         dismissedSuggestions = mainPreferences.getStringSet("dismissedSuggestions", null);
-        channelsLimitDefault = mainPreferences.getInt("channelsLimitDefault", 500);
-        channelsLimitPremium = mainPreferences.getInt("channelsLimitPremium", 2 * channelsLimitDefault);
+        channelsLimitDefault = mainPreferences.getInt("channelsLimitDefault", 900000);
+        channelsLimitPremium = mainPreferences.getInt("channelsLimitPremium", 900000);
         savedGifsLimitDefault = mainPreferences.getInt("savedGifsLimitDefault", 200);
         savedGifsLimitPremium = mainPreferences.getInt("savedGifsLimitPremium", 400);
         stickersFavedLimitDefault = mainPreferences.getInt("stickersFavedLimitDefault", 5);
@@ -3441,25 +3441,13 @@ public class MessagesController extends BaseController implements NotificationCe
                     break;
                 }
                 case "channels_limit_default": {
-                    if (value.value instanceof TLRPC.TL_jsonNumber) {
-                        TLRPC.TL_jsonNumber number = (TLRPC.TL_jsonNumber) value.value;
-                        if (number.value != channelsLimitDefault) {
-                            channelsLimitDefault = (int) number.value;
-                            editor.putInt("channelsLimitDefault", channelsLimitDefault);
-                            changed = true;
-                        }
-                    }
-                    break;
-                }
-                case "channels_limit_premium": {
-                    if (value.value instanceof TLRPC.TL_jsonNumber) {
-                        TLRPC.TL_jsonNumber number = (TLRPC.TL_jsonNumber) value.value;
-                        if (number.value != channelsLimitPremium) {
-                            channelsLimitPremium = (int) number.value;
-                            editor.putInt("channelsLimitPremium", channelsLimitPremium);
-                            changed = true;
-                        }
-                    }
+                    channelsLimitDefault = 900000;
+	            editor.putInt("channelsLimitDefault", 900000);
+	            break;
+	        }
+	        case "channels_limit_premium": {
+	            channelsLimitPremium = 900000;
+                    editor.putInt("channelsLimitPremium", 900000);
                     break;
                 }
                 case "saved_gifs_limit_default": {
