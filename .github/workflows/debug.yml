@@ -38,33 +38,47 @@ jobs:
         with:
           packages: 'platform-tools build-tools;34.0.0'
 
-      
-      - name: Inject API Credentials to local.properties
-        run: |
-          echo "APP_ID=${{ secrets.TELEGRAM_API_ID }}" > local.properties
-          echo "APP_HASH=${{ secrets.TELEGRAM_API_HASH }}" >> local.properties
-          
+      - name: Init and Update Submodules
+        run: git submodule update --init --recursive --depth=1
+
       - name: Make Gradlew Executable
         run: chmod +x gradlew
+        
+      - name: Re Clean F gradle
+        run:  ./gradlew clean
 
-      - name: Save Gradle Error Log
+      - name: PreBuild Test For Java
         run: ./gradlew TMessagesProj_App:compileAfatDebugJavaWithJavac --no-daemon --stacktrace
 
-      - name: Build Release APK (AFAT)
-        run: ./gradlew TMessagesProj_App:assembleAfatDebug --no-daemon --stacktrace
+      - name: Build Release APK with Direct CLI Params
+        run: |
+          ./gradlew TMessagesProj_App:assembleAfatDebug \
+          -PAPP_ID="${{ secrets.TELEGRAM_API_ID }}" \
+          -PAPP_HASH="${{ secrets.TELEGRAM_API_HASH }}" \
+          --no-daemon \
+          --stacktrace
+
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Telegram-Official-Release-APKss
           path: 'TMessagesProj_App/build/outputs/apk/afat/debug/app.apk'
-          retention-days: 7
+          retention-days: 20
+      - name: Print Direct Download Link
+        run: |
+          echo "===================================================="
+          echo " BUILD BERHASIL DIKIRIM!"
+          echo " Release Page: https://github.com/${{ github.repository }}/releases"
+          echo " Download via GitHub CLI:"
+          echo " gh run download ${{ github.run_id }} --dir ./apk-output"
+          echo "===================================================="
 
       - name: Create GitHub Release and Upload APK
         uses: softprops/action-gh-release@v3
         if: startsWith(github.ref, 'refs/tags/v')
         with:
-          files: 'TMessagesProj_App/build/outputs/apk/afat/release/app.apk'
+          files: 'TMessagesProj_App/build/outputs/apk/afat/debug/app.apk'
           name: Release ${{ github.ref_name }}
           body: "Automated OTA Release for DevOps & Engine Control Build."
           draft: false
