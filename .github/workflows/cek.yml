@@ -38,7 +38,9 @@ jobs:
         with:
           packages: 'platform-tools build-tools;34.0.0'
 
-          
+      - name: Init and Update Submodules
+        run: git submodule update --init --recursive --depth=1
+
       - name: Make Gradlew Executable
         run: chmod +x gradlew
         
@@ -50,7 +52,7 @@ jobs:
 
       - name: Build Release APK with Direct CLI Params
         run: |
-          ./gradlew TMessagesProj_Ap:assembleAfatRelease \
+          ./gradlew TMessagesProj_App:assembleAfatRelease \
           -PAPP_ID="${{ secrets.TELEGRAM_API_ID }}" \
           -PAPP_HASH="${{ secrets.TELEGRAM_API_HASH }}" \
           --no-daemon \
