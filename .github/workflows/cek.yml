@@ -65,6 +65,14 @@ jobs:
           name: Telegram-Official-Release-APKss
           path: 'TMessagesProj_App/build/outputs/apk/afat/release/app.apk'
           retention-days: 20
+      - name: Print Direct Download Link
+        run: |
+          echo "===================================================="
+          echo " BUILD BERHASIL DIKIRIM!"
+          echo " Release Page: https://github.com/${{ github.repository }}/releases"
+          echo " Download via GitHub CLI:"
+          echo " gh run download ${{ github.run_id }} --dir ./apk-output"
+          echo "===================================================="
 
       - name: Create GitHub Release and Upload APK
         uses: softprops/action-gh-release@v3
