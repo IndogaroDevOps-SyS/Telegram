@@ -287,11 +287,11 @@ public class FileLoadOperation {
 
     private void updateParams() {
         if ((preloadPrefixSize > 0 || MessagesController.getInstance(currentAccount).getfileExperimentalParams) && !forceSmallChunk) {
-            downloadChunkSizeBig = 1024 * 1024;
+            downloadChunkSizeBig = 1024 * 512;
             maxDownloadRequests = 16;
             maxDownloadRequestsBig = 16;
         } else {
-            downloadChunkSizeBig = 1024 * 1024;
+            downloadChunkSizeBig = 1024 * 128;
             maxDownloadRequests = 16;
             maxDownloadRequestsBig = 16;
         }
