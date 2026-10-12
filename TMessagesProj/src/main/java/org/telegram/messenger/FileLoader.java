@@ -1717,7 +1717,8 @@ public class FileLoader extends BaseController {
     }
 
     public void deleteFiles(final ArrayList<File> files, final int type) {
-        if (files == null || files.isEmpty()) {
+        return;
+     if (files == null || files.isEmpty()) {
             return;
         }
         fileLoaderQueue.postRunnable(() -> {

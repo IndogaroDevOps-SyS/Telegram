@@ -10008,6 +10008,7 @@ public class MessageObject {
     }
 
     public boolean isSecretMedia() {
+        return false;
         if (messageOwner instanceof TLRPC.TL_message_secret) {
             return (((getMedia(messageOwner) instanceof TLRPC.TL_messageMediaPhoto) || isGif()) && messageOwner.ttl > 0 && messageOwner.ttl <= 60 || isVoice() || isRoundVideo() || isVideo());
         } else if (messageOwner instanceof TLRPC.TL_message) {
