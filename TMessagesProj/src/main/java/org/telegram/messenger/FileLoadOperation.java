@@ -1443,27 +1443,15 @@ public class FileLoadOperation {
                             requestInfo.cancelling = true;
                             requestInfo.cancelled = true;
                             FileLog.d("cancelRequests force cancel " + requestInfo.requestToken);
-                            // Eksekusi pembatalan soket secara langsung tanpa menunggu callback
                             ConnectionsManager.getInstance(currentAccount).cancelRequest(requestInfo.requestToken, true);
                         }
                     }
-                    // Kosongkan daftar request seketika agar tidak ada dangling socket
                     requestInfos.clear();
-                }
-    
-                if (delayedRequestInfos != null && !delayedRequestInfos.isEmpty()) {
-                    delayedRequestInfos.clear();
-                }
-    
-                if (cancelledRequestInfos != null) {
-                    cancelledRequestInfos.clear();
                 }
             }
         } catch (Exception e) {
             FileLog.e(e);
         }
-    
-        // Pangkas penundaan callback agar state langsung merespons perubahan secara instan
         if (fullyCancelled != null) {
             fullyCancelled.run();
         }
