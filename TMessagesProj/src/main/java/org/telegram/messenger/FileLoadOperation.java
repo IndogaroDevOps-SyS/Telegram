@@ -286,22 +286,40 @@ public class FileLoadOperation {
     }
 
     private void updateParams() {
-         final long safeThresholdBytes = 5L * 1024L * 1024L;
-         boolean isLargeFile = totalBytesCount > safeThresholdBytes || totalBytesCount == 0;
+        final long sizeBytes = totalBytesCount;
+        final long thresholdSmall = 10L * 1024L * 1024L;
+        final long thresholdMedium = 20L * 1024L * 1024L; 
+    
+        if (sizeBytes > 0 && sizeBytes <= thresholdSmall) {
 
-         if (isLargeFile) {
+            downloadChunkSizeBig = 1024 * 64;
+            maxDownloadRequests = 4;
+            maxDownloadRequestsBig = 4;
+            maxDownloadRequestsAnimation = 4;
+            
+        } else if (sizeBytes > thresholdSmall && sizeBytes <= thresholdMedium) {
+            downloadChunkSizeBig = 1024 * 256;
+            maxDownloadRequests = 16;
+            maxDownloadRequestsBig = 16;
+            maxDownloadRequestsAnimation = 16;
+            
+        } else {
             downloadChunkSizeBig = 1024 * 512;
             maxDownloadRequests = 32;
             maxDownloadRequestsBig = 32;
-         } else {
-             downloadChunkSizeBig = 1024 * 64;
-             maxDownloadRequests = 4;
-             maxDownloadRequestsBig = 4;
-         }
-
-         long safeChunkSize = downloadChunkSizeBig > 0 ? downloadChunkSizeBig : 131072;
-         maxCdnParts = (int) Math.max(1, FileLoader.DEFAULT_MAX_FILE_SIZE / safeChunkSize);
+            maxDownloadRequestsAnimation = 32;
+        }
+    
+        if (isStream || isPreloadVideoOperation) {
+            maxDownloadRequests = Math.max(maxDownloadRequests, 16);
+            maxDownloadRequestsBig = Math.max(maxDownloadRequestsBig, 16);
+        }
+        
+        long safeChunkSize = downloadChunkSizeBig > 0 ? downloadChunkSizeBig : 131072;
+        maxCdnParts = (int) Math.max(1, FileLoader.DEFAULT_MAX_FILE_SIZE / safeChunkSize);
     }
+
+
 
     public FileLoadOperation(ImageLocation imageLocation, Object parent, String extension, long size) {
         updateParams();
