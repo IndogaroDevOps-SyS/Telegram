@@ -1,0 +1,8 @@
+indogaromedia.all@gmail.com
+echo "EMAIL UTAMA"
+sleep 1
+echo "SUB EMAIL"
++accountgram
++whatsapp
++whatsappb
+echo "BACKUP INTI AND SUB CLEAR"
