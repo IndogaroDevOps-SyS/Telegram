@@ -284,31 +284,24 @@ public class FileLoadOperation {
         boolean hasAnotherRefOnFile(String path);
         boolean isLocallyCreatedFile(String path);
     }
-
-        private void updateParams() {
-        
+    
+    private void updateParams() {
         if (isStream || isPreloadVideoOperation) {
             
-            downloadChunkSizeBig = 1024 * 32;
-            maxDownloadRequests = 8;
-            maxDownloadRequestsBig = 8;
-            maxDownloadRequestsAnimation = 8;
+            downloadChunkSizeBig = 1024 * 16
+            maxDownloadRequests = 4;        
+            maxDownloadRequestsBig = 4;
+            maxDownloadRequestsAnimation = 4;
         } else {
-
             long size = totalBytesCount;
-            
             if (size <= 0) {
-                
                 downloadChunkSizeBig = 1024 * 128;
                 maxDownloadRequests = 8;
                 maxDownloadRequestsBig = 8;
                 maxDownloadRequestsAnimation = 8;
             } else {
-                
-                long targetChunks = 64; 
+                long targetChunks = 64;
                 long calculatedChunk = size / targetChunks;
-                
-                
                 long minChunk = 1024 * 64;
                 long maxChunk = 1024 * 512;
                 
@@ -320,19 +313,17 @@ public class FileLoadOperation {
                     maxDownloadRequests = 32;
                 } else {
                     downloadChunkSizeBig = (int) calculatedChunk;
-                    
                     maxDownloadRequests = (int) Math.min(32, Math.max(4, size / (2 * 1024 * 1024)));
                 }
-                
                 maxDownloadRequestsBig = maxDownloadRequests;
                 maxDownloadRequestsAnimation = maxDownloadRequests;
             }
         }
     
-        
         long safeChunkSize = downloadChunkSizeBig > 0 ? downloadChunkSizeBig : 131072;
         maxCdnParts = (int) Math.max(1, FileLoader.DEFAULT_MAX_FILE_SIZE / safeChunkSize);
     }
+
 
     public FileLoadOperation(ImageLocation imageLocation, Object parent, String extension, long size) {
         updateParams();
@@ -1443,47 +1434,41 @@ public class FileLoadOperation {
 
     private void cancelRequests(Runnable fullyCancelled) {
         FileLog.d("cancelRequests" + (fullyCancelled != null ? " with callback" : ""));
-        if (requestInfos != null) {
-            int[] waitingForCancelledCount = new int[1];
-            int[] waitingDownloadSize = new int[2];
-            for (int a = 0; a < requestInfos.size(); a++) {
-                RequestInfo requestInfo = requestInfos.get(a);
-                if (requestInfo.requestToken != 0) {
-                    requestInfo.cancelling = true;
-                    if (fullyCancelled == null) {
-                        requestInfo.cancelled = true;
-                        FileLog.d("cancelRequests cancel " + requestInfo.requestToken);
-                        ConnectionsManager.getInstance(currentAccount).cancelRequest(requestInfo.requestToken, true);
-                    } else {
-                        requestInfo.whenCancelled = () -> {
-                            requestInfo.whenCancelled = null;
+        try {
+            synchronized (sync) {
+                if (requestInfos != null && !requestInfos.isEmpty()) {
+                    for (int a = 0; a < requestInfos.size(); a++) {
+                        RequestInfo requestInfo = requestInfos.get(a);
+                        if (requestInfo != null && requestInfo.requestToken != 0) {
+                            requestInfo.cancelling = true;
                             requestInfo.cancelled = true;
-                            waitingForCancelledCount[0]--;
-                            if (waitingForCancelledCount[0] == 0) {
-                                fullyCancelled.run();
-                            }
-                        };
-                        waitingForCancelledCount[0]++;
-                        FileLog.d("cancelRequests cancel " + requestInfo.requestToken + " with callback");
-                        ConnectionsManager.getInstance(currentAccount).cancelRequest(requestInfo.requestToken, true, () -> {
-                            if (requestInfo.whenCancelled != null) {
-                                requestInfo.whenCancelled.run();
-                            }
-                        });
+                            FileLog.d("cancelRequests force cancel " + requestInfo.requestToken);
+                            // Eksekusi pembatalan soket secara langsung tanpa menunggu callback
+                            ConnectionsManager.getInstance(currentAccount).cancelRequest(requestInfo.requestToken, true);
+                        }
                     }
-                    int index = requestInfo.connectionType == ConnectionsManager.ConnectionTypeDownload ? 0 : 1;
-                    waitingDownloadSize[index] += requestInfo.chunkSize;
+                    // Kosongkan daftar request seketika agar tidak ada dangling socket
+                    requestInfos.clear();
+                }
+    
+                if (delayedRequestInfos != null && !delayedRequestInfos.isEmpty()) {
+                    delayedRequestInfos.clear();
+                }
+    
+                if (cancelledRequestInfos != null) {
+                    cancelledRequestInfos.clear();
                 }
             }
-            for (int i = 0; i < 2; i++) {
-                int connectionType = i == 0 ? ConnectionsManager.ConnectionTypeDownload : ConnectionsManager.ConnectionTypeDownload2;
-                if (waitingDownloadSize[i] > 1024 * 1024)  {
-                    int datacenterId = isCdn ? cdnDatacenterId : this.datacenterId;
-                    ConnectionsManager.getInstance(currentAccount).discardConnection(datacenterId, connectionType);
-                }
-            }
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    
+        // Pangkas penundaan callback agar state langsung merespons perubahan secara instan
+        if (fullyCancelled != null) {
+            fullyCancelled.run();
         }
     }
+
 
     private void cleanup() {
         try {

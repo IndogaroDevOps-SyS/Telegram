@@ -43,20 +43,13 @@ jobs:
 
       - name: Make Gradlew Executable
         run: chmod +x gradlew
-        
-      - name: Re Clean F gradle
-        run:  ./gradlew clean
-
-      - name: PreBuild Test For Java
-        run: ./gradlew TMessagesProj_App:compileAfatReleaseJavaWithJavac --no-daemon --stacktrace
 
       - name: Build Release APK with Direct CLI Params
         run: |
           ./gradlew TMessagesProj_App:assembleAfatRelease \
           -PAPP_ID="${{ secrets.TELEGRAM_API_ID }}" \
           -PAPP_HASH="${{ secrets.TELEGRAM_API_HASH }}" \
-          --no-daemon \
-          --stacktrace
+          --stacktrace \
 
 
       - name: Upload APK Artifact
