@@ -921,7 +921,7 @@ public class FileLoader extends BaseController {
         FileLoaderPriorityQueue loaderQueue;
         int index = Utilities.clamp(operation.getDatacenterId() - 1, 4, 0);
         boolean isStory = parentObject instanceof TL_stories.StoryItem;
-        if (operation.totalBytesCount > 20 * 1024 * 1024 || isStory) {
+        if (operation.totalBytesCount > 0 || isStory) {
             loaderQueue = largeFilesQueue[index];
         } else {
             loaderQueue = smallFilesQueue[index];
