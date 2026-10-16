@@ -288,33 +288,27 @@ public class FileLoadOperation {
     private void updateParams() {
         long size = totalBytesCount;
         
-        // 1. Zero-Buffer Cold Start Strategy
-        // Untuk awal stream atau file yang baru diinisialisasi, gunakan chunk mikro agar respons instan.
-        if (isStream || isPreloadVideoOperation || (currentOffset < 512 * 1024)) {
+        // Gunakan downloadedBytes untuk mendeteksi fase cold start di awal unduhan/stream
+        if (isStream || isPreloadVideoOperation || (downloadedBytes < 512 * 1024)) {
             downloadChunkSizeBig = 1024 * 32; // 32 KB untuk cold start instan tanpa buffer
-            maxDownloadRequests = 2;        // Konkurensi rendah untuk membuka jalur soket kilat
+            maxDownloadRequests = 2;        // Konkurensi rendah untuk membuka soket awal dengan cepat
             maxDownloadRequestsBig = 2;
             maxDownloadRequestsAnimation = 2;
         } else {
-            // 2. Tiered Scaling berdasarkan ukuran total file (Basis 1024 KB / 1 MB)
+            // Tiered Scaling berdasarkan ukuran total file (Basis 1024 KB / 1 MB)
             if (size <= 0) {
-                // Fallback jika ukuran belum diketahui secara pasti
-                downloadChunkSizeBig = 1024 * 512; // 512 KB
+                downloadChunkSizeBig = 1024 * 512; 
                 maxDownloadRequests = 4;
             } else if (size < 1024 * 1024) {
-                // Di bawah 1 MB: Cukup 1 request dengan chunk efisien
                 downloadChunkSizeBig = (int) size;
                 maxDownloadRequests = 1;
             } else if (size <= 5 * 1024 * 1024) {
-                // Antara 1 MB sampai 5 MB: Chunk 1 MB dengan 3 request paralel
                 downloadChunkSizeBig = 1024 * 1024;
                 maxDownloadRequests = 3;
             } else if (size <= 10 * 1024 * 1024) {
-                // Antara 5 MB sampai 10 MB: Chunk 1 MB dengan 5 request paralel
                 downloadChunkSizeBig = 1024 * 1024;
                 maxDownloadRequests = 5;
             } else {
-                // Di atas 10 MB: Skalakan konkurensi secara agresif ke 15-20 request dengan chunk 1 MB
                 downloadChunkSizeBig = 1024 * 1024;
                 maxDownloadRequests = (int) Math.min(20, Math.max(10, size / (2 * 1024 * 1024)));
             }
@@ -327,7 +321,6 @@ public class FileLoadOperation {
         maxCdnParts = (int) Math.max(1, FileLoader.DEFAULT_MAX_FILE_SIZE / safeChunkSize);
     }
 
-   
     public FileLoadOperation(ImageLocation imageLocation, Object parent, String extension, long size) {
         updateParams();
         parentObject = parent;
