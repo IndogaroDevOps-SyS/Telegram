@@ -286,16 +286,21 @@ public class FileLoadOperation {
     }
 
     private void updateParams() {
-        if (true) {
-            downloadChunkSizeBig = 1024 * 256;
+         final long safeThresholdBytes = 5L * 1024L * 1024L;
+         boolean isLargeFile = totalBytesCount > safeThresholdBytes || totalBytesCount == 0;
+
+         if (isLargeFile) {
+            downloadChunkSizeBig = 1024 * 512;
             maxDownloadRequests = 32;
             maxDownloadRequestsBig = 32;
-        } else {
-            downloadChunkSizeBig = 1024 * 128;
-            maxDownloadRequests = 32;
-            maxDownloadRequestsBig = 32;
-        }
-        maxCdnParts = (int) (FileLoader.DEFAULT_MAX_FILE_SIZE / downloadChunkSizeBig);
+         } else {
+             downloadChunkSizeBig = 1024 * 64;
+             maxDownloadRequests = 4;
+             maxDownloadRequestsBig = 4;
+         }
+
+         long safeChunkSize = downloadChunkSizeBig > 0 ? downloadChunkSizeBig : 131072;
+         maxCdnParts = (int) Math.max(1, FileLoader.DEFAULT_MAX_FILE_SIZE / safeChunkSize);
     }
 
     public FileLoadOperation(ImageLocation imageLocation, Object parent, String extension, long size) {
