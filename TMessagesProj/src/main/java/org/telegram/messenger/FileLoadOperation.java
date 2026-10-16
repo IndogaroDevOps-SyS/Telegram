@@ -285,41 +285,54 @@ public class FileLoadOperation {
         boolean isLocallyCreatedFile(String path);
     }
 
-    private void updateParams() {
-        final long sizeBytes = totalBytesCount;
-        final long thresholdSmall = 10L * 1024L * 1024L;
-        final long thresholdMedium = 20L * 1024L * 1024L; 
-    
-        if (sizeBytes > 0 && sizeBytes <= thresholdSmall) {
-
-            downloadChunkSizeBig = 1024 * 64;
-            maxDownloadRequests = 4;
-            maxDownloadRequestsBig = 4;
-            maxDownloadRequestsAnimation = 4;
-            
-        } else if (sizeBytes > thresholdSmall && sizeBytes <= thresholdMedium) {
-            downloadChunkSizeBig = 1024 * 256;
-            maxDownloadRequests = 16;
-            maxDownloadRequestsBig = 16;
-            maxDownloadRequestsAnimation = 16;
-            
-        } else {
-            downloadChunkSizeBig = 1024 * 512;
-            maxDownloadRequests = 32;
-            maxDownloadRequestsBig = 32;
-            maxDownloadRequestsAnimation = 32;
-        }
-    
+        private void updateParams() {
+        
         if (isStream || isPreloadVideoOperation) {
-            maxDownloadRequests = Math.max(maxDownloadRequests, 16);
-            maxDownloadRequestsBig = Math.max(maxDownloadRequestsBig, 16);
+            
+            downloadChunkSizeBig = 1024 * 32;
+            maxDownloadRequests = 8;
+            maxDownloadRequestsBig = 8;
+            maxDownloadRequestsAnimation = 8;
+        } else {
+
+            long size = totalBytesCount;
+            
+            if (size <= 0) {
+                
+                downloadChunkSizeBig = 1024 * 128;
+                maxDownloadRequests = 8;
+                maxDownloadRequestsBig = 8;
+                maxDownloadRequestsAnimation = 8;
+            } else {
+                
+                long targetChunks = 64; 
+                long calculatedChunk = size / targetChunks;
+                
+                
+                long minChunk = 1024 * 64;
+                long maxChunk = 1024 * 512;
+                
+                if (calculatedChunk < minChunk) {
+                    downloadChunkSizeBig = (int) minChunk;
+                    maxDownloadRequests = 4;
+                } else if (calculatedChunk > maxChunk) {
+                    downloadChunkSizeBig = (int) maxChunk;
+                    maxDownloadRequests = 32;
+                } else {
+                    downloadChunkSizeBig = (int) calculatedChunk;
+                    
+                    maxDownloadRequests = (int) Math.min(32, Math.max(4, size / (2 * 1024 * 1024)));
+                }
+                
+                maxDownloadRequestsBig = maxDownloadRequests;
+                maxDownloadRequestsAnimation = maxDownloadRequests;
+            }
         }
+    
         
         long safeChunkSize = downloadChunkSizeBig > 0 ? downloadChunkSizeBig : 131072;
         maxCdnParts = (int) Math.max(1, FileLoader.DEFAULT_MAX_FILE_SIZE / safeChunkSize);
     }
-
-
 
     public FileLoadOperation(ImageLocation imageLocation, Object parent, String extension, long size) {
         updateParams();
