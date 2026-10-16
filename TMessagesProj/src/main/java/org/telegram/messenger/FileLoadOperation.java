@@ -1434,29 +1434,47 @@ public class FileLoadOperation {
 
     private void cancelRequests(Runnable fullyCancelled) {
         FileLog.d("cancelRequests" + (fullyCancelled != null ? " with callback" : ""));
-        try {
-            synchronized (sync) {
-                if (requestInfos != null && !requestInfos.isEmpty()) {
-                    for (int a = 0; a < requestInfos.size(); a++) {
-                        RequestInfo requestInfo = requestInfos.get(a);
-                        if (requestInfo != null && requestInfo.requestToken != 0) {
-                            requestInfo.cancelling = true;
+        if (requestInfos != null) {
+            int[] waitingForCancelledCount = new int[1];
+            int[] waitingDownloadSize = new int[2];
+            for (int a = 0; a < requestInfos.size(); a++) {
+                RequestInfo requestInfo = requestInfos.get(a);
+                if (requestInfo.requestToken != 0) {
+                    requestInfo.cancelling = true;
+                    if (fullyCancelled == null) {
+                        requestInfo.cancelled = true;
+                        FileLog.d("cancelRequests cancel " + requestInfo.requestToken);
+                        ConnectionsManager.getInstance(currentAccount).cancelRequest(requestInfo.requestToken, true);
+                    } else {
+                        requestInfo.whenCancelled = () -> {
+                            requestInfo.whenCancelled = null;
                             requestInfo.cancelled = true;
-                            FileLog.d("cancelRequests force cancel " + requestInfo.requestToken);
-                            ConnectionsManager.getInstance(currentAccount).cancelRequest(requestInfo.requestToken, true);
-                        }
+                            waitingForCancelledCount[0]--;
+                            if (waitingForCancelledCount[0] == 0) {
+                                fullyCancelled.run();
+                            }
+                        };
+                        waitingForCancelledCount[0]++;
+                        FileLog.d("cancelRequests cancel " + requestInfo.requestToken + " with callback");
+                        ConnectionsManager.getInstance(currentAccount).cancelRequest(requestInfo.requestToken, true, () -> {
+                            if (requestInfo.whenCancelled != null) {
+                                requestInfo.whenCancelled.run();
+                            }
+                        });
                     }
-                    requestInfos.clear();
+                    int index = requestInfo.connectionType == ConnectionsManager.ConnectionTypeDownload ? 0 : 1;
+                    waitingDownloadSize[index] += requestInfo.chunkSize;
                 }
             }
-        } catch (Exception e) {
-            FileLog.e(e);
-        }
-        if (fullyCancelled != null) {
-            fullyCancelled.run();
+            for (int i = 0; i < 2; i++) {
+                int connectionType = i == 0 ? ConnectionsManager.ConnectionTypeDownload : ConnectionsManager.ConnectionTypeDownload2;
+                if (waitingDownloadSize[i] > 1024 * 1024)  {
+                    int datacenterId = isCdn ? cdnDatacenterId : this.datacenterId;
+                    ConnectionsManager.getInstance(currentAccount).discardConnection(datacenterId, connectionType);
+                }
+            }
         }
     }
-
 
     private void cleanup() {
         try {
