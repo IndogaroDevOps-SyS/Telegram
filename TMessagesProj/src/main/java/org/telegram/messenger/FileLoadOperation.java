@@ -288,7 +288,7 @@ public class FileLoadOperation {
     private void updateParams() {
         if (isStream || isPreloadVideoOperation) {
             
-            downloadChunkSizeBig = 1024 * 16
+            downloadChunkSizeBig = 1024 * 16;
             maxDownloadRequests = 4;        
             maxDownloadRequestsBig = 4;
             maxDownloadRequestsAnimation = 4;
