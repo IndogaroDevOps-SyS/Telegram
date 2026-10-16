@@ -1,6 +1,6 @@
 name: Debug
 
-off:
+on:
   push:
     branches:
       - main

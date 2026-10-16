@@ -1,6 +1,6 @@
 name: PreRelease
 
-on:
+off:
   push:
     branches:
       - main
